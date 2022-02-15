@@ -631,6 +631,7 @@ namespace MugCup_PathFinder.Runtime
             _grid[_z + _gridSize.x * (_x + _gridSize.y * _y)] = default;
         }
 #endregion
+        
         // public Node NodeFromWorldPoint(Vector3 worldPosition) {
         //     float percentX = (worldPosition.x + gridWorldSize.x/2) / gridWorldSize.x;
         //     float percentY = (worldPosition.z + gridWorldSize.y/2) / gridWorldSize.y;
