@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace MugCup_PathFinder.Runtime
 {
@@ -642,5 +643,39 @@ namespace MugCup_PathFinder.Runtime
         //     int y = Mathf.RoundToInt((gridSizeY-1) * percentY);
         //     return grid[x,y];
         // }
+        
+        public static T[] GenerateGridINodes<T>(Vector3Int _gridUnitSize, GameObject _blockPrefab, GameObject _parent = null) where T : NodeBase
+        {
+            int _rowUnit    = _gridUnitSize.x;
+            int _columnUnit = _gridUnitSize.z;
+            int _levelUnit  = _gridUnitSize.y;
+            
+            T[] _nodes = new T[_rowUnit * _columnUnit * _levelUnit];
+            
+            for (int _y = 0; _y < _levelUnit; _y++)
+            {
+                for (int _x = 0; _x < _rowUnit; _x++)
+                {
+                    for (int _z = 0; _z < _columnUnit; _z++)
+                    {
+                        Vector3 _position = new Vector3(_x, _y, _z);
+            
+                        T _node = Object.Instantiate(_blockPrefab, _position, Quaternion.identity).AddComponent<T>();
+                         
+                        // if (_parent != null)
+                        // {
+                        //     _block.transform.position += _parent.transform.position;
+                        //     _block.transform.SetParent(_parent.transform);
+                        // }
+                        //
+                        // _block.Init(_block.transform.position, new Vector3Int(_x, _y, _z));
+
+                        _nodes[_z + _gridUnitSize.x * (_x + _gridUnitSize.y * _y)] = _node;
+                    }
+                }
+            }
+
+            return _nodes;
+        }
     }
 }

@@ -63,6 +63,7 @@ namespace MugCup_PathFinder.Runtime
             
             return null;
         }
+        
         private static T GetNodeLeastCost(List<T> _openSet)
         {
             T _node = _openSet[0];
