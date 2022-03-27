@@ -1,7 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using MugCup_PathFinder.Runtime.Utilities;
 using UnityEditor.Graphs;
 using UnityEngine;
+using UnityEngine.UIElements;
+using UnityEngine.InputSystem;
 
 namespace MugCup_PathFinder.Runtime.Examples
 {
@@ -18,6 +22,9 @@ namespace MugCup_PathFinder.Runtime.Examples
 
     public class PathFinderExample : MonoBehaviour
     {
+        [SerializeField] private NodeBase startNode;
+        [SerializeField] private NodeBase targetNode;
+        
         [SerializeField] private Vector3Int gridSize;
 
         [SerializeField] private NodeBase[] grid;
@@ -28,11 +35,22 @@ namespace MugCup_PathFinder.Runtime.Examples
             grid = GridUtility.GenerateGridINodes<NodeBase>(gridSize, _cube);
             
             AStar<NodeBase>.InitializeGridData(gridSize, grid);
+
+            var _path = AStar<NodeBase>.FindPath(grid[0], grid[40]).ToArray();
+
+
+
+            var _pathGizmos = FindObjectOfType<PathGizmos>();
+            
+            _pathGizmos.SetGridRef(_path);
         }
 
         void Update()
         {
-            
+            if (Mouse.current.leftButton.isPressed)
+            {
+                
+            }
         }
     }
 }

@@ -661,6 +661,8 @@ namespace MugCup_PathFinder.Runtime
                         Vector3 _position = new Vector3(_x, _y, _z);
             
                         T _node = Object.Instantiate(_blockPrefab, _position, Quaternion.identity).AddComponent<T>();
+
+                        _node.NodePosition = new Vector3Int(_x, _y, _z);
                          
                         // if (_parent != null)
                         // {
