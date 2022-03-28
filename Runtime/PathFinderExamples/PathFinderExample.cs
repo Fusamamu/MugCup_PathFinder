@@ -34,9 +34,9 @@ namespace MugCup_PathFinder.Runtime.Examples
             var _cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
             grid = GridUtility.GenerateGridINodes<NodeBase>(gridSize, _cube);
             
-            AStar<NodeBase>.InitializeGridData(gridSize, grid);
+            AStarPathFinder<NodeBase>.InitializeGridData(gridSize, grid);
 
-            var _path = AStar<NodeBase>.FindPath(grid[0], grid[40]).ToArray();
+            var _path = AStarPathFinder<NodeBase>.FindPath(grid[0], grid[40]).ToArray();
 
 
 

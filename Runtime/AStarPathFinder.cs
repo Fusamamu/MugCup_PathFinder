@@ -6,7 +6,28 @@ using UnityEngine;
 
 namespace MugCup_PathFinder.Runtime
 {
-    public static class AStar<T> where T: class, INode
+    public interface IPathFinder<T>
+    {
+        public Vector3Int GridSize { get; set; }
+        public T[] Nodes           { get; set; }
+        
+        public IEnumerable<T> FindPath(T _origin, T _target);
+    }
+
+    public class SimplePathFinder : IPathFinder<INode>
+    {
+        public Vector3Int GridSize { get; set; }
+        public INode[] Nodes       { get; set; }
+        
+        public IEnumerable<INode> FindPath(INode _origin, INode _target)
+        {
+            return null;
+        }
+    }
+    
+    //public class HeapPathFinder : IPathFinder<INode, IHeapItem<INode>>
+
+    public static class AStarPathFinder<T> where T: class, INode
     {
         public static Vector3Int GridSize;
         public static T[] Nodes;
@@ -33,8 +54,8 @@ namespace MugCup_PathFinder.Runtime
                 _iter++;
                     
                 T _node = GetNodeLeastCost(_openSet);
-                
                 _openSet.Remove(_node);
+                
                 _closedSet.Add(_node);
 
                 if (_node == _target)
