@@ -27,22 +27,37 @@ namespace MugCup_PathFinder.Runtime.Examples
         
         [SerializeField] private Vector3Int gridSize;
 
-        [SerializeField] private NodeBase[] grid;
-        
+        [SerializeField] private NodeBase[] gridNodes;
+
+        private IPathFinder<NodeBase> pathFinder;
+
         void Start()
         {
             var _cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            grid = GridUtility.GenerateGridINodes<NodeBase>(gridSize, _cube);
-            
-            AStarPathFinder<NodeBase>.InitializeGridData(gridSize, grid);
+            gridNodes = GridUtility.GenerateGridINodes<NodeBase>(gridSize, _cube);
 
-            var _path = AStarPathFinder<NodeBase>.FindPath(grid[0], grid[40]).ToArray();
-
-
+            var _path = GetPathUsingHeapPathFinder().ToArray();
 
             var _pathGizmos = FindObjectOfType<PathGizmos>();
             
             _pathGizmos.SetGridRef(_path);
+        }
+
+        private IEnumerable<NodeBase> GetPathUsingHeapPathFinder()
+        {
+            pathFinder = new HeapPathFinder(gridSize, gridNodes);
+            var _path = pathFinder.FindPath(gridNodes[0], gridNodes[40]).ToArray();
+
+            return _path;
+        }
+
+        private IEnumerable<NodeBase> GetPathUsingStaticPathFinder()
+        {
+            AStarPathFinder<NodeBase>.InitializeGridData(gridSize, gridNodes);
+            
+            var _path = AStarPathFinder<NodeBase>.FindPath(gridNodes[0], gridNodes[40]).ToArray();
+
+            return _path;
         }
 
         void Update()
