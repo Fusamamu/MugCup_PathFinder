@@ -12,8 +12,13 @@ namespace MugCup_PathFinder.Runtime
         public T[] Nodes           { get; set; }
         
         public IEnumerable<T> FindPath(T _origin, T _target);
+
+        public IEnumerable<Vector3Int> FindPath(Vector3Int _origin, Vector3Int _target);
     }
 
+    /// <summary>
+    /// Using simple loop iteration to find the node with least cost.
+    /// </summary>
     public class SimplePathFinder : IPathFinder<INode> 
     {
         public Vector3Int GridSize { get; set; }
@@ -72,8 +77,16 @@ namespace MugCup_PathFinder.Runtime
             
             return null;
         }
+
+        public IEnumerable<Vector3Int> FindPath(Vector3Int _origin, Vector3Int _target)
+        {
+            return null;
+        }
     }
 
+    /// <summary>
+    /// Using Heap sorting to find the node which least cost.
+    /// </summary>
     public class HeapPathFinder : IPathFinder<NodeBase>
     {
         public Vector3Int GridSize { get; set; }  
@@ -91,7 +104,7 @@ namespace MugCup_PathFinder.Runtime
         
         public IEnumerable<NodeBase> FindPath(NodeBase _origin, NodeBase _target)
         {
-            Heap<NodeBase> _openSet      = new Heap<NodeBase>(GridSize.x * GridSize.z);
+            Heap<NodeBase>    _openSet   = new Heap<NodeBase>(GridSize.x * GridSize.z);
             HashSet<NodeBase> _closedSet = new HashSet<NodeBase>();
             
             _openSet.Add(_origin);
@@ -129,6 +142,11 @@ namespace MugCup_PathFinder.Runtime
                 }
             }
             
+            return null;
+        }
+        
+        public IEnumerable<Vector3Int> FindPath(Vector3Int _origin, Vector3Int _target)
+        {
             return null;
         }
     }
@@ -200,12 +218,12 @@ namespace MugCup_PathFinder.Runtime
         {
             T _node = _openSet[0];
 
-            for (int i = 1; i < _openSet.Count; i++)
+            for (var _i = 1; _i < _openSet.Count; _i++)
             {
-                if (_openSet[i].F_Cost <= _node.F_Cost)
+                if (_openSet[_i].F_Cost <= _node.F_Cost)
                 {
-                    if (_openSet[i].H_Cost < _node.H_Cost)
-                        _node = _openSet[i];
+                    if (_openSet[_i].H_Cost < _node.H_Cost)
+                        _node = _openSet[_i];
                 }
             }
             return _node;

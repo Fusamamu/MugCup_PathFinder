@@ -644,7 +644,7 @@ namespace MugCup_PathFinder.Runtime
         //     return grid[x,y];
         // }
         
-        public static T[] GenerateGridINodes<T>(Vector3Int _gridUnitSize, GameObject _blockPrefab, GameObject _parent = null) where T : NodeBase
+        public static T[] GenerateGridINodes<T>(Vector3Int _gridUnitSize, GameObject _blockPrefab = null, GameObject _parent = null) where T : NodeBase
         {
             int _rowUnit    = _gridUnitSize.x;
             int _columnUnit = _gridUnitSize.z;
@@ -659,10 +659,22 @@ namespace MugCup_PathFinder.Runtime
                     for (int _z = 0; _z < _columnUnit; _z++)
                     {
                         Vector3 _position = new Vector3(_x, _y, _z);
-            
-                        T _node = Object.Instantiate(_blockPrefab, _position, Quaternion.identity).AddComponent<T>();
 
-                        _node.NodePosition = new Vector3Int(_x, _y, _z);
+                        T _node;
+                        
+                        if (_blockPrefab != null)
+                        {
+                            _node = Object.Instantiate(_blockPrefab, _position, Quaternion.identity).AddComponent<T>();
+                            
+                            _node.NodePosition = new Vector3Int(_x, _y, _z);
+                        }
+                        else
+                        {
+                            var _emptyNode = new GameObject("Empty Node");
+                            _node = _emptyNode.AddComponent<T>();
+                            
+                            _node.NodePosition = new Vector3Int(_x, _y, _z);
+                        }
                          
                         // if (_parent != null)
                         // {

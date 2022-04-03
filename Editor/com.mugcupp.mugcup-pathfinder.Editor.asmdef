@@ -1,0 +1,16 @@
+{
+    "name": "com.mugcupp.mugcup-pathfinder.editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:6dacba126246b44f292fb39a88e24d2a"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
