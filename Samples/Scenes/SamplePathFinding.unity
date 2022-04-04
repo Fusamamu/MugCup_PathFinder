@@ -236,8 +236,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gridSize: {x: 10, y: 1, z: 10}
-  startPosition: {x: 3, y: 0, z: 0}
-  targetPosition: {x: 8, y: 35, z: 4}
+  startPosition: {x: 8, y: 0, z: 9}
+  targetPosition: {x: 3, y: 0, z: 1}
   startNode: {fileID: 0}
   targetNode: {fileID: 0}
   gridNodes: []

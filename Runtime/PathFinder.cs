@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using MugCup_PathFinder.Runtime.Utilities;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -13,7 +14,10 @@ namespace MugCup_PathFinder.Runtime
     /// </summary>
     public class PathFinder : MonoBehaviour
     {
-        public Vector3Int GridSize => gridSize;
+        public Vector3Int GridSize  => gridSize ;
+        public NodeBase[] PathNodes => pathNodes;
+        
+        public bool HasPath => pathNodes.Length > 1;
         
         [SerializeField] private Vector3Int gridSize;
         
@@ -32,7 +36,22 @@ namespace MugCup_PathFinder.Runtime
             
         [SerializeField] private Color nodeColor = Color.blue;
 
-        void Start()
+        private void OnValidate()
+        {
+            if (startPosition.x >= gridSize.x)
+                startPosition.x = gridSize.x - 1;
+
+            if (startPosition.x < 0)
+                startPosition.x = 0;
+
+            if (startPosition.z >= gridSize.z)
+                startPosition.z = gridSize.z - 1;
+
+            if (startPosition.z < 0)
+                startPosition.z = 0;
+        }
+
+        private void Start()
         {
             gridSize = new Vector3Int(10, 1, 10);
             
@@ -53,34 +72,47 @@ namespace MugCup_PathFinder.Runtime
 
         public IEnumerable<NodeBase> GeneratePath()
         {
+            ClearPath();
+            
             gridNodes = GridUtility.GenerateGridINodes<NodeBase>(gridSize);
             
             var _pathFinder = new HeapPathFinder(gridSize, gridNodes);
 
             NodeBase _startNode  = null;
-            NodeBase _targetNOde = null;
+            NodeBase _targetNode = null;
 
             foreach (var _node in gridNodes)
             {
-                if (_node.NodePosition == startPosition)
+                if (_node.NodePosition == startPosition) //Need to implement IComparable
                     _startNode = _node;
 
                 if (_node.NodePosition == targetPosition)
-                    _targetNOde = _node;
+                    _targetNode = _node;
             }
 
-            pathNodes = _pathFinder.FindPath(_startNode, _targetNOde).ToArray();
+            if (_startNode == null)
+            {
+                Debug.Log("Start Node null");
+                return null;
+            }
+            if (_targetNode == null)
+            {
+                Debug.Log("Target Node null");
+                return null;
+            }
+            
+            pathNodes = _pathFinder.FindPath(_startNode, _targetNode).ToArray();
 
             return pathNodes;
         }
 
-        public void Clear()
+        public void ClearPath()
         {
             foreach (var _node in gridNodes)
                 DestroyImmediate(_node.gameObject);
             
-            Array.Clear(gridNodes, 0, gridNodes.Length);
-            Array.Clear(pathNodes, 0, pathNodes.Length);
+            gridNodes = Array.Empty<NodeBase>();
+            pathNodes = Array.Empty<NodeBase>();
         }
 
         private IEnumerable<NodeBase> GetPath(Vector3Int _gridSize, NodeBase[] _gridNodes)
@@ -101,8 +133,6 @@ namespace MugCup_PathFinder.Runtime
         {
             return null;
         }
-        
-        
 
         void Update()
         {
@@ -118,28 +148,9 @@ namespace MugCup_PathFinder.Runtime
             
             if(gridNodes == null || gridNodes.Length == 0) return;
             
-            
             foreach (var _node in gridNodes)
             {
                 Gizmos.DrawSphere(_node.NodePosition, nodeRadius);
-            }
-            
-            DrawGridGizmos(new Vector3Int(10, 1, 10));
-        }
-
-        private void DrawGridGizmos(Vector3Int _gridSize)
-        {
-            Gizmos.color = Color.green;
-
-            Vector3 _p0 = Vector3.zero;
-            Vector3 _p1 = Vector3.zero;
-
-            for (var _i = 0; _i < _gridSize.x; _i++)
-            {
-                _p0 = new Vector3(_i,     0, 0);
-                _p1 = new Vector3(_i + 1, 0, 0);
-                
-                Gizmos.DrawLine(_p0, _p1);
             }
         }
     }

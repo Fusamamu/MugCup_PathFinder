@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -671,9 +672,11 @@ namespace MugCup_PathFinder.Runtime
                         else
                         {
                             var _emptyNode = new GameObject("Empty Node");
-                            _node = _emptyNode.AddComponent<T>();
                             
+                            _node = _emptyNode.AddComponent<T>();
                             _node.NodePosition = new Vector3Int(_x, _y, _z);
+                            
+                            Undo.RegisterCreatedObjectUndo(_emptyNode, "Node Created");
                         }
                          
                         // if (_parent != null)

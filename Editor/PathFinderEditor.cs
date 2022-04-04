@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using MugCup_PathFinder.Runtime;
 using UnityEditor;
 using UnityEngine;
@@ -45,47 +46,69 @@ namespace MugCup_PathFinder.Editor
             
             EditorGUILayout.EndHorizontal();
 
+            GUI.color = new Color(120 / 255f, 120 / 255f, 120 / 255f);
+            EditorGUILayout.BeginVertical("Box");
+            EditorGUILayout.BeginVertical("Box");
+            
             EditorGUILayout.PropertyField(gridSize );
             EditorGUILayout.PropertyField(startPos );
             EditorGUILayout.PropertyField(targetPos);
+            
+            EditorGUILayout.EndVertical();
+            EditorGUILayout.EndVertical();
+            
+            GUI.color = Color.white;
             EditorGUILayout.PropertyField(gridNodes);
             EditorGUILayout.PropertyField(pathNodes);
+            
+            
             serializedObject.ApplyModifiedProperties();
-
 
             EditorGUILayout.BeginHorizontal("Box");
 
             if (GUILayout.Button("Generate Path"))
             {
+                Undo.RecordObject(pathFinder, "Path Generated");
+                EditorUtility.SetDirty(pathFinder);
+                
                 var _pathNodes = pathFinder.GeneratePath();
             }
 
             if (GUILayout.Button("Clear Path"))
             {
-                pathFinder.Clear();
+                pathFinder.ClearPath();
             }
             EditorGUILayout.EndHorizontal();
-
         }
 
         private void OnSceneGUI()
         {
             var _gridSize = pathFinder.GridSize;
             
-            
             DrawGridGizmos(_gridSize);
+            
             DrawCell( startPos.vector3IntValue, Color.green  );
             DrawCell(targetPos.vector3IntValue, Color.magenta);
+
+            if (pathFinder.HasPath)
+            {
+                DrawPath(pathFinder.PathNodes);
+            }
+            
+                
+            DrawArrow(pathFinder.PathNodes);
         }
 
         private void DrawCell(Vector3 _pos, Color _color)
         {
+            var _offSet = new Vector3(-0.5f, 0, -0.5f);
+            
             Vector3[] _cellVerts = 
             {
-                new Vector3(_pos.x,     0, _pos.z    ),
-                new Vector3(_pos.x + 1, 0, _pos.z    ),
-                new Vector3(_pos.x + 1, 0, _pos.z + 1),
-                new Vector3(_pos.x    , 0, _pos.z + 1)
+                new Vector3(_pos.x,     0, _pos.z    ) + _offSet,
+                new Vector3(_pos.x + 1, 0, _pos.z    ) + _offSet,
+                new Vector3(_pos.x + 1, 0, _pos.z + 1) + _offSet,
+                new Vector3(_pos.x    , 0, _pos.z + 1) + _offSet
             };
 
             Handles.DrawSolidRectangleWithOutline(_cellVerts, _color, Color.blue );
@@ -116,6 +139,11 @@ namespace MugCup_PathFinder.Editor
                     var _worldP0 = pathFinderHandleTransform.TransformPoint(_p0);
                     var _worldP1 = pathFinderHandleTransform.TransformPoint(_p1);
 
+                    var _offSet = new Vector3(-0.5f, 0, -0.5f);
+
+                    _worldP0 += _offSet;
+                    _worldP1 += _offSet;
+
                     Handles.DrawLine(_worldP0, _worldP1);
                 }
             }
@@ -129,10 +157,38 @@ namespace MugCup_PathFinder.Editor
 
                     var _worldP0 = pathFinderHandleTransform.TransformPoint(_p0);
                     var _worldP1 = pathFinderHandleTransform.TransformPoint(_p1);
+                    
+                    var _offSet = new Vector3(-0.5f, 0, -0.5f);
+
+                    _worldP0 += _offSet;
+                    _worldP1 += _offSet;
 
                     Handles.DrawLine(_worldP0, _worldP1);
                 }
             }
+        }
+
+        private void DrawPath(NodeBase[] _path)
+        {
+            Handles.color = Color.red;
+
+            for (var _i = 0; _i < _path.Length - 1; _i++)
+            {
+                var _p0 = _path[_i].NodePosition;
+                var _p1 = _path[_i + 1].NodePosition;
+      
+                var _thickness = 7;
+                
+                Handles.DrawBezier(_p0, _p1, _p0, _p1, Color.red, null, _thickness);
+            }
+        }
+
+        private void DrawArrow(NodeBase[] _path)
+        {
+            Handles.color = Color.red;
+            
+            //Handles.ArrowCap( 0, t.transform.position, t.transform.rotation * Quaternion.Euler( 0, 90, 0 ), arrowSize );
+            Handles.ArrowHandleCap(0, pathFinderHandleTransform.position + new Vector3(5,5,5), Quaternion.identity, 20, EventType.Ignore);
         }
     }
 }
