@@ -15,6 +15,7 @@ namespace MugCup_PathFinder.Runtime
     public class PathFinder : MonoBehaviour
     {
         public Vector3Int GridSize  => gridSize ;
+        public NodeBase[] GridNodes => gridNodes;
         public NodeBase[] PathNodes => pathNodes;
         
         public bool HasPath => pathNodes.Length > 1;
@@ -31,10 +32,10 @@ namespace MugCup_PathFinder.Runtime
         [SerializeField] private NodeBase[] pathNodes;
         
         private IPathFinder<NodeBase> pathFinder;
+
+        [SerializeField] private int maxIteration = 50;
         
         [SerializeField] private float nodeRadius = 0.025f;
-            
-        [SerializeField] private Color nodeColor = Color.blue;
 
         private void OnValidate()
         {
@@ -76,7 +77,7 @@ namespace MugCup_PathFinder.Runtime
             
             gridNodes = GridUtility.GenerateGridINodes<NodeBase>(gridSize);
             
-            var _pathFinder = new HeapPathFinder(gridSize, gridNodes);
+            var _pathFinder = new HeapPathFinder(gridSize, gridNodes, maxIteration);
 
             NodeBase _startNode  = null;
             NodeBase _targetNode = null;
@@ -117,7 +118,7 @@ namespace MugCup_PathFinder.Runtime
 
         private IEnumerable<NodeBase> GetPath(Vector3Int _gridSize, NodeBase[] _gridNodes)
         {
-            pathFinder = new HeapPathFinder(_gridSize, _gridNodes);
+            pathFinder = new HeapPathFinder(_gridSize, _gridNodes, maxIteration);
             
             var _path = pathFinder.FindPath(_gridNodes[0], _gridNodes[40]).ToArray();
 
