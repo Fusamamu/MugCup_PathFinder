@@ -9,6 +9,12 @@ using UnityEngine.InputSystem;
 
 namespace MugCup_PathFinder.Runtime
 {
+    //Todo
+    //Path Finder Methods
+    //1. By code using class AStarPathFinder
+    //2. By Attach PathFinder Component to each agent
+    //3. By PathFinder Controller
+    
     /// <summary>
     /// This is a Path Finder Controller, used to custom your own properties
     /// </summary>
@@ -19,6 +25,8 @@ namespace MugCup_PathFinder.Runtime
         public NodeBase[] PathNodes => pathNodes;
         
         public bool HasPath => pathNodes.Length > 1;
+
+        [SerializeField] private Agent agent; //If Assigned use agent pos instead of start posiiton
         
         [SerializeField] private Vector3Int gridSize;
         

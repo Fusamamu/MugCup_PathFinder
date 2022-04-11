@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace MugCup_PathFinder.Runtime
 {
-    public static class INodeBitMaskCalculation
+    public static class BitMaskCalculation
     {
         private const int swBit = 0b_100_000_000;
         private const int nwBit = 0b_001_000_000;

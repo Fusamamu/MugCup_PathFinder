@@ -52,7 +52,7 @@ public class test_bitmask_calculation
     
         var _surroundingNodes  = GridUtility.GetMiddleSectionNodesFrom3x3Cube(_selectedPos, _gridSize, _testGrids);
     
-        var _calculatedBitMask = INodeBitMaskCalculation.GetCalculatedBitMask(_surroundingNodes);
+        var _calculatedBitMask = BitMaskCalculation.GetCalculatedBitMask(_surroundingNodes);
 
         var _expectedBitMask = 0b_011_011_011;
         
@@ -65,6 +65,6 @@ public class test_bitmask_calculation
         var _checkedBit  = 0b_100_011_000;
         var _comparedBit = 0b_100_000_000;
 
-        Assert.True(INodeBitMaskCalculation.IsHaveBit(_checkedBit, _comparedBit));
+        Assert.True(BitMaskCalculation.IsHaveBit(_checkedBit, _comparedBit));
     }
 }
