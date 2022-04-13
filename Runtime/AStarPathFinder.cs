@@ -138,11 +138,96 @@ namespace MugCup_PathFinder.Runtime
                         
                         if(!_openSet.Contains(_adjacent))
                             _openSet.Add(_adjacent);
+                        else
+                            _openSet.UpdateItem(_adjacent);
                     }
                 }
             }
             
             return null;
+        }
+        
+        public void FindPath(PathRequest<NodeBase> _pathRequest, Action<PathResult> _onPathFound)
+        {
+            Vector3[] _waypoints = Array.Empty<Vector3>();
+            
+            bool _pathFound = false;
+		
+            // Node startNode = grid.NodeFromWorldPoint(request.pathStart);
+            // Node targetNode = grid.NodeFromWorldPoint(request.pathEnd);
+
+            NodeBase _startNode  = _pathRequest.PathStart;
+            NodeBase _targetNode = _pathRequest.PathEnd;
+            
+            _startNode.NodeParent = _startNode;
+            
+            //if (startNode.walkable && targetNode.walkable) 
+            
+            
+            Heap<NodeBase>    _openSet   = new Heap<NodeBase>(GridSize.x * GridSize.z);
+            HashSet<NodeBase> _closedSet = new HashSet<NodeBase>();
+            
+            _openSet.Add(_startNode);
+
+            int _iter = 0;
+            while (_openSet.Count > 0 && _iter < maxIteration)
+            {
+                _iter++;
+                
+                NodeBase _currentNode = _openSet.RemoveFirst();
+                
+                _closedSet.Add(_currentNode);
+
+                // if (_currentNode == _targetNode)
+                //     return AStarPathFinder<NodeBase>.RetracePath(_startNode, _targetNode);
+
+                if (_currentNode == _targetNode)
+                {
+                    _pathFound = true;
+                    break;
+                }
+
+                List<NodeBase> _adjacentNodes = GridUtility.GetAdjacentNodes8Dir(_currentNode, GridSize, Nodes).ToList();
+
+                foreach (NodeBase _adjacent in _adjacentNodes)
+                {
+                    // if (!neighbour.walkable || closedSet.Contains(neighbour)) {
+                    //     continue;
+                    // }
+                    
+                    if(_closedSet.Contains(_adjacent) || _adjacent == null)
+                        continue;
+                    
+                    int _newCostToAdjacent = _currentNode.G_Cost + AStarPathFinder<INode>.GetDistance(_currentNode, _adjacent);
+
+                    if (_newCostToAdjacent < _adjacent.G_Cost || !_openSet.Contains(_adjacent))
+                    {
+                        _adjacent.G_Cost = _newCostToAdjacent;
+                        _adjacent.H_Cost = AStarPathFinder<INode>.GetDistance(_adjacent, _targetNode);
+                        _adjacent.NodeParent = _currentNode;
+                        
+                        if(!_openSet.Contains(_adjacent))
+                            _openSet.Add(_adjacent);
+                        else
+                            _openSet.UpdateItem(_adjacent);
+                    }
+                }
+            }
+            
+            if (_pathFound)
+            {
+                //waypoints = AStarPathFinder<INode>.RetracePath(_startNode, _targetNode).ToArray();
+                _pathFound = _waypoints.Length > 0;
+            }
+            var _pathResult = new PathResult
+            {
+                Path = _waypoints,
+                Success =  _pathFound,
+                //Callback = _onPathFound;
+
+            };
+            
+            _onPathFound(_pathResult);
         }
         
         public IEnumerable<Vector3Int> FindPath(Vector3Int _origin, Vector3Int _target)
@@ -255,6 +340,26 @@ namespace MugCup_PathFinder.Runtime
                 return 14 * _distanceY + 10 * (_distanceX - _distanceY);
 
             return 14 * _distanceX + 10 * (_distanceY - _distanceX);
+        }
+        
+        public static Vector3[] SimplifyPath(List<T> _path) 
+        {
+            var _waypoints    = new List<Vector3>();
+            var _oldDirection = Vector2.zero;
+		
+            for (var _i = 1; _i < _path.Count; _i++) 
+            {
+                // Vector2 _newDirection = new Vector2(_path[_i-1].gridX - _path[_i].gridX,_path[_i-1].gridY - _path[_i].gridY);
+                //
+                // if (_newDirection != _oldDirection) 
+                // {
+                //     _waypoints.Add(_path[_i].worldPosition);
+                // }
+                
+                //_oldDirection = _newDirection;
+            }
+            
+            return _waypoints.ToArray();
         }
     }
 }

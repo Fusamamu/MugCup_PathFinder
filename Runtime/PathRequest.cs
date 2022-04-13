@@ -7,15 +7,15 @@ namespace MugCup_PathFinder.Runtime
 {
 	public struct PathRequest<T>
 	{
-	    public T pathStart;
-	    public T pathEnd  ;
+	    public T PathStart;
+	    public T PathEnd  ;
 	    
 	    public Action<T[], bool> callback;
 	
 	    public PathRequest(T _start, T _end, Action<T[], bool> _callback) 
 	    {
-	        pathStart = _start   ;
-	        pathEnd   = _end     ;
+	        PathStart = _start   ;
+	        PathEnd   = _end     ;
 	        callback  = _callback;
 	    }
 	}

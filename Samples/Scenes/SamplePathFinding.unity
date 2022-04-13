@@ -235,6 +235,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 37d5d69685adb4cce927e8023c1f6e9e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  agent: {fileID: 0}
   gridSize: {x: 10, y: 1, z: 10}
   startPosition: {x: 0, y: 0, z: 3}
   targetPosition: {x: 5, y: 0, z: 1}

@@ -6,50 +6,61 @@ namespace MugCup_PathFinder.Runtime
 {
     public class PathInfo
     {
-        // public readonly Vector3[] lookPoints;
-        // public readonly Line[] turnBoundaries;
-        // public readonly int finishLineIndex;
-        // public readonly int slowDownIndex;
-        //
-        // public PathInfo(Vector3[] waypoints, Vector3 startPos, float turnDst, float stoppingDst) {
-        //     lookPoints = waypoints;
-        //     turnBoundaries = new Line[lookPoints.Length];
-        //     finishLineIndex = turnBoundaries.Length - 1;
-        //
-        //     Vector2 previousPoint = V3ToV2 (startPos);
-        //     for (int i = 0; i < lookPoints.Length; i++) {
-        //         Vector2 currentPoint = V3ToV2 (lookPoints [i]);
-        //         Vector2 dirToCurrentPoint = (currentPoint - previousPoint).normalized;
-        //         Vector2 turnBoundaryPoint = (i == finishLineIndex)?currentPoint : currentPoint - dirToCurrentPoint * turnDst;
-        //         turnBoundaries [i] = new Line (turnBoundaryPoint, previousPoint - dirToCurrentPoint * turnDst);
-        //         previousPoint = turnBoundaryPoint;
-        //     }
-        //
-        //     float dstFromEndPoint = 0;
-        //     for (int i = lookPoints.Length - 1; i > 0; i--) {
-        //         dstFromEndPoint += Vector3.Distance (lookPoints [i], lookPoints [i - 1]);
-        //         if (dstFromEndPoint > stoppingDst) {
-        //             slowDownIndex = i;
-        //             break;
-        //         }
-        //     }
-        // }
-        //
-        // Vector2 V3ToV2(Vector3 v3) {
-        //     return new Vector2 (v3.x, v3.z);
-        // }
-        //
-        // public void DrawWithGizmos() {
-        //
-        //     Gizmos.color = Color.black;
-        //     foreach (Vector3 p in lookPoints) {
-        //         Gizmos.DrawCube (p + Vector3.up, Vector3.one);
-        //     }
-        //
-        //     Gizmos.color = Color.white;
-        //     foreach (Line l in turnBoundaries) {
-        //         l.DrawWithGizmos (10);
-        //     }
-        // }
+        public readonly Vector3[] LookPoints;
+        //public readonly Line[] turnBoundaries;
+        
+        public readonly int finishLineIndex;
+        public readonly int slowDownIndex;
+        
+        public PathInfo(Vector3[] _waypoints, Vector3 _startPos, float _turnDistance, float _stoppingDistance) 
+        {
+            LookPoints = _waypoints;
+            
+            //turnBoundaries  = new Line[lookPoints.Length];
+            //finishLineIndex = turnBoundaries.Length - 1;
+        
+            Vector2 _previousPoint = CastVec3ToVec2(_startPos);
+            
+            for (var _i = 0; _i < LookPoints.Length; _i++)
+            {
+                Vector2 _currentPoint      = CastVec3ToVec2 (LookPoints [_i]);
+                Vector2 _dirToCurrentPoint = (_currentPoint - _previousPoint).normalized;
+                Vector2 _turnBoundaryPoint = _i == finishLineIndex ? _currentPoint : _currentPoint - _dirToCurrentPoint * _turnDistance;
+                
+                //turnBoundaries [_i] = new Line (turnBoundaryPoint, previousPoint - dirToCurrentPoint * _turnDistance);
+                
+                _previousPoint = _turnBoundaryPoint;
+            }
+        
+            float dstFromEndPoint = 0;
+            
+            for (int i = LookPoints.Length - 1; i > 0; i--) 
+            {
+                dstFromEndPoint += Vector3.Distance (LookPoints [i], LookPoints [i - 1]);
+                
+                if (dstFromEndPoint > _stoppingDistance) {
+                    slowDownIndex = i;
+                    break;
+                }
+            }
+        }
+        
+        private static Vector2 CastVec3ToVec2(Vector3 _pos) 
+        {
+            return new Vector2 (_pos.x, _pos.z);
+        }
+        
+        public void DrawWithGizmos() {
+        
+            // Gizmos.color = Color.black;
+            // foreach (Vector3 p in lookPoints) {
+            //     Gizmos.DrawCube (p + Vector3.up, Vector3.one);
+            // }
+            //
+            // Gizmos.color = Color.white;
+            // foreach (Line l in turnBoundaries) {
+            //     l.DrawWithGizmos (10);
+            // }
+        }
     }
 }
