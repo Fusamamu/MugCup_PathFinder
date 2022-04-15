@@ -216,6 +216,7 @@ GameObject:
   m_Component:
   - component: {fileID: 427622020}
   - component: {fileID: 427622019}
+  - component: {fileID: 427622021}
   m_Layer: 0
   m_Name: '[---Path Finder---]'
   m_TagString: Untagged
@@ -235,9 +236,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 37d5d69685adb4cce927e8023c1f6e9e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  agent: {fileID: 0}
+  StartPathType: 0
+  EndPathType: 0
+  agent: {fileID: 427622021}
   gridSize: {x: 10, y: 1, z: 10}
-  startPosition: {x: 0, y: 0, z: 3}
+  startPosition: {x: 5, y: 0, z: 7}
   targetPosition: {x: 5, y: 0, z: 1}
   startNode: {fileID: 0}
   targetNode: {fileID: 0}
@@ -259,6 +262,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &427622021
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 427622018}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 289ec3886f32748e986d424082b32197, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &553281457
 GameObject:
   m_ObjectHideFlags: 0

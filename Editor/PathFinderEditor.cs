@@ -2,11 +2,15 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Reflection;
 using MugCup_PathFinder.Runtime;
 using UnityEditor;
 using UnityEditor.AnimatedValues;
+using UnityEditor.IMGUI.Controls;
 using UnityEngine;
+using Component = UnityEngine.Component;
 
 namespace MugCup_PathFinder.Editor
 {
@@ -17,6 +21,11 @@ namespace MugCup_PathFinder.Editor
         private Transform pathFinderHandleTransform;
         
         private Texture2D topLogo;
+
+        private SerializedProperty startPathType;
+        private SerializedProperty endPathType;
+
+        private SerializedProperty agent;
 
         private SerializedProperty gridSize;
         private SerializedProperty startPos;
@@ -42,6 +51,10 @@ namespace MugCup_PathFinder.Editor
             
             topLogo = AssetDatabase.LoadAssetAtPath<Texture2D>("Packages/com.mugcupp.mugcup-pathfinder/PackageResources/IconImages/PathFinderIcon_Header.png");
 
+            startPathType   = serializedObject.FindProperty("StartPathType");
+            endPathType     = serializedObject.FindProperty("EndPathType");
+            
+            agent        = serializedObject.FindProperty("agent");
             gridSize     = serializedObject.FindProperty("gridSize"      );
             startPos     = serializedObject.FindProperty("startPosition" );
             targetPos    = serializedObject.FindProperty("targetPosition");
@@ -53,10 +66,51 @@ namespace MugCup_PathFinder.Editor
         public override void OnInspectorGUI()
         {
             EditorGUILayout.BeginHorizontal("Box");
-
             GUILayout.Label(topLogo);
-            
             EditorGUILayout.EndHorizontal();
+            
+            //GUI.color = new Color(120 / 255f, 120 / 255f, 120 / 255f);
+            EditorGUILayout.BeginVertical("Box");
+            
+            EditorGUILayout.LabelField("Start Path Setting", EditorStyles.whiteBoldLabel);
+            EditorGUILayout.PropertyField(startPathType);
+            
+            if (pathFinder.StartPathType == PathFinder.TargetType.UseAgent)
+            {
+                EditorGUILayout.HelpBox(
+                    "Drop an Agent you wish to use the path finder to move object along the path. " +
+                    "Otherwise, if set none, the script will try to get the agent from attached object"
+                    , MessageType.None);
+
+                EditorGUILayout.BeginHorizontal();
+                EditorGUILayout.PropertyField(agent, new GUIContent("Agent", "An object attached with Agent component."));
+                //EditorGUILayout.
+                if (GUILayout.Button("GET AGENT", EditorStyles.miniButton))
+                {
+                    GetComponent(agent);
+                }
+                EditorGUILayout.EndHorizontal();
+            }
+            
+            EditorGUILayout.EndVertical();
+            
+            EditorGUILayout.BeginVertical("Box");
+            
+            EditorGUILayout.LabelField("End Path Setting", EditorStyles.whiteBoldLabel);
+            EditorGUILayout.PropertyField(endPathType);
+            
+            if (pathFinder.EndPathType == PathFinder.TargetType.UseAgent)
+            {
+                EditorGUILayout.HelpBox(
+                    "Drop an Agent you wish to use the path finder to move object along the path. " +
+                    "Otherwise, if set none, the script will try to get the agent from attached object"
+                    , MessageType.None);
+
+                EditorGUILayout.PropertyField(agent, new GUIContent("Agent", "An object attached with Agent component."));
+            }
+            
+            EditorGUILayout.EndVertical();
+
 
             GUI.color = new Color(120 / 255f, 120 / 255f, 120 / 255f);
             EditorGUILayout.BeginVertical("Box");
@@ -124,7 +178,7 @@ namespace MugCup_PathFinder.Editor
             
             GUILayout.EndVertical();
             
-            EditorGUILayout.LabelField("Mug Cup Studio.");
+            EditorGUILayout.LabelField("Mug Cup Studio.", EditorStyles.centeredGreyMiniLabel);
         }
 
         private void OnSceneGUI()
@@ -145,6 +199,8 @@ namespace MugCup_PathFinder.Editor
                 if (toggleAllNodeCost)
                     DisplayText(pathFinder.GridNodes);
             }
+            
+            DrawLabelPanel();
         }
 
         private void DrawCell(Vector3 _pos, Color _color)
@@ -252,6 +308,72 @@ namespace MugCup_PathFinder.Editor
                 Handles.Label(_textPos, _nodeCost);
             }
         }
+
+        private static GUIStyle miniPanel;
+        
+        private void DrawLabelPanel()
+        {
+            if (miniPanel == null)
+            {
+                miniPanel = new GUIStyle(GUI.skin.window)
+                {
+                    fixedWidth  = 60,
+                    fixedHeight = 60
+                };
+
+                miniPanel.padding.bottom -= 27;
+                miniPanel.padding.left   -= 7;
+                miniPanel.padding.right  -= 7;
+                
+                miniPanel.margin = new RectOffset();
+                
+                miniPanel.richText = true;
+            }
+            
+            Handles.Label(Vector3.zero, "sajfsd", miniPanel);
+            
+            // if (!EditorPrefs.GetBool(MENU_PATH, false))
+            //     return;
+            // if (meshFilter.sharedMesh == null)
+            //     return;
+            //
+            // var _style = new GUIStyle();
+            //
+            // if (_style == null)
+            // {
+            //     _style = new GUIStyle(GUI.skin.window);
+            //     _style.padding.bottom -= 27;
+            //     _style.padding.left -= 7;
+            //     _style.padding.right -= 7;
+            //     _style.margin = new RectOffset();
+            //     _style.richText = true;
+            // }
+            // // 同じ座標が存在するのでキャッシュ
+            // var dic = new Dictionary<Vector3, List<int>>();
+            // var mesh = meshFilter.sharedMesh;
+            // for (var index = 0; index < mesh.uv.Length; index++)
+            // {
+            //     var pos = meshFilter.transform.position + meshFilter.transform.rotation * mesh.vertices[index];
+            //     if (!dic.ContainsKey(pos))
+            //         dic.Add(pos, new List<int>());
+            //     dic[pos].Add(index);
+            // }
+            // foreach (var pair in dic)
+            // {
+            //     _builder.Clear();
+            //     foreach (var index in pair.Value)
+            //         if (mesh.colors.Length > index)
+            //         {
+            //             var color = ColorUtility.ToHtmlStringRGB(mesh.colors[index]);
+            //             _builder.AppendLine($"<color=#{color}>uv:{mesh.uv[index]}</color>");
+            //         }
+            //         else
+            //         {
+            //             _builder.AppendLine("uv:" + mesh.uv[index]);
+            //         }
+            //     Handles.Label(pair.Key, _builder.ToString(), _style);
+            // }
+        }
         
         public static void HorizontalLine(float _height = 1, float _width = -1, Vector2 _margin = new Vector2())
         {
@@ -272,6 +394,106 @@ namespace MugCup_PathFinder.Editor
             GUILayout.Space(_margin.y);
         }
 
+        private void GetComponent(SerializedProperty _property)
+        {
+            var _object = _property.serializedObject.targetObject as Component;
+
+            if (_object == null)
+            {
+                Debug.Log("GameObject Not Found");
+                return;
+            }
+
+            var _type = _property.serializedObject.targetObject.GetType();
+
+            var _fieldInfo = _type.GetField(_property.propertyPath, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static);
+            
+            if (_fieldInfo == null)
+            {
+                return;
+            }
+
+            var _filedType = _fieldInfo.FieldType;
+
+            var _components = _object.GetComponentsInChildren(_filedType);
+
+            if (_components.Length == 0)
+            {
+                Debug.Log("Component Not Found");
+            }else if (_components.Length == 1)
+            {
+                _property.objectReferenceValue = _components[0];
+            }
+            else
+            { 
+                PopupWindow.Show(Rect.zero , new Popup(_property, _components));
+            }
+        }
+        
+        private class Popup : PopupWindowContent
+        {
+            private readonly TreeView treeView;
+            
+            public Popup(SerializedProperty _property, Component[] _components)
+            {
+                treeView = new PopupTreeView(new TreeViewState(), this, _property, _components);
+                GUIUtility.keyboardControl = treeView.treeViewControlID;
+            }
+            
+            public override void OnGUI(Rect _rect)
+            {
+                treeView.OnGUI(_rect);
+            }
+            
+            private class PopupTreeView : TreeView
+            {
+                private readonly SerializedProperty property;
+                private readonly Popup              popup;
+                private readonly Component[]        components;
+     
+                public PopupTreeView(TreeViewState _state, Popup _popup, SerializedProperty _property, Component[] _components) : base(_state)
+                {
+                    property   = _property;
+                    popup      = _popup;
+                    components = _components;
+                    
+                    Reload();
+                }
+     
+                public PopupTreeView(TreeViewState _state, MultiColumnHeader _multiColumnHeader) : base(_state, _multiColumnHeader)
+                {
+                }
+                 
+                protected override TreeViewItem BuildRoot()
+                {
+                    var _root = new TreeViewItem(-1, -1, "root");
+                    
+                    for (var _i = 0; _i < components.Length; ++_i)
+                    {
+                        _root.AddChild(new TreeViewItem(_i, 0, components[_i].name));
+                    }
+                    
+                    return _root;
+                }
+     
+                protected override void SingleClickedItem(int _id)
+                {
+                    DecideObject();
+                }
+                
+                private void DecideObject()
+                {
+                    if (state.selectedIDs.Count <= 0)
+                        return;
+                    
+                    property.serializedObject.Update();
+                    property.objectReferenceValue = components[state.selectedIDs.First()];
+                    property.serializedObject.ApplyModifiedProperties();
+                    
+                    popup.editorWindow.Close();
+                }
+            }
+        }
     }
 }
 #endif

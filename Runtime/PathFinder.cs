@@ -26,6 +26,20 @@ namespace MugCup_PathFinder.Runtime
         
         public bool HasPath => pathNodes.Length > 1;
 
+        //1. Use Agent as Start Node
+        //2. If no Agent, Set Start Node and Target Node Manually.
+        //3. Use Raycast in Editor to get Start and Target Node.
+        
+        //Might need to move to Custom Editor Class
+        public enum TargetType
+        {
+            UseAgent, SetManual, UseRaycast
+        }
+
+        public TargetType StartPathType = TargetType.SetManual;
+        public TargetType EndPathType   = TargetType.SetManual;
+        //------------------------------------//
+        
         [SerializeField] private Agent agent; //If Assigned use agent pos instead of start posiiton
         
         [SerializeField] private Vector3Int gridSize;
