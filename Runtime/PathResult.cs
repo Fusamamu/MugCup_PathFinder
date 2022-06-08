@@ -5,15 +5,22 @@ using UnityEngine;
 
 namespace MugCup_PathFinder.Runtime
 {
-    public struct PathResult 
+    public class PathResultVec3 : PathResult<Vector3>
     {
-        public Vector3[] Path;
+        public PathResultVec3(Vector3[] _path, bool _success, Action<Vector3[], bool> _onPathFound) : base(_path, _success, _onPathFound)
+        {
+        }
+    }
+
+    public class PathResult<T> 
+    {
+        public T[] Path;
         
         public bool Success;
         
-        public readonly Action<Vector3[], bool> OnPathFound;
+        public Action<T[], bool> OnPathFound;
 
-        public PathResult (Vector3[] _path, bool _success, Action<Vector3[], bool> _onPathFound)
+        public PathResult (T[] _path, bool _success, Action<T[], bool> _onPathFound)
         {
             Path     = _path    ;
             Success  = _success ;

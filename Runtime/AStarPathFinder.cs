@@ -147,22 +147,21 @@ namespace MugCup_PathFinder.Runtime
             return null;
         }
         
-        public void FindPath(PathRequest<NodeBase> _pathRequest, Action<PathResult> _onPathFound)
+        public void FindPath(PathRequestVec3 _pathRequest, Action<PathResultVec3> _onPathFound)
         {
             Vector3[] _waypoints = Array.Empty<Vector3>();
             
             bool _pathFound = false;
-		
-            // Node startNode = grid.NodeFromWorldPoint(request.pathStart);
-            // Node targetNode = grid.NodeFromWorldPoint(request.pathEnd);
+          
+            Vector3Int _startPos  = CastVec3ToVec3Int(_pathRequest.PathStart);
+            Vector3Int _targetPos = CastVec3ToVec3Int(_pathRequest.PathEnd);
 
-            NodeBase _startNode  = _pathRequest.PathStart;
-            NodeBase _targetNode = _pathRequest.PathEnd;
+            NodeBase _startNode  = GridUtility.GetNode(_startPos , GridSize, Nodes);
+            NodeBase _targetNode = GridUtility.GetNode(_targetPos, GridSize, Nodes);
             
             _startNode.NodeParent = _startNode;
             
             //if (startNode.walkable && targetNode.walkable) 
-            
             
             Heap<NodeBase>    _openSet   = new Heap<NodeBase>(GridSize.x * GridSize.z);
             HashSet<NodeBase> _closedSet = new HashSet<NodeBase>();
@@ -202,8 +201,8 @@ namespace MugCup_PathFinder.Runtime
 
                     if (_newCostToAdjacent < _adjacent.G_Cost || !_openSet.Contains(_adjacent))
                     {
-                        _adjacent.G_Cost = _newCostToAdjacent;
-                        _adjacent.H_Cost = AStarPathFinder<INode>.GetDistance(_adjacent, _targetNode);
+                        _adjacent.G_Cost     = _newCostToAdjacent;
+                        _adjacent.H_Cost     = AStarPathFinder<INode>.GetDistance(_adjacent, _targetNode);
                         _adjacent.NodeParent = _currentNode;
                         
                         if(!_openSet.Contains(_adjacent))
@@ -216,16 +215,11 @@ namespace MugCup_PathFinder.Runtime
             
             if (_pathFound)
             {
-                //waypoints = AStarPathFinder<INode>.RetracePath(_startNode, _targetNode).ToArray();
+                //_waypoints = AStarPathFinder<Vector3>.RetracePath(_pathRequest.PathStart, _pathRequest.PathEnd).ToList();
                 _pathFound = _waypoints.Length > 0;
             }
-            var _pathResult = new PathResult
-            {
-                Path = _waypoints,
-                Success =  _pathFound,
-                //Callback = _onPathFound;
 
-            };
+            var _pathResult = new PathResultVec3(_waypoints, _pathFound, _pathRequest.Callback);
             
             _onPathFound(_pathResult);
         }
@@ -233,6 +227,11 @@ namespace MugCup_PathFinder.Runtime
         public IEnumerable<Vector3Int> FindPath(Vector3Int _origin, Vector3Int _target)
         {
             return null;
+        }
+
+        private Vector3Int CastVec3ToVec3Int(Vector3 _value)
+        {
+            return new Vector3Int((int)_value.x, (int)_value.y, (int)_value.z);
         }
     }
 

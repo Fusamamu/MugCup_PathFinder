@@ -41,7 +41,6 @@ namespace MugCup_PathFinder.Editor
         private bool togglePathNodeCost;
         private bool toggleAllNodeCost;
         
-        
         private AnimBool animToggle = new AnimBool();
 
         private void OnEnable()
@@ -54,7 +53,7 @@ namespace MugCup_PathFinder.Editor
             startPathType   = serializedObject.FindProperty("StartPathType");
             endPathType     = serializedObject.FindProperty("EndPathType");
             
-            agent        = serializedObject.FindProperty("agent");
+            agent        = serializedObject.FindProperty("agent"         );
             gridSize     = serializedObject.FindProperty("gridSize"      );
             startPos     = serializedObject.FindProperty("startPosition" );
             targetPos    = serializedObject.FindProperty("targetPosition");

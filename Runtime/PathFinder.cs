@@ -16,7 +16,7 @@ namespace MugCup_PathFinder.Runtime
     //3. By PathFinder Controller
     
     /// <summary>
-    /// This is a Path Finder Controller, used to custom your own properties
+    /// This is a Path Finder Component, used to custom your own properties
     /// </summary>
     public class PathFinder : MonoBehaviour
     {

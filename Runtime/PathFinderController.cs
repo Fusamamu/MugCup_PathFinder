@@ -8,10 +8,16 @@ namespace MugCup_PathFinder.Runtime
 {
     public class PathFinderController : MonoBehaviour
     {
-        private readonly Queue<PathResult> results = new Queue<PathResult>();
+        private readonly Queue<PathResultVec3> results = new Queue<PathResultVec3>();
 
-        // static PathRequestManager instance;
-        // Pathfinding pathfinding;
+        private PathRequest<Vector3Int> currentPathRequest;
+
+        private bool isProcessingPath;
+
+        private void Awake()
+        {
+            //Need PathFinder Component//
+        }
 
         private void Update() 
         {
@@ -23,7 +29,7 @@ namespace MugCup_PathFinder.Runtime
                 {
                     for(var _i = 0; _i < _itemsInQueue; _i++) 
                     {
-                        PathResult _result = results.Dequeue();
+                        PathResultVec3 _result = results.Dequeue();
                         
                         _result.OnPathFound(_result.Path, _result.Success);
                     }
@@ -41,7 +47,7 @@ namespace MugCup_PathFinder.Runtime
             _threadStart.Invoke();
         }
 
-        public void FinishedProcessingPath(PathResult _result) 
+        public void FinishedProcessingPath(PathResultVec3 _result) 
         {
             lock (results) 
             {

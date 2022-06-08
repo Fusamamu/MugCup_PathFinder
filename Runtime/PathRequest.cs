@@ -5,18 +5,25 @@ using UnityEngine;
 
 namespace MugCup_PathFinder.Runtime
 {
-	public struct PathRequest<T>
+	public class PathRequestVec3 : PathRequest<Vector3>
+	{
+		public PathRequestVec3(Vector3 _start, Vector3 _end, Action<Vector3[], bool> _callback) : base(_start, _end, _callback)
+		{
+		}
+	}
+	
+	public class PathRequest<T>
 	{
 	    public T PathStart;
 	    public T PathEnd  ;
 	    
-	    public Action<T[], bool> callback;
+	    public Action<T[], bool> Callback;
 	
 	    public PathRequest(T _start, T _end, Action<T[], bool> _callback) 
 	    {
 	        PathStart = _start   ;
 	        PathEnd   = _end     ;
-	        callback  = _callback;
+	        Callback  = _callback;
 	    }
 	}
 }
