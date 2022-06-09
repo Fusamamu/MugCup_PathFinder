@@ -11,7 +11,14 @@ namespace MugCup_PathFinder.Runtime
 		{
 		}
 	}
-	
+
+	public class PathRequestNodeBase : PathRequest<NodeBase>
+	{
+		public PathRequestNodeBase(NodeBase _start, NodeBase _end, Action<NodeBase[], bool> _callback) : base(_start, _end, _callback)
+		{
+		}
+	}
+
 	public class PathRequest<T>
 	{
 	    public T PathStart;

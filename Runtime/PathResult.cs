@@ -12,6 +12,13 @@ namespace MugCup_PathFinder.Runtime
         }
     }
 
+    public class PathResultNodeBase : PathResult<NodeBase>
+    {
+        public PathResultNodeBase(NodeBase[] _path, bool _success, Action<NodeBase[], bool> _onPathFound) : base(_path, _success, _onPathFound)
+        {
+        }
+    }
+
     public class PathResult<T> 
     {
         public T[] Path;
@@ -22,9 +29,8 @@ namespace MugCup_PathFinder.Runtime
 
         public PathResult (T[] _path, bool _success, Action<T[], bool> _onPathFound)
         {
-            Path     = _path    ;
-            Success  = _success ;
-            
+            Path        = _path       ;
+            Success     = _success    ;
             OnPathFound = _onPathFound;
         }
     }

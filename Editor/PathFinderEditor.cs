@@ -1,8 +1,4 @@
 #if UNITY_EDITOR
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using MugCup_PathFinder.Runtime;
@@ -182,7 +178,7 @@ namespace MugCup_PathFinder.Editor
 
         private void OnSceneGUI()
         {
-            var _gridSize = pathFinder.GridSize;
+            var _gridSize = pathFinder.GetGridSize();
             
             DrawGridGizmos(_gridSize);
             
@@ -196,7 +192,7 @@ namespace MugCup_PathFinder.Editor
                 if(togglePathNodeCost)
                     DisplayText(pathFinder.PathNodes);
                 if (toggleAllNodeCost)
-                    DisplayText(pathFinder.GridNodes);
+                    DisplayText(pathFinder.GetGridNodes());
             }
             
             DrawLabelPanel();

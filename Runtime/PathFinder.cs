@@ -18,11 +18,18 @@ namespace MugCup_PathFinder.Runtime
     /// <summary>
     /// This is a Path Finder Component, used to custom your own properties
     /// </summary>
-    public class PathFinder : MonoBehaviour
+    public class PathFinder : MonoBehaviour, IPathFinder<NodeBase>
     {
-        public Vector3Int GridSize  => gridSize ;
-        public NodeBase[] GridNodes => gridNodes;
         public NodeBase[] PathNodes => pathNodes;
+        
+        public Vector3Int GetGridSize()
+        {
+            return gridSize;
+        }
+        public NodeBase[] GetGridNodes()
+        {
+            return gridNodes;
+        }
         
         public bool HasPath => pathNodes.Length > 1;
 
@@ -157,6 +164,16 @@ namespace MugCup_PathFinder.Runtime
             return null;
         }
 
+        public IEnumerable<NodeBase> FindPath(NodeBase _origin, NodeBase _target)
+        {
+            throw new NotImplementedException();
+        }
+        
+        public IEnumerable<Vector3Int> FindPath(Vector3Int _origin, Vector3Int _target)
+        {
+            throw new NotImplementedException();
+        }
+        
         void Update()
         {
             if (Mouse.current.leftButton.isPressed)
@@ -176,5 +193,6 @@ namespace MugCup_PathFinder.Runtime
                 Gizmos.DrawSphere(_node.NodePosition, nodeRadius);
             }
         }
+        
     }
 }

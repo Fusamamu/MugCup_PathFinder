@@ -8,10 +8,13 @@ namespace MugCup_PathFinder.Runtime
 {
     public interface IPathFinder<T> where T : INode
     {
-        public Vector3Int GridSize { get; set; }
-        public T[] Nodes           { get; set; }
-        
-        public IEnumerable<T> FindPath(T _origin, T _target);
+        // public Vector3Int GridSize  { get; set; }
+        // public T[]        GridNodes { get; set; }
+
+        public Vector3Int GetGridSize();
+        public T[]        GetGridNodes();
+
+        public IEnumerable<T>          FindPath(T _origin, T _target);
 
         public IEnumerable<Vector3Int> FindPath(Vector3Int _origin, Vector3Int _target);
     }
@@ -21,16 +24,24 @@ namespace MugCup_PathFinder.Runtime
     /// </summary>
     public class SimplePathFinder : IPathFinder<INode> 
     {
-        public Vector3Int GridSize { get; set; }
-        public INode[] Nodes       { get; set; }
+        public Vector3Int GridSize  { get; set; }
+        public INode[]    GridNodes { get; set; }
+
+        public Vector3Int GetGridSize()
+        {
+            return GridSize;
+        }
+        public INode[] GetGridNodes()
+        {
+            return GridNodes;
+        }
 
         private readonly int maxIteration;
 
         public SimplePathFinder(Vector3Int _gridSize, INode[] _nodes, int _maxIteration = 50)
         {
-            GridSize = _gridSize;
-            Nodes    = _nodes;
-
+            GridSize     = _gridSize;
+            GridNodes    = _nodes;
             maxIteration = _maxIteration;
         }
         
@@ -54,7 +65,7 @@ namespace MugCup_PathFinder.Runtime
                 if (_node == _target)
                     return AStarPathFinder<INode>.RetracePath(_origin, _target);
 
-                List<INode> _adjacentNodes = GridUtility.GetAdjacentNodes8Dir(_node, GridSize, Nodes).ToList();
+                List<INode> _adjacentNodes = GridUtility.GetAdjacentNodes8Dir(_node, GridSize, GridNodes).ToList();
 
                 foreach (INode _adjacent in _adjacentNodes)
                 {
@@ -89,16 +100,24 @@ namespace MugCup_PathFinder.Runtime
     /// </summary>
     public class HeapPathFinder : IPathFinder<NodeBase>
     {
-        public Vector3Int GridSize { get; set; }  
-        public NodeBase[] Nodes    { get; set; }
+        public Vector3Int GridSize  { get; set; }  
+        public NodeBase[] GridNodes { get; set; }
+        
+        public Vector3Int GetGridSize()
+        {
+            return GridSize;
+        }
+        public NodeBase[] GetGridNodes()
+        {
+            return GridNodes;
+        }
         
         private readonly int maxIteration;
 
         public HeapPathFinder(Vector3Int _gridSize, NodeBase[] _nodes, int _maxIteration = 50)
         {
-            GridSize = _gridSize;
-            Nodes    = _nodes;
-            
+            GridSize     = _gridSize;
+            GridNodes    = _nodes;
             maxIteration = _maxIteration;
         }
         
@@ -121,7 +140,7 @@ namespace MugCup_PathFinder.Runtime
                 if (_node == _target)
                     return AStarPathFinder<NodeBase>.RetracePath(_origin, _target);
 
-                List<NodeBase> _adjacentNodes = GridUtility.GetAdjacentNodes8Dir(_node, GridSize, Nodes).ToList();
+                List<NodeBase> _adjacentNodes = GridUtility.GetAdjacentNodes8Dir(_node, GridSize, GridNodes).ToList();
 
                 foreach (NodeBase _adjacent in _adjacentNodes)
                 {
@@ -147,17 +166,19 @@ namespace MugCup_PathFinder.Runtime
             return null;
         }
         
-        public void FindPath(PathRequestVec3 _pathRequest, Action<PathResultVec3> _onPathFound)
+        /// <summary>
+        /// Find a path with PathRequest. If Success, return PathResult.
+        /// </summary>
+        /// <param name="_pathRequest"></param>
+        /// <param name="_onPathFound"></param>
+        public void FindPath(PathRequestNodeBase _pathRequest, Action<PathResultNodeBase> _onPathFound)
         {
-            Vector3[] _waypoints = Array.Empty<Vector3>();
+            NodeBase[] _waypoints = Array.Empty<NodeBase>();
             
             bool _pathFound = false;
-          
-            Vector3Int _startPos  = CastVec3ToVec3Int(_pathRequest.PathStart);
-            Vector3Int _targetPos = CastVec3ToVec3Int(_pathRequest.PathEnd);
 
-            NodeBase _startNode  = GridUtility.GetNode(_startPos , GridSize, Nodes);
-            NodeBase _targetNode = GridUtility.GetNode(_targetPos, GridSize, Nodes);
+            NodeBase _startNode  = _pathRequest.PathStart;
+            NodeBase _targetNode = _pathRequest.PathEnd;
             
             _startNode.NodeParent = _startNode;
             
@@ -177,16 +198,13 @@ namespace MugCup_PathFinder.Runtime
                 
                 _closedSet.Add(_currentNode);
 
-                // if (_currentNode == _targetNode)
-                //     return AStarPathFinder<NodeBase>.RetracePath(_startNode, _targetNode);
-
                 if (_currentNode == _targetNode)
                 {
                     _pathFound = true;
                     break;
                 }
 
-                List<NodeBase> _adjacentNodes = GridUtility.GetAdjacentNodes8Dir(_currentNode, GridSize, Nodes).ToList();
+                List<NodeBase> _adjacentNodes = GridUtility.GetAdjacentNodes8Dir(_currentNode, GridSize, GridNodes).ToList();
 
                 foreach (NodeBase _adjacent in _adjacentNodes)
                 {
@@ -215,11 +233,11 @@ namespace MugCup_PathFinder.Runtime
             
             if (_pathFound)
             {
-                //_waypoints = AStarPathFinder<Vector3>.RetracePath(_pathRequest.PathStart, _pathRequest.PathEnd).ToList();
+                _waypoints = AStarPathFinder<NodeBase>.RetracePath(_pathRequest.PathStart, _pathRequest.PathEnd).ToArray();
                 _pathFound = _waypoints.Length > 0;
             }
 
-            var _pathResult = new PathResultVec3(_waypoints, _pathFound, _pathRequest.Callback);
+            var _pathResult = new PathResultNodeBase(_waypoints, _pathFound, _pathRequest.Callback);
             
             _onPathFound(_pathResult);
         }

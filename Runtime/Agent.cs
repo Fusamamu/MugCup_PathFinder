@@ -1,12 +1,48 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Collections;
 using UnityEngine;
 
 namespace MugCup_PathFinder.Runtime
 {
     public class Agent : MonoBehaviour
     {
-       
+	    [SerializeField] private float speed     = 10f;
+	    [SerializeField] private float turnSpeed = 5f;
+
+	    [SerializeField] private NodeBase[] currentFollowedPath;
+
+	    [SerializeField] private NodeBase startNode;
+	    [SerializeField] private NodeBase targetNode;
+
+#region Dependencies
+	    [SerializeField] private PathFinderController pathFinderController;
+#endregion
+
+	    private void Start()
+	    {
+		    if (!pathFinderController)
+		    {
+			    Debug.LogWarning($"PathFinderController Missing!");
+			    return;
+		    }
+		    
+		    //Test Request Path//
+		    var _newPathRequest = new PathRequestNodeBase(startNode, targetNode, OnPathFound);
+		    
+		    pathFinderController.RequestPath(_newPathRequest);
+	    }
+	    
+	    public void OnPathFound(NodeBase[] _nodePath, bool _pathSuccessful) 
+	    {
+		    if (!_pathSuccessful) return;
+			    
+		    currentFollowedPath = _nodePath;
+		    
+		    //Start Follow Path.
+	    }
+
 	    //Add PathFinder Automatically?
 
 	    public IEnumerator FollowPath(PathInfo _pathInfo)
