@@ -19,18 +19,30 @@ namespace MugCup_PathFinder.Runtime
 
         [SerializeField] private bool useGridNodeData;
 
-        //This should replace gridSize/gridNodes below?
-        //Or we're able to switch between local and global data.
-        [SerializeField] private GridNodeData gridNodeData;
+        //Should replace with singleton GridNodeData    
+        [SerializeField] private GridNodeDataSetting gridNodeDataSetting;
+       
         
         //Need to have something hold "Grid Size" n "GridNode" Data
         [SerializeField] private Vector3Int gridSize;
+        
         [SerializeField] private NodeBase[] gridNodes;
+        
+        
+        
 
         private void Awake()
         {
             pathFinder = new HeapPathFinder(gridSize, gridNodes);
         }
+
+
+        //Inject GridData
+        public void Init()
+        {
+            
+        }
+        
 
         private void Update() 
         {
