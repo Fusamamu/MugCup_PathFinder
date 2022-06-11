@@ -12,4 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 25581f7d3deda462284ead23e7063289, type: 3}
   m_Name: GridNodeDataSettingSO
   m_EditorClassIdentifier: 
-  GridSize: {x: 10, y: 0, z: 10}
+  NodePrefab: {fileID: 3622728601820947521, guid: 81637d6689e5642d480d9efd71a1464b, type: 3}
+  GridSize: {x: 10, y: 1, z: 10}

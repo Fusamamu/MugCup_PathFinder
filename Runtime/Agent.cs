@@ -17,18 +17,27 @@ namespace MugCup_PathFinder.Runtime
 	    [SerializeField] private NodeBase targetNode;
 
 #region Dependencies
+	    //Path Finder Controller should be singleton?
 	    [SerializeField] private PathFinderController pathFinderController;
 #endregion
 
 	    private void Start()
 	    {
+		    InjectPathFinderController();
+	    }
+	    
+	    private void InjectPathFinderController(PathFinderController _pathFinderController = null)
+	    {
+		    pathFinderController = _pathFinderController != null ? _pathFinderController : FindObjectOfType<PathFinderController>();
+
 		    if (!pathFinderController)
 		    {
-			    Debug.LogWarning($"PathFinderController Missing!");
-			    return;
+			    Debug.LogWarning($"{typeof(PathFinderController)} Missing Reference.");
 		    }
-		    
-		    //Test Request Path//
+	    }
+
+	    public void StartFindPath()
+	    {
 		    var _newPathRequest = new PathRequestNodeBase(startNode, targetNode, OnPathFound);
 		    
 		    pathFinderController.RequestPath(_newPathRequest);
@@ -39,7 +48,9 @@ namespace MugCup_PathFinder.Runtime
 		    if (!_pathSuccessful) return;
 			    
 		    currentFollowedPath = _nodePath;
-		    
+
+		    Debug.Log($"Path Found!");
+
 		    //Start Follow Path.
 	    }
 

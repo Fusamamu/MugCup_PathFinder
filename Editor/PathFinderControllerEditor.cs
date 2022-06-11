@@ -37,22 +37,29 @@ namespace MugCup_PathFinder.Editor
 
         public override void OnInspectorGUI()
         {
-           
-            serializedObject.Update();
-            
-            dataSettingMode = (GridDataSettingMode)EditorGUILayout.EnumPopup("Grid Data Setting Mode", dataSettingMode);
 
-            switch (dataSettingMode)
+            DrawDefaultInspector();
+
+            if (GUILayout.Button("Request Path"))
             {
-                case GridDataSettingMode.UseGridDataSetting:
-                    EditorGUILayout.PropertyField(gridDataSetting);
-                    break;
-                case GridDataSettingMode.Custom:
-                    EditorGUILayout.PropertyField(gridSize);
-                    break;
+                pathFinderController.RequestPath();
             }
 
-            serializedObject.ApplyModifiedProperties();
+            // serializedObject.Update();
+            //
+            // dataSettingMode = (GridDataSettingMode)EditorGUILayout.EnumPopup("Grid Data Setting Mode", dataSettingMode);
+            //
+            // switch (dataSettingMode)
+            // {
+            //     case GridDataSettingMode.UseGridDataSetting:
+            //         EditorGUILayout.PropertyField(gridDataSetting);
+            //         break;
+            //     case GridDataSettingMode.Custom:
+            //         EditorGUILayout.PropertyField(gridSize);
+            //         break;
+            // }
+            //
+            // serializedObject.ApplyModifiedProperties();
         }
     }
 }
