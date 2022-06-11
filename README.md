@@ -21,13 +21,29 @@ class to help generate and manage a grid of nodes.
 
 </p>
 
-## Grid Data Setting
+## GridNodeData.cs
 <p>
 To be able to use PathFinder, a grid of nodes, containing position and cost among other thing, must be created.
-Script "GridNodeData" is used for this purpose. 
+Script "GridNodeData" is used for this purpose. GridNodeData mainly use preset grid data from a scriptable object called
+"GridNodeDataSetting". It contains grid size data among other things. GridNodeData is a Global data which ideally,
+other componets should consider access this first. However, the framework allow components to work separately if neeeded.
 </p>
 
+## GridNodeDataSetting Scriptable
+<p>
+This is used mainly by "GridNodeData.cs" to initialize its grid-related data for path finder to work with.
+</p>
+
+
+
 ### How to generate a grid of nodes
+
+
+## Agent.cs
+<p>
+Agent holds the reference of "PathFinderController". An agent make a path request via the controller. Attach
+an agent script to a gameObject you want it to be able to make a request.
+</p>
 
 
 

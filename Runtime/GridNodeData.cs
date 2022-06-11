@@ -43,6 +43,19 @@ namespace MugCup_PathFinder.Runtime
             return gridNodes;
         }
 
+        public NodeBase GetNode(Vector3Int _pos)
+        {
+            var _node = GridUtility.GetNode(_pos, gridSize, gridNodes);
+
+            if (!_node)
+            {
+                Debug.LogWarning($"Cannot find Node base at position {_pos}.");
+                return null;
+            }
+            
+            return _node;
+        }
+
         public void InitializeGridNode()
         {
             if(IsInitialized()) return;

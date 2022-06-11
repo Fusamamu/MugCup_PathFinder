@@ -661,20 +661,23 @@ namespace MugCup_PathFinder.Runtime
                     {
                         Vector3 _position = new Vector3(_x, _y, _z);
 
-                        T _node;
+                        T _nodeBase;
                         
                         if (_blockPrefab != null)
                         {
-                            _node = Object.Instantiate(_blockPrefab, _position, Quaternion.identity).AddComponent<T>();
+                            var _nodeObject = Object.Instantiate(_blockPrefab, _position, Quaternion.identity);
+
+                            if (!_nodeObject.TryGetComponent(out _nodeBase))
+                                _nodeBase = _nodeObject.AddComponent<T>();
                             
-                            _node.NodePosition = new Vector3Int(_x, _y, _z);
+                            _nodeBase.NodePosition = new Vector3Int(_x, _y, _z);
                         }
                         else
                         {
                             var _emptyNode = new GameObject("Empty Node");
                             
-                            _node = _emptyNode.AddComponent<T>();
-                            _node.NodePosition = new Vector3Int(_x, _y, _z);
+                            _nodeBase = _emptyNode.AddComponent<T>();
+                            _nodeBase.NodePosition = new Vector3Int(_x, _y, _z);
                             
                             Undo.RegisterCreatedObjectUndo(_emptyNode, "Node Created");
                         }
@@ -687,7 +690,7 @@ namespace MugCup_PathFinder.Runtime
                         //
                         // _block.Init(_block.transform.position, new Vector3Int(_x, _y, _z));
 
-                        _nodes[_z + _gridUnitSize.x * (_x + _gridUnitSize.y * _y)] = _node;
+                        _nodes[_z + _gridUnitSize.x * (_x + _gridUnitSize.y * _y)] = _nodeBase;
                     }
                 }
             }

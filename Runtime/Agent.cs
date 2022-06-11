@@ -8,7 +8,7 @@ namespace MugCup_PathFinder.Runtime
 {
     public class Agent : MonoBehaviour
     {
-	    [SerializeField] private float speed     = 10f;
+	    [SerializeField] private float speed     = 0.05f;
 	    [SerializeField] private float turnSpeed = 5f;
 
 	    [SerializeField] private NodeBase[] currentFollowedPath;
@@ -21,9 +21,15 @@ namespace MugCup_PathFinder.Runtime
 	    [SerializeField] private PathFinderController pathFinderController;
 #endregion
 
+	    private Coroutine followPathCoroutine;
+
 	    private void Start()
 	    {
 		    InjectPathFinderController();
+		    
+		    //Get self position in gridNodeData
+		    
+		    
 	    }
 	    
 	    private void InjectPathFinderController(PathFinderController _pathFinderController = null)
@@ -38,12 +44,18 @@ namespace MugCup_PathFinder.Runtime
 
 	    public void StartFindPath()
 	    {
+		    if (followPathCoroutine != null)
+		    {
+			    StopCoroutine(followPathCoroutine);
+			    followPathCoroutine = null;
+		    }
+		    
 		    var _newPathRequest = new PathRequestNodeBase(startNode, targetNode, OnPathFound);
 		    
 		    pathFinderController.RequestPath(_newPathRequest);
 	    }
 	    
-	    public void OnPathFound(NodeBase[] _nodePath, bool _pathSuccessful) 
+	    private void OnPathFound(NodeBase[] _nodePath, bool _pathSuccessful) 
 	    {
 		    if (!_pathSuccessful) return;
 			    
@@ -51,10 +63,35 @@ namespace MugCup_PathFinder.Runtime
 
 		    Debug.Log($"Path Found!");
 
-		    //Start Follow Path.
+		    followPathCoroutine = StartCoroutine(FollowPath());
 	    }
 
-	    //Add PathFinder Automatically?
+	    private IEnumerator FollowPath()
+	    {
+		    bool _followingPath = true;
+		    
+		    int _pathIndex = 0;
+		    int _lastIndex = currentFollowedPath.Length - 1;
+
+		    while (_followingPath)
+		    {
+			    var _currentCellPos = (Vector3)currentFollowedPath[_pathIndex].NodePosition;
+			    var _distToNextNode = Vector3.Distance(transform.position, _currentCellPos);
+			    
+			    if (_distToNextNode > float.Epsilon)
+			    {
+				    transform.position = Vector3.MoveTowards(transform.position, _currentCellPos, speed * Time.deltaTime);
+				    yield return null;
+			    }
+			    else
+			    {
+				    _pathIndex++;
+			    }
+
+			    if (_pathIndex >= _lastIndex)
+				    _followingPath = false;
+		    }
+	    }
 
 	    public IEnumerator FollowPath(PathInfo _pathInfo)
 	    {
