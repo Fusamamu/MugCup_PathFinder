@@ -47,8 +47,13 @@ MonoBehaviour:
   speed: 10
   turnSpeed: 5
   currentFollowedPath: []
+  useNode: 0
+  followingPath: 0
   startNode: {fileID: 0}
   targetNode: {fileID: 0}
+  startPosition: {x: 0, y: 0, z: 0}
+  targetPosition: {x: 0, y: 0, z: 0}
+  gridNodeData: {fileID: 0}
   pathFinderController: {fileID: 0}
 --- !u!1 &437393793019498940
 GameObject:
@@ -110,7 +115,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: aae5127bf52e448eeb4378bb7ad03d95, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

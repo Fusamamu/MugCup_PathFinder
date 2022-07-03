@@ -13,23 +13,44 @@ namespace MugCup_PathFinder.Runtime
 
 	    [SerializeField] private NodeBase[] currentFollowedPath;
 
+	    [SerializeField] private bool useNode;
+	    [SerializeField] private bool followingPath;
+
 	    [SerializeField] private NodeBase startNode;
 	    [SerializeField] private NodeBase targetNode;
 
+	    [SerializeField] private Vector3Int startPosition ;
+	    [SerializeField] private Vector3Int targetPosition;
+
 #region Dependencies
-	    //Path Finder Controller should be singleton?
-	    [SerializeField] private PathFinderController pathFinderController;
+	    //Should have something manage all of these?. Just one singleton?
+	    //App Manager/Tool Manager
+	    
+	    [SerializeField] private GridNodeData         gridNodeData;
+	    [SerializeField] private PathFinderController pathFinderController; //Path Finder Controller should be singleton?
 #endregion
 
 	    private Coroutine followPathCoroutine;
 
 	    private void Start()
 	    {
+		    InjectGridNodeData();
 		    InjectPathFinderController();
+		    
 		    
 		    //Get self position in gridNodeData
 		    
 		    
+	    }
+	    
+	    private void InjectGridNodeData(GridNodeData _gridNodeData = null)
+	    {
+		    gridNodeData= _gridNodeData != null ? _gridNodeData : FindObjectOfType<GridNodeData>();
+
+		    if (!gridNodeData)
+		    {
+			    Debug.LogWarning($"GridNodeData Missing Reference.");
+		    }
 	    }
 	    
 	    private void InjectPathFinderController(PathFinderController _pathFinderController = null)
@@ -49,13 +70,19 @@ namespace MugCup_PathFinder.Runtime
 			    StopCoroutine(followPathCoroutine);
 			    followPathCoroutine = null;
 		    }
+
+		    if (!useNode)
+		    {
+			    startNode  = gridNodeData.GetNode(startPosition );
+			    targetNode = gridNodeData.GetNode(targetPosition);
+		    }
 		    
-		    var _newPathRequest = new PathRequestNodeBase(startNode, targetNode, OnPathFound);
+		    var _newPathRequest = new PathRequestNodeBase(startNode, targetNode, OnPathFoundHandler);
 		    
 		    pathFinderController.RequestPath(_newPathRequest);
 	    }
 	    
-	    private void OnPathFound(NodeBase[] _nodePath, bool _pathSuccessful) 
+	    private void OnPathFoundHandler(NodeBase[] _nodePath, bool _pathSuccessful) 
 	    {
 		    if (!_pathSuccessful) return;
 			    
@@ -67,13 +94,13 @@ namespace MugCup_PathFinder.Runtime
 	    }
 
 	    private IEnumerator FollowPath()
-	    {
-		    bool _followingPath = true;
+	    { 
+		    followingPath = true;
 		    
 		    int _pathIndex = 0;
 		    int _lastIndex = currentFollowedPath.Length - 1;
 
-		    while (_followingPath)
+		    while (followingPath)
 		    {
 			    var _currentCellPos = (Vector3)currentFollowedPath[_pathIndex].NodePosition;
 			    var _distToNextNode = Vector3.Distance(transform.position, _currentCellPos);
@@ -89,7 +116,7 @@ namespace MugCup_PathFinder.Runtime
 			    }
 
 			    if (_pathIndex >= _lastIndex)
-				    _followingPath = false;
+				    followingPath = false;
 		    }
 	    }
 
