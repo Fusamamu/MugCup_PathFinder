@@ -16,17 +16,29 @@ namespace MugCup_PathFinder.Runtime
 	    [SerializeField] private bool useNode;
 	    [SerializeField] private bool followingPath;
 
+	    
+#region Selected Start/Target Position
 	    [SerializeField] private NodeBase startNode;
 	    [SerializeField] private NodeBase targetNode;
 
 	    [SerializeField] private Vector3Int startPosition ;
 	    [SerializeField] private Vector3Int targetPosition;
+#endregion
 
 #region Dependencies
 	    //Should have something manage all of these?. Just one singleton?
 	    //App Manager/Tool Manager
 	    
-	    [SerializeField] private GridNodeData         gridNodeData;
+	    [SerializeField] private bool useGridNodeData;
+	    
+	    //This is not flexible
+	    [SerializeField] private GridNodeDataManager gridNodeDataManager;
+	    
+	    [SerializeField] private GridNodeData gridNodeData;
+	   
+	    
+	    
+	    
 	    [SerializeField] private PathFinderController pathFinderController; //Path Finder Controller should be singleton?
 #endregion
 
@@ -34,23 +46,44 @@ namespace MugCup_PathFinder.Runtime
 
 	    private void Start()
 	    {
-		    InjectGridNodeData();
+		    //Need to try not using start. Will move init to other place later.
+		    Initialized();
+	    }
+
+	    public void Initialized()
+	    {
+		    if(useGridNodeData)
+				InjectGridNodeData();
+		    else
+			    InjectCustomGridNodeData(gridNodeData);
+		    
 		    InjectPathFinderController();
 		    
-		    
 		    //Get self position in gridNodeData
-		    
-		    
+	    }
+
+	    public void LoadGridData(GridNodeData _gridNodeData)
+	    {
+		    gridNodeData = _gridNodeData;
 	    }
 	    
-	    private void InjectGridNodeData(GridNodeData _gridNodeData = null)
+	    /// <summary>
+	    /// Use GridNodeData as Default Initialization.
+	    /// </summary>
+	    /// <param name="_gridNodeDataManager"></param>
+	    private void InjectGridNodeData(GridNodeDataManager _gridNodeDataManager = null)
 	    {
-		    gridNodeData= _gridNodeData != null ? _gridNodeData : FindObjectOfType<GridNodeData>();
+		    gridNodeDataManager = _gridNodeDataManager != null ? _gridNodeDataManager : FindObjectOfType<GridNodeDataManager>();
 
-		    if (!gridNodeData)
+		    if (!gridNodeDataManager)
 		    {
 			    Debug.LogWarning($"GridNodeData Missing Reference.");
 		    }
+	    }
+	    
+	    private void InjectCustomGridNodeData(GridNodeData _gridNodeData)
+	    {
+		    gridNodeData = _gridNodeData;
 	    }
 	    
 	    private void InjectPathFinderController(PathFinderController _pathFinderController = null)
@@ -73,8 +106,8 @@ namespace MugCup_PathFinder.Runtime
 
 		    if (!useNode)
 		    {
-			    startNode  = gridNodeData.GetNode(startPosition );
-			    targetNode = gridNodeData.GetNode(targetPosition);
+			    startNode  = gridNodeDataManager.GetNode(startPosition );
+			    targetNode = gridNodeDataManager.GetNode(targetPosition);
 		    }
 		    
 		    var _newPathRequest = new PathRequestNodeBase(startNode, targetNode, OnPathFoundHandler);
@@ -95,7 +128,7 @@ namespace MugCup_PathFinder.Runtime
 
 	    private IEnumerator FollowPath()
 	    { 
-		    followingPath = true;
+		    followingPath  = true;
 		    
 		    int _pathIndex = 0;
 		    int _lastIndex = currentFollowedPath.Length - 1;
@@ -134,35 +167,31 @@ namespace MugCup_PathFinder.Runtime
 		    {
 			    Vector2 pos2D = new Vector2 (transform.position.x, transform.position.z);
 			    
-			    // while (_pathInfo.turnBoundaries [pathIndex].HasCrossedLine (pos2D)) {
-				   //  if (pathIndex == _pathInfo.finishLineIndex) {
-					  //   followingPath = false;
-					  //   break;
-				   //  } else {
-					  //   pathIndex++;
-				   //  }
-			    // }
+			    //while (_pathInfo.turnBoundaries [pathIndex].HasCrossedLine (pos2D)) {
+				//    if (pathIndex == _pathInfo.finishLineIndex) {
+				//	    followingPath = false;
+				//	    break;
+				//    } else {
+				//	    pathIndex++;
+				//    }
+			    //}
 			    //
-			    // if (followingPath) {
+			    //if (followingPath) {
 			    //
-				   //  if (pathIndex >= _pathInfo.slowDownIndex && stoppingDst > 0) {
-					  //   speedPercent = Mathf.Clamp01 (_pathInfo.turnBoundaries [_pathInfo.finishLineIndex].DistanceFromPoint (pos2D) / stoppingDst);
-					  //   if (speedPercent < 0.01f) {
-						 //    followingPath = false;
-					  //   }
-				   //  }
+				//    if (pathIndex >= _pathInfo.slowDownIndex && stoppingDst > 0) {
+				//	    speedPercent = Mathf.Clamp01 (_pathInfo.turnBoundaries [_pathInfo.finishLineIndex].DistanceFromPoint (pos2D) / stoppingDst);
+				//	    if (speedPercent < 0.01f) {
+				//		    followingPath = false;
+				//	    }
+				//    }
 			    //
-				   //  Quaternion targetRotation = Quaternion.LookRotation (_pathInfo.lookPoints [pathIndex] - transform.position);
-				   //  transform.rotation = Quaternion.Lerp (transform.rotation, targetRotation, Time.deltaTime * turnSpeed);
-				   //  transform.Translate (Vector3.forward * Time.deltaTime * speed * speedPercent, Space.Self);
-			    // }
+				//    Quaternion targetRotation = Quaternion.LookRotation (_pathInfo.lookPoints [pathIndex] - transform.position);
+				//    transform.rotation = Quaternion.Lerp (transform.rotation, targetRotation, Time.deltaTime * turnSpeed);
+				//    transform.Translate (Vector3.forward * Time.deltaTime * speed * speedPercent, Space.Self);
+			    //}
 
 			    yield return null;
 		    }
 	    }
-       
-        
-
-       
     }
 }

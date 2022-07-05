@@ -1,43 +1,39 @@
 #if UNITY_EDITOR
-using System;
 using MugCup_PathFinder.Runtime;
 using UnityEditor;
 using UnityEngine;
 
 namespace MugCup_PathFinder.Editor
 {
-    [CustomEditor(typeof(GridNodeData))]
+    [CustomEditor(typeof(GridNodeDataManager))]
     public class GridNodeDataEditor : UnityEditor.Editor
     {
-        private GridNodeData gridNodeData;
+        private GridNodeDataManager gridNodeDataManager;
 
         private SerializedProperty gridDataSetting;
         private SerializedProperty gridNodes;
 
         private void OnEnable()
         {
-            gridNodeData = (GridNodeData)target;
+            gridNodeDataManager = (GridNodeDataManager)target;
 
             gridDataSetting = serializedObject.FindProperty("gridNodeDataSetting");
-            gridNodes       = serializedObject.FindProperty("gridNodes");
-
+            gridNodes       = serializedObject.FindProperty("gridNodes"          );
         }
 
         public override void OnInspectorGUI()
         {
-            EditorGUILayout.PropertyField(gridDataSetting);
-            EditorGUILayout.PropertyField(gridNodes);
+            DrawDefaultInspector();
 
             if (GUILayout.Button("Initialize"))
             {
-                gridNodeData.InitializeGridNode();
+                gridNodeDataManager.InitializeGridNode();
             }
-
+            
             if (GUILayout.Button("Clear Data"))
             {
-                gridNodeData.ClearData();
+                gridNodeDataManager.ClearData();
             }
-
         }
     }
 }

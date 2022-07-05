@@ -1,9 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Threading;
 using System.Threading.Tasks;
-using Unity.Collections;
 using UnityEngine;
 
 namespace MugCup_PathFinder.Runtime
@@ -21,47 +19,59 @@ namespace MugCup_PathFinder.Runtime
         
         [SerializeField] private bool useGridNodeData;
         
-        [SerializeField] private GridNodeData gridNodeData;
+        [SerializeField] private GridNodeDataManager gridNodeDataManager;
 
-        //Should replace with singleton GridNodeData    
-        //[SerializeField] private GridNodeDataSetting gridNodeDataSetting;
-       
-        
-        //Need to have something hold "Grid Size" n "GridNode" Data
-        private Vector3Int gridSize;
-        private NodeBase[] gridNodes;
-        
-        
+        [SerializeField] private GridNodeData gridNodeData;
         
         private void Start()
         {
-            InjectGridNodeData  ();
+            //Need to move. Call in Start is never a good Idea
+            Initialized();
+        }
+
+        public void Initialized()
+        {
+            if(useGridNodeData)
+                InjectGridNodeData();
+            else
+                InjectCustomGridNodeData(gridNodeData);
+            
             InitializePathFinder();
         }
 
         /// <summary>
         /// Inject GridNodeData into PathFinderController. 
         /// </summary>
-        /// <param name="_gridNodeData"></param>
-        private void InjectGridNodeData(GridNodeData _gridNodeData = null)
+        /// <param name="_gridNodeDataManager"></param>
+        private void InjectGridNodeData(GridNodeDataManager _gridNodeDataManager = null)
         {
-            gridNodeData= _gridNodeData != null ? _gridNodeData : FindObjectOfType<GridNodeData>();
+            /*Using GridNodeData from GridNodeDataManager this is out of the box data from Path Finder Package*/
+            gridNodeDataManager = _gridNodeDataManager != null ? _gridNodeDataManager : FindObjectOfType<GridNodeDataManager>();
 
-            if (!gridNodeData)
+            if (!gridNodeDataManager)
             {
                 Debug.LogWarning($"GridNodeData Missing Reference.");
                 return;
             }
 
-            gridSize     = gridNodeData.GetGridSize ();
-            gridNodes    = gridNodeData.GetGridNodes();
+            gridNodeData.GridSize  = gridNodeDataManager.GetGridSize ();
+            gridNodeData.GridNodes = gridNodeDataManager.GetGridNodes();
+        }
+
+        /// <summary>
+        /// Inject Custom GridNodeData if not using GridNodeDataManager from PathFinder Package.
+        /// </summary>
+        /// <param name="_gridNodeData"></param>
+        private void InjectCustomGridNodeData(GridNodeData _gridNodeData)
+        {
+            //Use grid node data from scene (from Block Builder)
+            gridNodeData = _gridNodeData;
         }
 
         private void InitializePathFinder()
         {
-            pathFinder = new HeapPathFinder(gridSize, gridNodes);
+            pathFinder = new HeapPathFinder(gridNodeData.GridSize, gridNodeData.GridNodes);
         }
-        
 
         private void Update() 
         {
@@ -81,8 +91,8 @@ namespace MugCup_PathFinder.Runtime
         //Test Request Path
         public void RequestPath()
         {
-            var _startNode  = GridUtility.GetNode(new Vector3Int(0, 0, 0), gridSize, gridNodes);
-            var _targetNode = GridUtility.GetNode(new Vector3Int(4, 0, 4), gridSize, gridNodes);
+            var _startNode  = GridUtility.GetNode(new Vector3Int(0, 0, 0), gridNodeData.GridSize, gridNodeData.GridNodes);
+            var _targetNode = GridUtility.GetNode(new Vector3Int(4, 0, 4), gridNodeData.GridSize, gridNodeData.GridNodes);
 
             var _pathRequest = new PathRequestNodeBase(_startNode, _targetNode, ((_bases, _b) => { } ));
             
@@ -95,7 +105,6 @@ namespace MugCup_PathFinder.Runtime
             {
                 pathFinder.FindPath(_request, FinishedProcessingPath);
             });
-            //_findPathTask.Wait();
         }
 
         private void FinishedProcessingPath(PathResultNodeBase _result) 

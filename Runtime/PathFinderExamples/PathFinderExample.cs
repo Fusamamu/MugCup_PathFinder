@@ -1,10 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using MugCup_PathFinder.Runtime.Utilities;
-using UnityEditor.Graphs;
 using UnityEngine;
-using UnityEngine.UIElements;
 using UnityEngine.InputSystem;
 
 namespace MugCup_PathFinder.Runtime.Examples

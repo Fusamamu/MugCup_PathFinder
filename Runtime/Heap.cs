@@ -1,5 +1,3 @@
-using UnityEngine;
-using System.Collections;
 using System;
 
 namespace MugCup_PathFinder.Runtime
