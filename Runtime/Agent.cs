@@ -33,10 +33,8 @@ namespace MugCup_PathFinder.Runtime
 	    
 	    //This is not flexible
 	    [SerializeField] private GridNodeDataManager gridNodeDataManager;
-	    
-	    [SerializeField] private GridNodeData gridNodeData;
-	   
-	    
+	    //This is for inject custom gridNodeData
+	    [SerializeField] private GridNodeData        gridNodeData;
 	    
 	    
 	    [SerializeField] private PathFinderController pathFinderController; //Path Finder Controller should be singleton?
@@ -44,11 +42,11 @@ namespace MugCup_PathFinder.Runtime
 
 	    private Coroutine followPathCoroutine;
 
-	    private void Start()
-	    {
-		    //Need to try not using start. Will move init to other place later.
-		    Initialized();
-	    }
+	    // private void Start()
+	    // {
+		   //  //Need to try not using start. Will move init to other place later.
+		   //  Initialized();
+	    // }
 
 	    public void Initialized()
 	    {
@@ -86,7 +84,7 @@ namespace MugCup_PathFinder.Runtime
 		    gridNodeData = _gridNodeData;
 	    }
 	    
-	    private void InjectPathFinderController(PathFinderController _pathFinderController = null)
+	    public void InjectPathFinderController(PathFinderController _pathFinderController = null)
 	    {
 		    pathFinderController = _pathFinderController != null ? _pathFinderController : FindObjectOfType<PathFinderController>();
 

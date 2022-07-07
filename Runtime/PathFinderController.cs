@@ -17,21 +17,24 @@ namespace MugCup_PathFinder.Runtime
 
         private HeapPathFinder pathFinder;
         
-        [SerializeField] private bool useGridNodeData;
+        [SerializeField] private bool useGridNodeDataManager;
         
         [SerializeField] private GridNodeDataManager gridNodeDataManager;
+        [SerializeField] private GridNodeData        gridNodeData;
 
-        [SerializeField] private GridNodeData gridNodeData;
-        
-        private void Start()
+        private bool isInit;
+
+        public void SetUseGridNodeDataManager(bool _value)
         {
-            //Need to move. Call in Start is never a good Idea
-            Initialized();
+            useGridNodeDataManager = _value;
         }
 
         public void Initialized()
         {
-            if(useGridNodeData)
+            if(isInit) return;
+            isInit = true;
+            
+            if(useGridNodeDataManager)
                 InjectGridNodeData();
             else
                 InjectCustomGridNodeData(gridNodeData);
@@ -62,7 +65,7 @@ namespace MugCup_PathFinder.Runtime
         /// Inject Custom GridNodeData if not using GridNodeDataManager from PathFinder Package.
         /// </summary>
         /// <param name="_gridNodeData"></param>
-        private void InjectCustomGridNodeData(GridNodeData _gridNodeData)
+        public void InjectCustomGridNodeData(GridNodeData _gridNodeData)
         {
             //Use grid node data from scene (from Block Builder)
             gridNodeData = _gridNodeData;
