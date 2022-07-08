@@ -24,7 +24,7 @@ namespace MugCup_PathFinder.Runtime
 
         private void Awake()
         {
-            InitializeGridNode();
+            //InitializeGridNode();
         }
 
         public Vector3Int GetGridSize()

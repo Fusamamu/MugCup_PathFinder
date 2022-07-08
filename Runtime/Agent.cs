@@ -26,27 +26,15 @@ namespace MugCup_PathFinder.Runtime
 #endregion
 
 #region Dependencies
-	    //Should have something manage all of these?. Just one singleton?
-	    //App Manager/Tool Manager
-	    
 	    [SerializeField] private bool useGridNodeData;
 	    
-	    //This is not flexible
 	    [SerializeField] private GridNodeDataManager gridNodeDataManager;
-	    //This is for inject custom gridNodeData
 	    [SerializeField] private GridNodeData        gridNodeData;
-	    
 	    
 	    [SerializeField] private PathFinderController pathFinderController; //Path Finder Controller should be singleton?
 #endregion
 
 	    private Coroutine followPathCoroutine;
-
-	    // private void Start()
-	    // {
-		   //  //Need to try not using start. Will move init to other place later.
-		   //  Initialized();
-	    // }
 
 	    public void Initialized()
 	    {
