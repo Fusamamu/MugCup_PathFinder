@@ -12,20 +12,20 @@ namespace MugCup_PathFinder.Runtime
 
         private HeapPathFinderGeneric<T> pathFinder;
         
-        [SerializeField] protected GridNodeData<T> gridNodeData;
+        [SerializeField] private GridNodeData<T> gridNodeData;
 
         private bool isInit;
        
-        public virtual void Initialized(GridNodeData<T> _gridNodeData = null)
+        public virtual void Initialized(GridNodeData<T> _gridNodeData)
         {
             if(isInit) return;
             isInit = true;
                 
-            InjectCustomGridNodeData(_gridNodeData);
+            InjectGridDataNode  (_gridNodeData);
             InitializePathFinder();
         }
       
-        public void InjectCustomGridNodeData(GridNodeData<T> _gridNodeData)
+        protected void InjectGridDataNode(GridNodeData<T> _gridNodeData)
         {
             gridNodeData = _gridNodeData;
         }
@@ -54,10 +54,6 @@ namespace MugCup_PathFinder.Runtime
         {
             Task _findPathTask = Task.Run(() =>
             {
-                //Init order wrong //Temp Fix
-                pathFinder = new HeapPathFinderGeneric<T>(gridNodeData.GridSize, gridNodeData.GridNodes);
-                ///
-                /// 
                 pathFinder.FindPath(_request, FinishedProcessingPath);
             });
         }

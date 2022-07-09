@@ -17,12 +17,12 @@ namespace MugCup_PathFinder.Runtime
             useGridNodeDataManager = _value;
         }
         
-        public override void Initialized(GridNodeData<NodeBase> _gridNodeData = null)
+        public override void Initialized(GridNodeData<NodeBase> _gridNodeData)
         {
             if(useGridNodeDataManager)
                 InjectGridNodeDataManager(gridNodeDataManager);
             else
-                base.Initialized(gridNodeData);
+                base.Initialized(_gridNodeData);
         }
     
         private void InjectGridNodeDataManager(GridNodeDataManager _gridNodeDataManager = null)
@@ -35,9 +35,8 @@ namespace MugCup_PathFinder.Runtime
                 Debug.LogWarning($"GridNodeData Missing Reference.");
                 return;
             }
-        
-            gridNodeData.GridSize  = gridNodeDataManager.GetGridSize ();
-            gridNodeData.GridNodes = gridNodeDataManager.GetGridNodes();
+            
+            InjectGridDataNode(gridNodeDataManager.GetGridNodeData());
         }
     }
 }

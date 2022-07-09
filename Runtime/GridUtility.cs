@@ -615,6 +615,19 @@ namespace MugCup_PathFinder.Runtime
 #endregion
 
 #region Add/Remove Nodes Methods
+        // public static void AddNode<T, U>(U _newNode, Vector3Int _nodePos, Vector3Int _gridSize, ref T[] _grid) where T : NodeBase
+        // {
+        //     int _x = _nodePos.x;
+        //     int _y = _nodePos.y;
+        //     int _z = _nodePos.z;
+        //
+        //     if (_x < 0 || _x >= _gridSize.x) return;
+        //     if (_y < 0 || _y >= _gridSize.y) return;
+        //     if (_z < 0 || _z >= _gridSize.z) return;
+        //     
+        //     _grid[_z + _gridSize.x * (_x + _gridSize.y * _y)] = _newNode;
+        // }
+        
         public static void AddNode<T>(T _newNode, Vector3Int _nodePos, Vector3Int _gridSize, ref T[] _grid)
         {
             int _x = _nodePos.x;
