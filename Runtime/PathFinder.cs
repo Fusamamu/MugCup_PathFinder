@@ -19,14 +19,8 @@ namespace MugCup_PathFinder.Runtime
     {
         public NodeBase[] PathNodes => pathNodes;
         
-        public Vector3Int GetGridSize()
-        {
-            return gridSize;
-        }
-        public NodeBase[] GetGridNodes()
-        {
-            return gridNodes;
-        }
+        public Vector3Int GridSize  { get; private set; }  
+        public NodeBase[] GridNodes { get; private set; }
         
         public bool HasPath => pathNodes.Length > 1;
 

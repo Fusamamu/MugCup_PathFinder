@@ -178,7 +178,7 @@ namespace MugCup_PathFinder.Editor
 
         private void OnSceneGUI()
         {
-            var _gridSize = pathFinder.GetGridSize();
+            var _gridSize = pathFinder.GridSize;
             
             DrawGridGizmos(_gridSize);
             
@@ -192,7 +192,7 @@ namespace MugCup_PathFinder.Editor
                 if(togglePathNodeCost)
                     DisplayText(pathFinder.PathNodes);
                 if (toggleAllNodeCost)
-                    DisplayText(pathFinder.GetGridNodes());
+                    DisplayText(pathFinder.GridNodes);
             }
             
             DrawLabelPanel();
