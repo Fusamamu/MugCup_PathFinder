@@ -12,11 +12,11 @@ namespace MugCup_PathFinder.Runtime
 
         private HeapPathFinderGeneric<T> pathFinder;
         
-        [SerializeField] private GridNodeData<T> gridNodeData;
+        [SerializeField] protected GridNodeData<T> gridNodeData;
 
         private bool isInit;
-
-        public void Initialized(GridNodeData<T> _gridNodeData = null)
+       
+        public virtual void Initialized(GridNodeData<T> _gridNodeData = null)
         {
             if(isInit) return;
             isInit = true;
@@ -32,11 +32,7 @@ namespace MugCup_PathFinder.Runtime
 
         private void InitializePathFinder()
         {
-
-            var _gridSize = new Vector3Int(gridNodeData.GridSize.x, 0, gridNodeData.GridSize.z);
-            
-            
-            pathFinder = new HeapPathFinderGeneric<T>(_gridSize, gridNodeData.GridNodes);
+            pathFinder = new HeapPathFinderGeneric<T>(gridNodeData.GridSize, gridNodeData.GridNodes);
         }
 
         private void Update() 
@@ -58,6 +54,10 @@ namespace MugCup_PathFinder.Runtime
         {
             Task _findPathTask = Task.Run(() =>
             {
+                //Init order wrong //Temp Fix
+                pathFinder = new HeapPathFinderGeneric<T>(gridNodeData.GridSize, gridNodeData.GridNodes);
+                ///
+                /// 
                 pathFinder.FindPath(_request, FinishedProcessingPath);
             });
         }

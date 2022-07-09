@@ -17,14 +17,14 @@ namespace MugCup_PathFinder.Runtime
         /// <summary>
         /// Data must only initialize from GridNodeDataSetting 
         /// </summary>
-        [ReadOnly] [SerializeField] private Vector3Int gridSize ;
-        [ReadOnly] [SerializeField] private NodeBase[] gridNodes;
+        [ReadOnly] 
+        [SerializeField] private GridNodeData<NodeBase> gridNodeData;
 
         [SerializeField] private bool isInit;
 
-        private void Awake()
+        public GridNodeData<NodeBase> GetGridNodeData()
         {
-            //InitializeGridNode();
+            return gridNodeData;
         }
 
         public Vector3Int GetGridSize()
@@ -32,7 +32,7 @@ namespace MugCup_PathFinder.Runtime
             if (!IsInitialized())
                 return Vector3Int.zero;
             
-            return gridSize;
+            return gridNodeData.GridSize;
         }
 
         public NodeBase[] GetGridNodes()
@@ -40,12 +40,12 @@ namespace MugCup_PathFinder.Runtime
             if (!IsInitialized())
                 return null;
             
-            return gridNodes;
+            return gridNodeData.GridNodes;
         }
 
         public NodeBase GetNode(Vector3Int _pos)
         {
-            var _node = GridUtility.GetNode(_pos, gridSize, gridNodes);
+            var _node = GridUtility.GetNode(_pos, gridNodeData.GridSize, gridNodeData.GridNodes);
 
             if (!_node)
             {
@@ -64,7 +64,7 @@ namespace MugCup_PathFinder.Runtime
 
             isInit = true;
             
-            gridSize = gridNodeDataSetting.GridSize;
+            gridNodeData.GridSize = gridNodeDataSetting.GridSize;
 
             var _nodePrefab = gridNodeDataSetting.NodePrefab;
 
@@ -75,18 +75,18 @@ namespace MugCup_PathFinder.Runtime
                 Debug.LogWarning($"GridNodeDataSetting Missing NodePrefab. Using Primitive Cube instead.");
             }
             
-            gridNodes = GridUtility.GenerateGridINodes<NodeBase>(gridSize, _nodePrefab.gameObject);
+            gridNodeData.GridNodes = GridUtility.GenerateGridINodes<NodeBase>(gridNodeData.GridSize, _nodePrefab.gameObject);
         }
 
         public void ClearData()
         {
-            foreach (var _node in gridNodes)
+            foreach (var _node in gridNodeData.GridNodes)
             {
                 DestroyImmediate(_node.gameObject);
             }
             
-            gridNodes = null;
-            isInit    = false;
+            gridNodeData.GridNodes = null;
+            isInit                 = false;
         }
 
         private bool IsInitialized()

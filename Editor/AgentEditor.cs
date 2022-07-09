@@ -21,6 +21,8 @@ namespace MugCup_PathFinder.Editor
 
             if (GUILayout.Button("Start Find Path"))
             {
+                agent.SetUseGridNodeDataManager(true);
+                agent.Initialized();
                 agent.StartFindPath();
             }
         }

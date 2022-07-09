@@ -5,13 +5,14 @@ namespace MugCup_PathFinder.Runtime
 {
     public class Agent : MonoBehaviour
     {
-	    [SerializeField] private float speed     = 0.05f;
+	    [SerializeField] private bool useGridNodeDataManager;
+	    [SerializeField] private bool useNodeAsPosition;
+	    [SerializeField] private bool followingPath;
+	    
+	    [SerializeField] private float speed     = 10f;
 	    [SerializeField] private float turnSpeed = 5f;
 
 	    [SerializeField] private NodeBase[] currentFollowedPath;
-
-	    [SerializeField] private bool useNodeAsPosition;
-	    [SerializeField] private bool followingPath;
 	    
 #region Selected Start/Target Position
 	    [SerializeField] private NodeBase startNode;
@@ -22,8 +23,6 @@ namespace MugCup_PathFinder.Runtime
 #endregion
 
 #region Dependencies
-	    [SerializeField] private bool useGridNodeDataManager;
-	    
 	    [SerializeField] private GridNodeDataManager    gridNodeDataManager;
 	    [SerializeField] private GridNodeData<NodeBase> gridNodeData;
 	    
@@ -63,12 +62,16 @@ namespace MugCup_PathFinder.Runtime
 	    /// <param name="_gridNodeDataManager"></param>
 	    private void InjectGridNodeDataManager(GridNodeDataManager _gridNodeDataManager = null)
 	    {
-		    gridNodeDataManager = _gridNodeDataManager != null ? _gridNodeDataManager : FindObjectOfType<GridNodeDataManager>();
+		    if(gridNodeDataManager == null)
+				gridNodeDataManager = _gridNodeDataManager != null ? _gridNodeDataManager : FindObjectOfType<GridNodeDataManager>();
 
 		    if (!gridNodeDataManager)
 		    {
 			    Debug.LogWarning($"GridNodeData Missing Reference.");
+			    return;
 		    }
+
+		    gridNodeData = gridNodeDataManager.GetGridNodeData();
 	    }
 	    
 	    private void InjectCustomGridNodeData(GridNodeData<NodeBase> _gridNodeData)
@@ -78,7 +81,7 @@ namespace MugCup_PathFinder.Runtime
 	    
 	    public void InjectPathFinderController(IPathFinderController<NodeBase> _pathFinderController = null)
 	    {
-		    pathFinderController = _pathFinderController ?? FindObjectOfType<PathFinderControllerGeneric<NodeBase>>();
+		    pathFinderController = _pathFinderController ?? FindObjectOfType<PathFinderControllerNodeBase>();
 
 		    if (pathFinderController == null)
 		    {
@@ -112,24 +115,27 @@ namespace MugCup_PathFinder.Runtime
 		    
 		    var _newPathRequest = new PathRequestNodeBase(startNode, targetNode, OnPathFoundHandler);
 		    
+		    pathFinderController = FindObjectOfType<PathFinderControllerNodeBase>();
+		    pathFinderController.Initialized(null);
+		    
 		    pathFinderController.RequestPath(_newPathRequest);
 	    }
 	    
-	    public void StartFindPath(Vector3Int _startPos, Vector3Int _targetPos)
-	    {
-		    if (followPathCoroutine != null)
-		    {
-			    StopCoroutine(followPathCoroutine);
-			    followPathCoroutine = null;
-		    }
-			  
-		    startNode  = GridUtility.GetNode(_startPos , gridNodeData);
-		    targetNode = GridUtility.GetNode(_targetPos, gridNodeData);
-		    
-		    var _newPathRequest = new PathRequestNodeBase(startNode, targetNode, OnPathFoundHandler);
-		    
-		    pathFinderController.RequestPath(_newPathRequest);
-	    }
+	    //public void StartFindPath(Vector3Int _startPos, Vector3Int _targetPos)
+	    //{
+		//    if (followPathCoroutine != null)
+		//    {
+		//	    StopCoroutine(followPathCoroutine);
+		//	    followPathCoroutine = null;
+		//    }
+		//	  
+		//    startNode  = GridUtility.GetNode(_startPos , gridNodeData);
+		//    targetNode = GridUtility.GetNode(_targetPos, gridNodeData);
+		//    
+		//    var _newPathRequest = new PathRequestNodeBase(startNode, targetNode, OnPathFoundHandler);
+		//    
+		//    pathFinderController.RequestPath(_newPathRequest);
+	    //}
 	    
 	    private void OnPathFoundHandler(NodeBase[] _nodePath, bool _pathSuccessful) 
 	    {
