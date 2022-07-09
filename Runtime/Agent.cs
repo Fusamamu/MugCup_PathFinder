@@ -1,7 +1,4 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
-using Unity.Collections;
 using UnityEngine;
 
 namespace MugCup_PathFinder.Runtime
@@ -30,7 +27,7 @@ namespace MugCup_PathFinder.Runtime
 	    [SerializeField] private GridNodeDataManager    gridNodeDataManager;
 	    [SerializeField] private GridNodeData<NodeBase> gridNodeData;
 	    
-	    [SerializeField] private PathFinderController pathFinderController; //Path Finder Controller should be singleton?
+	    private IPathFinderController<NodeBase> pathFinderController;
 #endregion
 
 	    private Coroutine followPathCoroutine;
@@ -50,7 +47,7 @@ namespace MugCup_PathFinder.Runtime
 		    gridNodeData = _gridNodeData;
 	    }
 
-	    public void Initialized(PathFinderController _pathFinderController = null)
+	    public void Initialized(IPathFinderController<NodeBase> _pathFinderController = null)
 	    {
 		    if(useGridNodeDataManager)
 				InjectGridNodeDataManager();
@@ -79,13 +76,13 @@ namespace MugCup_PathFinder.Runtime
 		    gridNodeData = _gridNodeData;
 	    }
 	    
-	    public void InjectPathFinderController(PathFinderController _pathFinderController = null)
+	    public void InjectPathFinderController(IPathFinderController<NodeBase> _pathFinderController = null)
 	    {
-		    pathFinderController = _pathFinderController != null ? _pathFinderController : FindObjectOfType<PathFinderController>();
+		    pathFinderController = _pathFinderController ?? FindObjectOfType<PathFinderControllerGeneric<NodeBase>>();
 
-		    if (!pathFinderController)
+		    if (pathFinderController == null)
 		    {
-			    Debug.LogWarning($"{typeof(PathFinderController)} Missing Reference.");
+			    Debug.LogWarning($"{typeof(IPathFinderController<NodeBase>)} Missing Reference.");
 		    }
 	    }
 
