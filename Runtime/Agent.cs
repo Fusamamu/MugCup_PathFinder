@@ -13,9 +13,8 @@ namespace MugCup_PathFinder.Runtime
 
 	    [SerializeField] private NodeBase[] currentFollowedPath;
 
-	    [SerializeField] private bool useNode;
+	    [SerializeField] private bool useNodeAsPosition;
 	    [SerializeField] private bool followingPath;
-
 	    
 #region Selected Start/Target Position
 	    [SerializeField] private NodeBase startNode;
@@ -26,38 +25,46 @@ namespace MugCup_PathFinder.Runtime
 #endregion
 
 #region Dependencies
-	    [SerializeField] private bool useGridNodeData;
+	    [SerializeField] private bool useGridNodeDataManager;
 	    
-	    [SerializeField] private GridNodeDataManager gridNodeDataManager;
-	    [SerializeField] private GridNodeData        gridNodeData;
+	    [SerializeField] private GridNodeDataManager    gridNodeDataManager;
+	    [SerializeField] private GridNodeData<NodeBase> gridNodeData;
 	    
 	    [SerializeField] private PathFinderController pathFinderController; //Path Finder Controller should be singleton?
 #endregion
 
 	    private Coroutine followPathCoroutine;
 
-	    public void Initialized()
+	    public void SetUseGridNodeDataManager(bool _value)
 	    {
-		    if(useGridNodeData)
-				InjectGridNodeData();
+		    useGridNodeDataManager = _value;
+	    }
+
+	    public void SetUseNodeAsPosition(bool _value)
+	    {
+		    useNodeAsPosition      = _value;
+	    }
+	    
+	    public void LoadGridData(GridNodeData<NodeBase> _gridNodeData)
+	    {
+		    gridNodeData = _gridNodeData;
+	    }
+
+	    public void Initialized(PathFinderController _pathFinderController = null)
+	    {
+		    if(useGridNodeDataManager)
+				InjectGridNodeDataManager();
 		    else
 			    InjectCustomGridNodeData(gridNodeData);
 		    
-		    InjectPathFinderController();
-		    
-		    //Get self position in gridNodeData
-	    }
-
-	    public void LoadGridData(GridNodeData _gridNodeData)
-	    {
-		    gridNodeData = _gridNodeData;
+		    InjectPathFinderController(_pathFinderController);
 	    }
 	    
 	    /// <summary>
 	    /// Use GridNodeData as Default Initialization.
 	    /// </summary>
 	    /// <param name="_gridNodeDataManager"></param>
-	    private void InjectGridNodeData(GridNodeDataManager _gridNodeDataManager = null)
+	    private void InjectGridNodeDataManager(GridNodeDataManager _gridNodeDataManager = null)
 	    {
 		    gridNodeDataManager = _gridNodeDataManager != null ? _gridNodeDataManager : FindObjectOfType<GridNodeDataManager>();
 
@@ -67,7 +74,7 @@ namespace MugCup_PathFinder.Runtime
 		    }
 	    }
 	    
-	    private void InjectCustomGridNodeData(GridNodeData _gridNodeData)
+	    private void InjectCustomGridNodeData(GridNodeData<NodeBase> _gridNodeData)
 	    {
 		    gridNodeData = _gridNodeData;
 	    }
@@ -82,6 +89,16 @@ namespace MugCup_PathFinder.Runtime
 		    }
 	    }
 
+	    public void SetStartPos(Vector3Int _startPos)
+	    {
+		    startPosition = _startPos;
+	    }
+
+	    public void SetTargetPos(Vector3Int _targetPos)
+	    {
+		    targetPosition = _targetPos;
+	    }
+
 	    public void StartFindPath()
 	    {
 		    if (followPathCoroutine != null)
@@ -90,11 +107,27 @@ namespace MugCup_PathFinder.Runtime
 			    followPathCoroutine = null;
 		    }
 
-		    if (!useNode)
+		    if (!useNodeAsPosition)
 		    {
-			    startNode  = gridNodeDataManager.GetNode(startPosition );
-			    targetNode = gridNodeDataManager.GetNode(targetPosition);
+			    startNode  = GridUtility.GetNode(startPosition,  gridNodeData);
+			    targetNode = GridUtility.GetNode(targetPosition, gridNodeData);
 		    }
+		    
+		    var _newPathRequest = new PathRequestNodeBase(startNode, targetNode, OnPathFoundHandler);
+		    
+		    pathFinderController.RequestPath(_newPathRequest);
+	    }
+	    
+	    public void StartFindPath(Vector3Int _startPos, Vector3Int _targetPos)
+	    {
+		    if (followPathCoroutine != null)
+		    {
+			    StopCoroutine(followPathCoroutine);
+			    followPathCoroutine = null;
+		    }
+			  
+		    startNode  = GridUtility.GetNode(_startPos , gridNodeData);
+		    targetNode = GridUtility.GetNode(_targetPos, gridNodeData);
 		    
 		    var _newPathRequest = new PathRequestNodeBase(startNode, targetNode, OnPathFoundHandler);
 		    

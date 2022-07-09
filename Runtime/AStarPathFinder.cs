@@ -242,7 +242,7 @@ namespace MugCup_PathFinder.Runtime
             _onPathFound(_pathResult);
         }
         
-        public void FindPath<T>(PathRequestNodeBase _pathRequest, Action<PathResult<T>> _onPathFound) where T : NodeBase, IHeapItem<T>
+        public void FindPath<T>(PathRequest<T> _pathRequest, Action<PathResult<T>> _onPathFound) where T : NodeBase, IHeapItem<T>
         {
             T[] _waypoints = Array.Empty<T>();
             

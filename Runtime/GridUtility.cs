@@ -191,6 +191,14 @@ namespace MugCup_PathFinder.Runtime
             );
         }
         
+        public static T GetNode<T>(Vector3Int _nodePos, GridNodeData<T> _gridNodeData) where T : NodeBase
+        {
+            var _gridSize = _gridNodeData.GridSize;
+            var _grid     = _gridNodeData.GridNodes;
+
+            return GetNode<T>(_nodePos, _gridSize, _grid);
+        }
+        
         public static T GetNode<T>(Vector3Int _nodePos, Vector3Int _gridSize, T[] _grid)
         {
             if (!NodePositionInsideGrid(_nodePos, _gridSize)) return default;

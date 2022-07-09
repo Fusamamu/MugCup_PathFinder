@@ -6,9 +6,9 @@ using UnityEngine;
 namespace MugCup_PathFinder.Runtime
 {
     [Serializable]
-    public class GridNodeData
+    public class GridNodeData<T> where T : NodeBase
     {
-        public NodeBase[] GridNodes;
+        public T[]        GridNodes;
         public Vector3Int GridSize ;
     }
 }
