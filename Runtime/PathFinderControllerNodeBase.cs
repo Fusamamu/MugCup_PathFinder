@@ -6,6 +6,9 @@ using UnityEngine;
 
 namespace MugCup_PathFinder.Runtime
 {
+    /// <summary>
+    /// Inherit PathFinderControllerGeneric so that it can be attached to gameObject.
+    /// </summary>
     public class PathFinderControllerNodeBase : PathFinderControllerGeneric<NodeBase>
     {
         [SerializeField] private bool useGridNodeDataManager;
