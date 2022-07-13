@@ -115,8 +115,8 @@ namespace MugCup_PathFinder.Runtime
 		    
 		    var _newPathRequest = new PathRequestNodeBase(startNode, targetNode, OnPathFoundHandler);
 		    
-		    pathFinderController = FindObjectOfType<PathFinderControllerNodeBase>();
-		    pathFinderController.Initialized(null);
+		    // pathFinderController = FindObjectOfType<PathFinderControllerNodeBase>();
+		    // pathFinderController.Initialized(null);
 		    
 		    pathFinderController.RequestPath(_newPathRequest);
 	    }
