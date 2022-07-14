@@ -10,7 +10,8 @@ namespace MugCup_PathFinder.Runtime.Examples
     {
         public INode NodeParent { get; set; }
         
-        public Vector3Int NodePosition { get; set; }
+        public Vector3Int NodePosition      { get; set; }
+        public Vector3    NodeWorldPosition { get; set;  }
         
         public int G_Cost { get; set; }
         public int H_Cost { get; set; }

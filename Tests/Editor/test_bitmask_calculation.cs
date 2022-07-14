@@ -18,6 +18,10 @@ public class test_bitmask_calculation
             get;
             set;
         }
+        public Vector3 NodeWorldPosition {
+            get; 
+            set;
+        }
         public int G_Cost {
             get;
             set;
