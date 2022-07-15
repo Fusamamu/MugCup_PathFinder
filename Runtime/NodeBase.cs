@@ -9,14 +9,16 @@ namespace MugCup_PathFinder.Runtime
 	    public INode NodeParent { get; set; }
 			
 	    public Vector3Int NodePosition      { get; set; }
-	    public Vector3    NodeWorldPosition { get; set; }
-			
+	    public Vector3    NodeWorldPosition => nodeWorldPosition;
+
 	    public int G_Cost { get; set; }
 	    public int H_Cost { get; set; }
 			
 	    public int F_Cost => G_Cost + H_Cost;
 			
 	    public int HeapIndex { get; set; }
+
+	    [SerializeField] private Vector3 nodeWorldPosition;
 			
 	    public int CompareTo(NodeBase _nodeToCompare)
 	    {
@@ -28,6 +30,11 @@ namespace MugCup_PathFinder.Runtime
 	        }
 				
 	        return -_compare;
+	    }
+
+	    public void SetNodeWorldPosition(Vector3 _worldPosition)
+	    {
+		    nodeWorldPosition = _worldPosition;
 	    }
 	}
 }
