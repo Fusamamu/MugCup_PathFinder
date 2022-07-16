@@ -157,7 +157,7 @@ namespace MugCup_PathFinder.Runtime
 
 		    while (followingPath)
 		    {
-			    var _currentCellPos = (Vector3)currentFollowedPath[_pathIndex].NodePosition;
+			    var _currentCellPos = (Vector3)currentFollowedPath[_pathIndex].NodePosition + Vector3.up;//Temp plus one up
 			    var _distToNextNode = Vector3.Distance(transform.position, _currentCellPos);
 			    
 			    if (_distToNextNode > float.Epsilon)
