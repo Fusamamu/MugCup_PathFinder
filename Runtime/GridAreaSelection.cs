@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -120,6 +121,32 @@ namespace MugCup_PathFinder.Runtime
             }
             
             return _outerFirstQuadrantPosition;
+        }
+        
+        public static IEnumerable<Vector3Int> GetCircleAreaDistanceBased(Vector3Int _gridSize, Vector3Int _center, float _radius)
+        {
+            var _circleAreaPoints = new List<Vector3Int>();
+            
+            for (var _x = 0; _x < _gridSize.x; _x++)
+                for (var _z = 0; _z < _gridSize.z; _z++)
+                {
+                    var _checkPos = new Vector3Int(_x, 0, _z);
+                        
+                    if(IsInsideCircle(_checkPos, _center, _radius))
+                        _circleAreaPoints.Add(_checkPos);
+                }
+
+            return _circleAreaPoints;
+        }
+
+        public static bool IsInsideCircle(Vector3Int _checkedPos, Vector3Int _center, float _radius)
+        {
+            float _dx = _center.x - _checkedPos.x;
+            float _dz = _center.z - _checkedPos.z;
+
+            float _distance = Mathf.Sqrt(_dx*_dx + _dz*_dz);
+            
+            return _distance <= _radius;
         }
     }
 }
