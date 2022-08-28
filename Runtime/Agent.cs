@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace MugCup_PathFinder.Runtime
@@ -31,20 +32,10 @@ namespace MugCup_PathFinder.Runtime
 
 	    private Coroutine followPathCoroutine;
 
-	    public void SetUseGridNodeDataManager(bool _value)
-	    {
-		    useGridNodeDataManager = _value;
-	    }
-
-	    public void SetUseNodeAsPosition(bool _value)
-	    {
-		    useNodeAsPosition = _value;
-	    }
+	    public void SetUseGridNodeDataManager(bool _value) => useGridNodeDataManager = _value;
+	    public void SetUseNodeAsPosition     (bool _value) => useNodeAsPosition      = _value;
 	    
-	    public void LoadGridData(GridNodeData<NodeBase> _gridNodeData)
-	    {
-		    gridNodeData = _gridNodeData;
-	    }
+	    public void LoadGridData(GridNodeData<NodeBase> _gridNodeData) => gridNodeData = _gridNodeData;
 
 	    public void Initialized(IPathFinderController<NodeBase> _pathFinderController = null)
 	    {
@@ -56,6 +47,7 @@ namespace MugCup_PathFinder.Runtime
 		    InjectPathFinderController(_pathFinderController);
 	    }
 	    
+#region Inject Dependencies
 	    /// <summary>
 	    /// Use GridNodeData as Default Initialization.
 	    /// </summary>
@@ -88,15 +80,50 @@ namespace MugCup_PathFinder.Runtime
 			    Debug.LogWarning($"{typeof(IPathFinderController<NodeBase>)} Missing Reference.");
 		    }
 	    }
+  #endregion
 
-	    public void SetStartPos(Vector3Int _startPos)
+	    /// <summary>
+	    /// Get Complete Path from outside.
+	    /// </summary>
+	    /// <param name="_targetPath"></param>
+	    public Agent SetTargetPath(NodeBase[] _targetPath)
 	    {
-		    startPosition = _startPos;
+		    currentFollowedPath = _targetPath;
+		    return this;
 	    }
 
-	    public void SetTargetPos(Vector3Int _targetPos)
+	    public Agent StartFollowPath()
+	    {
+		    StopFollowPath();
+		    followPathCoroutine = StartCoroutine(FollowPath());
+		    return this;
+	    }
+
+	    public Agent StopFollowPath()
+	    {
+		    if (followPathCoroutine == null) 
+			    return this;
+		    
+		    StopCoroutine(followPathCoroutine);
+		    followPathCoroutine = null;
+
+		    return this;
+	    }
+
+	    /// <summary>
+	    /// Calculate Path by agent itself
+	    /// </summary>
+	    /// <param name="_startPos"></param>
+	    public Agent SetStartPos(Vector3Int _startPos)
+	    {
+		    startPosition = _startPos;
+		    return this;
+	    }
+
+	    public Agent SetTargetPos(Vector3Int _targetPos)
 	    {
 		    targetPosition = _targetPos;
+		    return this;
 	    }
 
 	    public void StartFindPath()
@@ -115,9 +142,6 @@ namespace MugCup_PathFinder.Runtime
 		    
 		    var _newPathRequest = new PathRequestNodeBase(startNode, targetNode, OnPathFoundHandler);
 		    
-		    // pathFinderController = FindObjectOfType<PathFinderControllerNodeBase>();
-		    // pathFinderController.Initialized(null);
-		    
 		    pathFinderController.RequestPath(_newPathRequest);
 	    }
 	    
@@ -126,9 +150,6 @@ namespace MugCup_PathFinder.Runtime
 		    if (!_pathSuccessful) return;
 			    
 		    currentFollowedPath = _nodePath;
-
-		    //Debug.Log($"Path Found!");
-
 		    followPathCoroutine = StartCoroutine(FollowPath());
 	    }
 

@@ -50,12 +50,15 @@ namespace MugCup_PathFinder.Runtime
             }
         }
 
-        public void RequestPath(PathRequest<T> _request)
+        public void RequestPath(PathRequest<T> _request, bool _waitForComplete = false)
         {
             Task _findPathTask = Task.Run(() =>
             {
                 pathFinder.FindPath(_request, FinishedProcessingPath);
             });
+
+            if (_waitForComplete)
+                _findPathTask.Wait();
         }
 
         private void FinishedProcessingPath(PathResult<T> _result) 

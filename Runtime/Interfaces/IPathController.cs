@@ -7,6 +7,6 @@ namespace MugCup_PathFinder.Runtime
     public interface IPathFinderController<T> where T : NodeBase
     {
         public void Initialized(GridNodeData<T> _gridNodeData);
-        public void RequestPath(PathRequest<T> _request);
+        public void RequestPath(PathRequest<T> _request, bool _waitForComplete = false);
     }
 }
