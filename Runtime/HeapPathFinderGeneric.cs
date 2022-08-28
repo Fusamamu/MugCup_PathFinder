@@ -108,7 +108,8 @@ namespace MugCup_PathFinder.Runtime
                     break;
                 }
                 
-                List<T> _adjacentNodes = GridUtility.GetAdjacentNodes8Dir(_currentNode, GridSize, GridNodes).ToList();
+                //List<T> _adjacentNodes = GridUtility.GetAdjacentNodes8Dir(_currentNode, GridSize, GridNodes).ToList();
+                List<T> _adjacentNodes = GridUtility.GetAdjacentNodes4Dir(_currentNode, GridSize, GridNodes).ToList();
 
                 foreach (T _adjacent in _adjacentNodes)
                 {
@@ -138,6 +139,9 @@ namespace MugCup_PathFinder.Runtime
             if (_pathFound)
             {
                 _waypoints = AStarPathFinder<T>.RetracePath(_startNode, _targetNode).ToArray();
+                
+                AStarPathFinder<T>.SetNodePathData(_waypoints.ToList());
+
                 _pathFound = _waypoints.Length > 0;
             }
 

@@ -38,7 +38,7 @@ namespace MugCup_PathFinder.Runtime
 
 	    public void SetUseNodeAsPosition(bool _value)
 	    {
-		    useNodeAsPosition      = _value;
+		    useNodeAsPosition = _value;
 	    }
 	    
 	    public void LoadGridData(GridNodeData<NodeBase> _gridNodeData)
@@ -121,29 +121,13 @@ namespace MugCup_PathFinder.Runtime
 		    pathFinderController.RequestPath(_newPathRequest);
 	    }
 	    
-	    //public void StartFindPath(Vector3Int _startPos, Vector3Int _targetPos)
-	    //{
-		//    if (followPathCoroutine != null)
-		//    {
-		//	    StopCoroutine(followPathCoroutine);
-		//	    followPathCoroutine = null;
-		//    }
-		//	  
-		//    startNode  = GridUtility.GetNode(_startPos , gridNodeData);
-		//    targetNode = GridUtility.GetNode(_targetPos, gridNodeData);
-		//    
-		//    var _newPathRequest = new PathRequestNodeBase(startNode, targetNode, OnPathFoundHandler);
-		//    
-		//    pathFinderController.RequestPath(_newPathRequest);
-	    //}
-	    
 	    private void OnPathFoundHandler(NodeBase[] _nodePath, bool _pathSuccessful) 
 	    {
 		    if (!_pathSuccessful) return;
 			    
 		    currentFollowedPath = _nodePath;
 
-		    Debug.Log($"Path Found!");
+		    //Debug.Log($"Path Found!");
 
 		    followPathCoroutine = StartCoroutine(FollowPath());
 	    }

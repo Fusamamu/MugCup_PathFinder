@@ -10,6 +10,19 @@ namespace MugCup_PathFinder.Runtime
 {
     public static class GridUtility
     {
+        public static IEnumerable<T> GetAdjacentNodes4Dir<T>(T _node, Vector3Int _gridSize, T[] _grid) where T: INode
+        {
+            List<T> _adjacentBlocks = new List<T>
+            {
+                GetNodeLeft        (_node.NodePosition, _gridSize, _grid),
+                GetNodeRight       (_node.NodePosition, _gridSize, _grid),
+                GetNodeForward     (_node.NodePosition, _gridSize, _grid),
+                GetNodeBack        (_node.NodePosition, _gridSize, _grid)
+            };
+
+            return _adjacentBlocks;
+        }
+        
         public static IEnumerable<T> GetAdjacentNodes8Dir<T>(T _node, Vector3Int _gridSize, T[] _grid) where T: INode
         {
             List<T> _adjacentBlocks = new List<T>

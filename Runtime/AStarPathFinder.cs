@@ -11,7 +11,6 @@ namespace MugCup_PathFinder.Runtime
         public Vector3Int GridSize  { get; } 
         public T[]        GridNodes { get; } 
         
-        
         // public Vector3Int GetGridSize ();
         // public T[]        GetGridNodes();
 
@@ -188,6 +187,43 @@ namespace MugCup_PathFinder.Runtime
             _path.Reverse();
             
             return _path;
+        }
+
+        public static void SetNodePathData(List<T> _path)
+        {
+            for (var _i = 0; _i < _path.Count - 1; _i++)
+            {
+                var _currentNode = _path[_i];
+                var _nextNode    = _path[_i + 1];
+                
+                _currentNode.SetNextNodeOnPath(_nextNode);
+
+                var _currentPos = _currentNode.NodePosition;
+                var _nextPos    = _nextNode   .NodePosition;
+
+                _currentNode.NextNodePosition = _nextPos;
+                
+                NodeDirection _direction = NodeDirection.None;
+
+                if (_nextPos.x > _currentPos.x)
+                {
+                    _direction = NodeDirection.East;
+                }
+                else if (_nextPos.x < _currentPos.x)
+                {
+                    _direction = NodeDirection.West;
+                }
+                else if (_nextPos.z > _currentPos.z)
+                {
+                    _direction = NodeDirection.North;
+                }
+                else if (_nextPos.z < _currentPos.z)
+                {
+                    _direction = NodeDirection.South;
+                }
+                
+                _currentNode.SetNodePathDirection(_direction);
+            }
         }
         
         public static int GetDistance(T _nodeA, T _nodeB)
