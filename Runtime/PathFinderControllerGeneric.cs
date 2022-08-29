@@ -16,30 +16,43 @@ namespace MugCup_PathFinder.Runtime
 
         private bool isInit;
        
-        public virtual void Initialized(GridNodeData<T> _gridNodeData)
+        /// <summary>
+        /// Select Target GridDataNode Used to Calculate Path.
+        /// Must be called before Initialized.
+        /// </summary>
+        /// <param name="_gridNodeData"></param>
+        /// <returns></returns>
+        public IPathFinderController<T> SelectGridDataNode(GridNodeData<T> _gridNodeData)
+        {
+            gridNodeData = _gridNodeData;
+            return this;
+        }
+        
+        /// <summary>
+        /// Must be called Initialized.
+        /// </summary>
+        /// <returns></returns>
+        public IPathFinderController<T> InitializePathFinder()
+        {
+            pathFinder = new HeapPathFinderGeneric<T>
+            (
+                gridNodeData.GridSize, 
+                gridNodeData.GridNodes
+            );
+            return this;
+        }
+        
+        public virtual void Initialized()
         {
             if(isInit) return;
             isInit = true;
-                
-            InjectGridDataNode  (_gridNodeData);
-            InitializePathFinder();
-        }
-      
-        protected void InjectGridDataNode(GridNodeData<T> _gridNodeData)
-        {
-            gridNodeData = _gridNodeData;
-        }
-
-        private void InitializePathFinder()
-        {
-            pathFinder = new HeapPathFinderGeneric<T>(gridNodeData.GridSize, gridNodeData.GridNodes);
         }
 
         private void Update() 
         {
             if (pathResults.Count > 0) 
             {
-                int _itemsInQueue = pathResults.Count;
+                var _itemsInQueue = pathResults.Count;
                 
                 for(var _i = 0; _i < _itemsInQueue; _i++) 
                 {
@@ -66,17 +79,6 @@ namespace MugCup_PathFinder.Runtime
             pathResults.Enqueue(_result);
             Debug.Log("Path Process Completed. Path's result enqueued.");
         }
-        
-        //Test Request Path
-        // public void RequestPath()
-        // {
-        //     var _startNode  = GridUtility.GetNode(new Vector3Int(0, 0, 0), gridNodeData.GridSize, gridNodeData.GridNodes);
-        //     var _targetNode = GridUtility.GetNode(new Vector3Int(4, 0, 4), gridNodeData.GridSize, gridNodeData.GridNodes);
-        //
-        //     var _pathRequest = new PathRequestNodeBase(_startNode, _targetNode, ((_bases, _b) => { } ));
-        //     
-        //     RequestPath(_pathRequest);
-        // }
     }
 }
 

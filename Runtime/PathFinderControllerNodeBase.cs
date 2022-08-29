@@ -20,18 +20,20 @@ namespace MugCup_PathFinder.Runtime
             useGridNodeDataManager = _value;
         }
         
-        public override void Initialized(GridNodeData<NodeBase> _gridNodeData)
+        public override void Initialized()
         {
             if(useGridNodeDataManager)
                 InjectGridNodeDataManager(gridNodeDataManager);
             else
-                base.Initialized(_gridNodeData);
+                base.Initialized();
         }
     
         private void InjectGridNodeDataManager(GridNodeDataManager _gridNodeDataManager = null)
         {
             /*Using GridNodeData from GridNodeDataManager this is out of the box data from Path Finder Package*/
-            gridNodeDataManager = _gridNodeDataManager != null ? _gridNodeDataManager : FindObjectOfType<GridNodeDataManager>();
+            gridNodeDataManager = 
+                _gridNodeDataManager != null ? 
+                    _gridNodeDataManager : FindObjectOfType<GridNodeDataManager>();
         
             if (!gridNodeDataManager)
             {
@@ -39,7 +41,7 @@ namespace MugCup_PathFinder.Runtime
                 return;
             }
             
-            InjectGridDataNode(gridNodeDataManager.GetGridNodeData());
+            SelectGridDataNode(gridNodeDataManager.GetGridNodeData());
         }
     }
 }
