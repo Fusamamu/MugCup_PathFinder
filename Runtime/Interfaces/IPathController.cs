@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace MugCup_PathFinder.Runtime
@@ -12,5 +14,6 @@ namespace MugCup_PathFinder.Runtime
         public IPathFinderController<T> InitializePathFinder();
    
         public void RequestPath(PathRequest<T> _request, bool _waitForComplete = false);
+        public Task RequestPathAsync(PathRequest<T> _request, Action _onCompleted);
     }
 }

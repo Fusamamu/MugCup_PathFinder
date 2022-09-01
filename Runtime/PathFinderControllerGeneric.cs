@@ -15,7 +15,7 @@ namespace MugCup_PathFinder.Runtime
         [SerializeField] private GridNodeData<T> gridNodeData;
 
         private bool isInit;
-       
+
         /// <summary>
         /// Select Target GridDataNode Used to Calculate Path.
         /// Must be called before Initialized.
@@ -72,6 +72,16 @@ namespace MugCup_PathFinder.Runtime
 
             if (_waitForComplete)
                 _findPathTask.Wait();
+        }
+        
+        public async Task RequestPathAsync(PathRequest<T> _request, Action _onCompleted)
+        {
+            await Task.Run(() =>
+            {
+                pathFinder.FindPath(_request, FinishedProcessingPath);
+            });
+            
+            _onCompleted?.Invoke();
         }
 
         private void FinishedProcessingPath(PathResult<T> _result) 

@@ -99,6 +99,12 @@ namespace MugCup_PathFinder.Runtime
 		    return this;
 	    }
 
+	    // public Agent SetPathToFollow(NodeBase[] _path)
+	    // {
+		   //  currentFollowedPath = _path;
+		   //  return this;
+	    // }
+
 	    public Agent StopFollowPath()
 	    {
 		    if (followPathCoroutine == null) 
