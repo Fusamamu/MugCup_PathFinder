@@ -14,6 +14,7 @@ namespace MugCup_PathFinder.Runtime.Examples
         public Vector3    NodeWorldPosition { get; set;  }
         
         public Vector3Int NextNodePosition  { get; set; }
+        public Vector3    ExitPosition      { get; set; }
         
         public int G_Cost { get; set; }
         public int H_Cost { get; set; }

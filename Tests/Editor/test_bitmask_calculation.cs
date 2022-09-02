@@ -28,6 +28,11 @@ public class test_bitmask_calculation
             set;
         }
         
+        public Vector3 ExitPosition {
+            get; 
+            set;
+        }
+        
         public int G_Cost {
             get;
             set;

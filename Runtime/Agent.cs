@@ -29,6 +29,18 @@ namespace MugCup_PathFinder.Runtime
 	    
 	    private IPathFinderController<NodeBase> pathFinderController;
 #endregion
+	    
+	    [Header("Path Node Tracking Data")]
+	    [SerializeField] private NodeBase nodeFrom;
+	    [SerializeField] private NodeBase nodeTo;
+
+	    [SerializeField] private Vector3 positionFrom;
+	    [SerializeField] private Vector3 positionTo;
+
+	    [SerializeField] private NodeDirection   direction;
+	    [SerializeField] private DirectionChange directionChange;
+	    
+	    [SerializeField] private float directionAngleFrom, directionAngleTo;
 
 	    private Coroutine followPathCoroutine;
 
@@ -160,7 +172,17 @@ namespace MugCup_PathFinder.Runtime
 	    }
 
 	    private IEnumerator FollowPath()
-	    { 
+	    {
+
+		    direction       = NodeDirection.East;
+		    directionChange = DirectionChange.None;
+
+		    directionAngleFrom = direction.GetAngle();
+		    directionAngleTo   = direction.GetAngle();
+
+		    transform.localRotation = direction.GetRotation();
+		    
+		    
 		    followingPath  = true;
 		    
 		    int _pathIndex = 0;
@@ -168,22 +190,89 @@ namespace MugCup_PathFinder.Runtime
 
 		    while (followingPath)
 		    {
-			    var _currentCellPos = (Vector3)currentFollowedPath[_pathIndex].NodePosition + Vector3.up;//Temp plus one up
-			    var _distToNextNode = Vector3.Distance(transform.position, _currentCellPos);
 			    
+			    
+			    //var _currentCell     = currentFollowedPath[_pathIndex];
+			    //var _currentCellPos = _currentCell.NodePosition + Vector3.up;//Temp plus one up
+
+			    nodeTo     = currentFollowedPath[_pathIndex];
+			    positionTo = nodeTo.ExitPosition + Vector3.up;//Temp plus one up
+			    
+			    // var _targetDirection = nodeTo.Direction;
+			    // var _targetRotation  = _targetDirection.GetRotation();
+
+			    if (directionChange != DirectionChange.None)
+			    {
+				    Quaternion _from = Quaternion.Euler(0, directionAngleFrom, 0);
+				    Quaternion _to   = Quaternion.Euler(0, directionAngleTo,   0);
+
+				    // while(Quaternion.Euler(transform.localEulerAngles) != _to)
+				    // {
+					    transform.localRotation = Quaternion.RotateTowards(_from, _to, 10f);
+					   //  yield return null;
+				    // }
+			    }
+			    
+			    
+			    
+			    var _distToNextNode = Vector3.Distance(transform.position, positionTo);
 			    if (_distToNextNode > float.Epsilon)
 			    {
-				    transform.position = Vector3.MoveTowards(transform.position, _currentCellPos, speed * Time.deltaTime);
+				    transform.position = Vector3.MoveTowards(transform.position, positionTo, speed * Time.deltaTime);
+				    
 				    yield return null;
 			    }
 			    else
 			    {
 				    _pathIndex++;
+				    
+				    nodeFrom     = nodeTo;
+				    positionFrom = positionTo;
+				    
+				    nodeTo     = currentFollowedPath[_pathIndex];
+				    positionTo = nodeTo.ExitPosition + Vector3.up;//Temp plus one up
+
+				    directionChange = direction.GetDirectionChangeTo(nodeTo.Direction);
+				    direction       = nodeTo.Direction;
+				    
+				    directionAngleFrom = directionAngleTo;
+				    
+				    switch (directionChange) 
+				    {
+					    case DirectionChange.None     : PrepareForward()   ; break;
+					    case DirectionChange.TurnRight: PrepareTurnRight() ; break;
+					    case DirectionChange.TurnLeft : PrepareTurnLeft()  ; break;
+					    default:                        PrepareTurnAround(); break;
+				    }
 			    }
 
 			    if (_pathIndex >= _lastIndex)
 				    followingPath = false;
 		    }
+	    }
+	    
+	    private void PrepareForward () 
+	    {
+		    directionAngleTo        = direction.GetAngle();
+		    //transform.localRotation = direction.GetRotation();
+	    }
+
+	    private void PrepareTurnRight () 
+	    {
+		    directionAngleTo = directionAngleFrom + 90f;
+		    //transform.localPosition = positionFrom + direction.GetHalfVector();
+	    }
+
+	    private void PrepareTurnLeft () 
+	    {
+		    directionAngleTo = directionAngleFrom - 90f;
+		    //transform.localPosition = positionFrom + direction.GetHalfVector();
+	    }
+
+	    private void PrepareTurnAround ()
+	    {
+		    directionAngleTo = directionAngleFrom + 180f;
+		    //transform.localPosition = positionFrom;
 	    }
 
 	    public IEnumerator FollowPath(PathInfo _pathInfo)

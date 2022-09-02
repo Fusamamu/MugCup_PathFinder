@@ -36,26 +36,27 @@ namespace MugCup_PathFinder.Runtime
             return (float)direction * 90f;
         }
 
-        public static DirectionChange GetDirectionChangeTo (this NodeDirection current, NodeDirection next) 
+        public static DirectionChange GetDirectionChangeTo (this NodeDirection _current, NodeDirection _next) 
         {
-            if (current == next) {
+            if (_current == _next) {
                 return DirectionChange.None;
             }
-            else if (current + 1 == next || current - 3 == next) {
+            else if (_current + 1 == _next || _current - 3 == _next) {
                 return DirectionChange.TurnRight;
             }
-            else if (current - 1 == next || current + 3 == next) {
+            else if (_current - 1 == _next || _current + 3 == _next) {
                 return DirectionChange.TurnLeft;
             }
+            
             return DirectionChange.TurnAround;
         }
 
-        public static Vector3 GetHalfVector (this NodeDirection direction) {
-            return halfVectors[(int)direction];
+        public static Vector3 GetHalfVector (this NodeDirection _direction) {
+            return halfVectors[(int)_direction];
         }
 
-        public static Quaternion GetRotation (this NodeDirection direction) {
-            return rotations[(int)direction];
+        public static Quaternion GetRotation (this NodeDirection _direction) {
+            return rotations[(int)_direction];
         }
     }
 }

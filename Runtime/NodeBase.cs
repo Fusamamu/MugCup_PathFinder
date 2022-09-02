@@ -12,6 +12,7 @@ namespace MugCup_PathFinder.Runtime
 	    public Vector3    NodeWorldPosition => nodeWorldPosition;
 	    
 	    public Vector3Int NextNodePosition  { get; set; }
+	    public Vector3    ExitPosition      { get; set; }
 
 	    public int G_Cost { get; set; }
 	    public int H_Cost { get; set; }
@@ -55,8 +56,14 @@ namespace MugCup_PathFinder.Runtime
 
 	    public void SetNextNodeOnPath(INode _node)
 	    {
-		    NextNodeOnPath = _node;
+		    NextNodeOnPath   = _node;
+		    NextNodePosition = _node.NodePosition;
+		    
+		    ExitPosition = (NodeWorldPosition + NextNodeOnPath.NodeWorldPosition) / (2.0f);
+		    
+		    Debug.Log("dsd");
 	    }
+	    
 	    public void SetNodePathDirection(NodeDirection _direction)
 	    {
 		    Direction = _direction;
@@ -65,6 +72,7 @@ namespace MugCup_PathFinder.Runtime
 		    Debug.Log(DIR);
 	    }
 
+	    //Not Use
 	    public INode GrowPathTo(INode _neighbor, NodeDirection _direction)
 	    {
 		    _neighbor.NextNodeOnPath = this;
