@@ -6,7 +6,7 @@ namespace MugCup_PathFinder.Runtime
 {
     public enum NodeDirection
     {
-        None, North, East, South, West
+        North, East, South, West
     }
     
     public enum DirectionChange 

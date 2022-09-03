@@ -203,7 +203,7 @@ namespace MugCup_PathFinder.Runtime
 
                 _currentNode.NextNodePosition = _nextPos;
                 
-                NodeDirection _direction = NodeDirection.None;
+                NodeDirection _direction = NodeDirection.North;
 
                 if (_nextPos.x > _currentPos.x)
                 {
