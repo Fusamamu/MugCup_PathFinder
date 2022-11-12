@@ -139,6 +139,18 @@ namespace MugCup_PathFinder.Runtime
             return _circleAreaPoints;
         }
 
+        public static IEnumerable<Vector3Int> GetRectAreaDistanceBased(Vector3Int _gridSize, Vector3Int _center, float _radius)
+        {
+            for (var _x = 0; _x < _gridSize.x; _x++)
+            for (var _z = 0; _z < _gridSize.z; _z++)
+            {
+                var _checkPos = new Vector3Int(_x, 0, _z);
+
+                if (IsInsideRect(_checkPos, _center, _radius))
+                    yield return _checkPos;
+            }
+        }
+
         public static bool IsInsideCircle(Vector3Int _checkedPos, Vector3Int _center, float _radius)
         {
             float _dx = _center.x - _checkedPos.x;
@@ -147,6 +159,14 @@ namespace MugCup_PathFinder.Runtime
             float _distance = Mathf.Sqrt(_dx*_dx + _dz*_dz);
             
             return _distance <= _radius;
+        }
+
+        public static bool IsInsideRect(Vector3Int _checkedPos, Vector3Int _center, float _radius)
+        {
+            float _distX = Mathf.Abs(_center.x - _checkedPos.x);
+            float _distY = Mathf.Abs(_center.z - _checkedPos.z);
+
+            return _distX <= _radius && _distY <= _radius;
         }
     }
 }
