@@ -224,6 +224,8 @@ namespace MugCup_PathFinder.Runtime
 
             return _node;
         }
+        
+        //public static T GetNode<T>(Vector2Int _nodePos,)
 
         public static bool NodePositionInsideGrid(Vector3Int _nodePos, Vector3Int _gridSize)
         {
@@ -704,14 +706,16 @@ namespace MugCup_PathFinder.Runtime
                             if (!_nodeObject.TryGetComponent(out _nodeBase))
                                 _nodeBase = _nodeObject.AddComponent<T>();
                             
-                            _nodeBase.NodePosition = new Vector3Int(_x, _y, _z);
+                            //_nodeBase.NodePosition = new Vector3Int(_x, _y, _z);
+                            _nodeBase.SetNodePosition(new Vector3Int(_x, _y, _z));
                         }
                         else
                         {
                             var _emptyNode = new GameObject("Empty Node");
                             
                             _nodeBase = _emptyNode.AddComponent<T>();
-                            _nodeBase.NodePosition = new Vector3Int(_x, _y, _z);
+                            //_nodeBase.NodePosition = new Vector3Int(_x, _y, _z);
+                            _nodeBase.SetNodePosition(new Vector3Int(_x, _y, _z));
                             
                             Undo.RegisterCreatedObjectUndo(_emptyNode, "Node Created");
                         }

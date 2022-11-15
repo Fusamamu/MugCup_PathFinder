@@ -83,7 +83,9 @@ namespace MugCup_PathFinder.Runtime
             
             _path.ToList().ForEach(_p =>
             {
-                _p.NodePosition += new Vector3Int(0, 1, 0);
+                //_p.NodePosition += new Vector3Int(0, 1, 0);
+                var _newPos = _p.NodePosition + new Vector3Int(0, 1, 0);
+                _p.SetNodePosition(_newPos);
             });
 
             var _pathGizmos = gameObject.AddComponent<PathGizmos>();

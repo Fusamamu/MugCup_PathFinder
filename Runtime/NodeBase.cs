@@ -8,8 +8,8 @@ namespace MugCup_PathFinder.Runtime
 	{
 	    public INode NodeParent { get; set; }
 			
-	    public Vector3Int NodePosition { get; set; }
-	    public Vector3    NodeWorldPosition => nodeWorldPosition;
+	    [field: SerializeField] public Vector3Int NodePosition      { get; private set; }
+	    [field: SerializeField] public Vector3    NodeWorldPosition { get; private set; }
 	    
 	    public Vector3Int NextNodePosition  { get; set; }
 	    public Vector3    ExitPosition      { get; set; }
@@ -19,8 +19,6 @@ namespace MugCup_PathFinder.Runtime
 	    public int F_Cost => G_Cost + H_Cost;
 			
 	    public int HeapIndex { get; set; }
-
-	    [SerializeField] private Vector3 nodeWorldPosition;
 	    
 	    public INode NorthNode { get; private set; }
 	    public INode SouthNode { get; private set; }
@@ -44,9 +42,14 @@ namespace MugCup_PathFinder.Runtime
 	        return -_compare;
 	    }
 
+	    public void SetNodePosition(Vector3Int _nodePosition)
+	    {
+		    NodePosition = _nodePosition;
+	    }
+
 	    public void SetNodeWorldPosition(Vector3 _worldPosition)
 	    {
-		    nodeWorldPosition = _worldPosition;
+		    NodeWorldPosition = _worldPosition;
 	    }
 
 	    public void SetNorthNode(INode _node) => NorthNode = _node;
@@ -60,14 +63,12 @@ namespace MugCup_PathFinder.Runtime
 		    NextNodePosition = _node.NodePosition;
 		    
 		    ExitPosition = (NodeWorldPosition + NextNodeOnPath.NodeWorldPosition) / (2.0f);
-		    
-		    Debug.Log("dsd");
 	    }
 	    
 	    public void SetNodePathDirection(NodeDirection _direction)
 	    {
 		    Direction = _direction;
-		    DIR = _direction;
+		    DIR       = _direction;
 		    
 		    Debug.Log(DIR);
 	    }
@@ -80,18 +81,5 @@ namespace MugCup_PathFinder.Runtime
 
 		    return _neighbor;
 	    }
-	    
-	    // GameTile GrowPathTo (GameTile neighbor, Direction direction) {
-		   //  if (neighbor == null || neighbor.HasPath) {
-			  //   return null;
-		   //  }
-		   //  neighbor.distance = distance + 1;
-		   //  neighbor.nextOnPath = this;
-		   //  neighbor.ExitPoint =
-			  //   neighbor.transform.localPosition + direction.GetHalfVector();
-		   //  neighbor.PathDirection = direction;
-		   //  return
-			  //   neighbor.Content.Type != GameTileContentType.Wall ? neighbor : null;
-	    // }
 	}
 }
