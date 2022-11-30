@@ -69,7 +69,6 @@ namespace MugCup_PathFinder.Runtime
 	    /// <summary>
 	    /// Use GridNodeData as Default Initialization.
 	    /// </summary>
-	    /// <param name="_gridNodeDataManager"></param>
 	    private void InjectGridNodeDataManager(GridNodeDataManager _gridNodeDataManager = null)
 	    {
 		    if(gridNodeDataManager == null)
@@ -131,7 +130,6 @@ namespace MugCup_PathFinder.Runtime
 	    /// <summary>
 	    /// Calculate Path by agent itself
 	    /// </summary>
-	    /// <param name="_startPos"></param>
 	    public Agent SetStartPos(Vector3Int _startPos)
 	    {
 		    startPosition = _startPos;
