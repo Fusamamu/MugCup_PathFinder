@@ -25,7 +25,6 @@ namespace MugCup_PathFinder.Runtime.Examples
         public INode WestNode  { get; }
         public INode EastNode  { get; }
         
-      
         public INode NextNodeOnPath { get; set; }
 
         public NodeDirection Direction { get; set; }
@@ -43,7 +42,6 @@ namespace MugCup_PathFinder.Runtime.Examples
         {
             return default;
         }
-
     }
 
     public class PathFinderExample : MonoBehaviour
