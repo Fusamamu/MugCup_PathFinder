@@ -230,7 +230,20 @@ namespace MugCup_PathFinder.Runtime
             return _node;
         }
         
-        //public static T GetNode<T>(Vector2Int _nodePos,)
+        public static T[] GetNodesByLevel<T>(int _gridLevel, Vector3Int _gridSize, T[] _grid) where T : NodeBase
+        {
+            int _rowUnit    = _gridSize.x;
+            int _columnUnit = _gridSize.z;
+            int _heightUnit = _gridSize.y;
+            
+            var _selectedBlockLevel = new T[_rowUnit * _columnUnit];
+            
+            for (var _x = 0; _x < _rowUnit   ; _x++)
+            for (var _z = 0; _z < _columnUnit; _z++)
+                _selectedBlockLevel[_z + _rowUnit * _x] = _grid[_z + _rowUnit * (_x + _heightUnit * _gridLevel)] as T;
+
+            return _selectedBlockLevel;
+        }
 
         public static bool NodePositionInsideGrid(Vector3Int _nodePos, Vector3Int _gridSize)
         {
