@@ -5,11 +5,11 @@ using UnityEngine;
 
 namespace MugCup_PathFinder.Runtime
 {
-    // [Serializable]
-    // public class GridNodeBaseData : GridNodeData<NodeBase>
-    // {
-    //     
-    // }
+    [Serializable]
+    public class GridNodeBaseData : GridNodeData<NodeBase>
+    {
+        
+    }
 
     [Serializable]
     public class GridNodeData<T> where T : NodeBase

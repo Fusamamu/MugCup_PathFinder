@@ -22,6 +22,11 @@ namespace MugCup_PathFinder.Runtime
 
             return _adjacentBlocks;
         }
+
+        public static IEnumerable<T> GetAdjacentNodes8Dir<T>(T _node, GridNodeData<T> _gridNodeData) where T : NodeBase
+        {
+            yield return (T)GetAdjacentNodes4Dir(_node, _gridNodeData.GridSize, _gridNodeData.GridNodes);
+        }
         
         public static IEnumerable<T> GetAdjacentNodes8Dir<T>(T _node, Vector3Int _gridSize, T[] _grid) where T: INode
         {
