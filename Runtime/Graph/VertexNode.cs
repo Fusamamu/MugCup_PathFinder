@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace MugCup_PathFinder.Runtime
 {
-    public class VertexNode : INode
+    public class VertexNode : MonoBehaviour, INode
     {
         public INode NodeParent { get; set; }
         
@@ -17,6 +17,13 @@ namespace MugCup_PathFinder.Runtime
         public int G_Cost { get; set; }
         public int H_Cost { get; set; }
         public int F_Cost { get; }
+        
+        
+        
+        
+        
+        
+        
         
         public INode NorthNode { get; }
         public INode SouthNode { get; }

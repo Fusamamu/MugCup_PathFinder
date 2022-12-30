@@ -11,9 +11,10 @@ namespace MugCup_PathFinder.Runtime
     {
         public Dictionary<VertexNode, VertexNode[]> Edges { get; private set; }
 
+        [SerializeField] private GridVertexData   GridVertexData;
         [SerializeField] private GridNodeBaseData GridNodeData;
 
-        [SerializeField] private Transform VertexPrefab;
+        [SerializeField] private VertexNode VertexPrefab;
 
         public GridGraph Initialized(GridNodeBaseData _gridNodeData)
         {
@@ -21,18 +22,44 @@ namespace MugCup_PathFinder.Runtime
             return this;
         }
 
+        public void GenerateValidVertices()
+        {
+            foreach (var _node in GridNodeData.GridNodes)
+            {
+                if(_node == null) continue;
+
+                if (!GridUtility.HasNodeOnTop(_node, GridNodeData.GridSize, GridNodeData.GridNodes))
+                {
+                    //Gen Vertex
+                    var _targetVertexPos = _node.NodeWorldPosition + Vector3.up;
+                    var _vertexNode = Instantiate(VertexPrefab, _targetVertexPos, Quaternion.identity);
+                }
+            }
+        }
+
         public GridGraph ConstructGraph()
         {
-            var _firstLevelNodes = GridUtility.GetNodesByLevel(0, GridNodeData.GridSize, GridNodeData.GridNodes);
+            var _firstLevelNodes = GridUtility.GetNodesByLevel(1, GridNodeData.GridSize, GridNodeData.GridNodes);
 
             foreach (var _node in _firstLevelNodes)
             {
-                //if(_node.)
+                if(_node != null) continue;
+
+                var _vertexNode = Instantiate(VertexPrefab, _node.NodeWorldPosition, Quaternion.identity);
+                
+                Edges.Add(_vertexNode, null);
+
+             
             }
             
 
             return this;
         }
+
+        // private VertexNode CreateVertex()
+        // {
+        //     
+        // }
 
         public VertexNode[] GetNeighbors(VertexNode _node)
         {

@@ -10,6 +10,17 @@ namespace MugCup_PathFinder.Runtime
 {
     public static class GridUtility
     {
+        public static bool HasNodeOnTop<T>(T _node, Vector3Int _gridSize, T[] _grid) where T: INode
+        {
+            return HasNodeOnTop(_node.NodePosition, _gridSize, _grid);
+        }
+        
+        public static bool HasNodeOnTop<T>(Vector3Int _nodePos, Vector3Int _gridSize, T[] _grid) where T: INode
+        {
+            var _topNode = GetNodeUp(_nodePos, _gridSize, _grid);
+            return _topNode != null;
+        }
+
         public static IEnumerable<T> GetAdjacentNodes4Dir<T>(T _node, Vector3Int _gridSize, T[] _grid) where T: INode
         {
             List<T> _adjacentBlocks = new List<T>
