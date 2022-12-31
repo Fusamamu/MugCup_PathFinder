@@ -13,9 +13,9 @@ namespace MugCup_PathFinder.Runtime
 	}
 
 	[Serializable]
-	public class PathRequestNodeBase : PathRequest<NodeBase>
+	public class PathRequestNodeBase : PathRequest<GridNode>
 	{
-		public PathRequestNodeBase(NodeBase _start, NodeBase _end, Action<NodeBase[], bool> _callback) : base(_start, _end, _callback)
+		public PathRequestNodeBase(GridNode _start, GridNode _end, Action<GridNode[], bool> _callback) : base(_start, _end, _callback)
 		{
 		}
 	}

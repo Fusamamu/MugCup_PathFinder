@@ -6,11 +6,11 @@ using UnityEngine;
 
 namespace MugCup_PathFinder.Runtime
 {
-    public interface IPathFinderController<T> where T : NodeBase
+    public interface IPathFinderController<T> where T : GridNode
     {
         public void Initialized();
 
-        public IPathFinderController<T> SelectGridDataNode(GridNodeData<T> _gridNodeData);
+        public IPathFinderController<T> SelectGridDataNode(GridData<T> _gridData);
         public IPathFinderController<T> InitializePathFinder();
    
         public void RequestPath(PathRequest<T> _request, bool _waitForComplete = false);

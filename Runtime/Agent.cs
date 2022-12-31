@@ -13,11 +13,11 @@ namespace MugCup_PathFinder.Runtime
 	    [SerializeField] private float speed     = 10f;
 	    [SerializeField] private float turnSpeed = 5f;
 
-	    [SerializeField] private NodeBase[] currentFollowedPath;
+	    [SerializeField] private GridNode[] currentFollowedPath;
 	    
 #region Selected Start/Target Position
-	    [SerializeField] private NodeBase startNode;
-	    [SerializeField] private NodeBase targetNode;
+	    [SerializeField] private GridNode StartGridNode;
+	    [SerializeField] private GridNode TargetGridNode;
 
 	    [SerializeField] private Vector3Int startPosition ;
 	    [SerializeField] private Vector3Int targetPosition;
@@ -25,17 +25,17 @@ namespace MugCup_PathFinder.Runtime
 
 #region Dependencies
 	    [SerializeField] private GridNodeDataManager    gridNodeDataManager;
-	    [SerializeField] private GridNodeData<NodeBase> gridNodeData;
+	    [SerializeField] private GridData<GridNode> GridData;
 	    
-	    private IPathFinderController<NodeBase> pathFinderController;
+	    private IPathFinderController<GridNode> pathFinderController;
 #endregion
 
 	    [Header("Path Node Tracking Data")]
 	    [SerializeField] private Transform model = default;
 	    
 	    [Space(10)]
-	    [SerializeField] private NodeBase nodeFrom;
-	    [SerializeField] private NodeBase nodeTo;
+	    [SerializeField] private GridNode GridNodeFrom;
+	    [SerializeField] private GridNode GridNodeTo;
 
 	    [Space(10)]
 	    [SerializeField] private Vector3 positionFrom;
@@ -53,14 +53,14 @@ namespace MugCup_PathFinder.Runtime
 	    public void SetUseGridNodeDataManager(bool _value) => useGridNodeDataManager = _value;
 	    public void SetUseNodeAsPosition     (bool _value) => useNodeAsPosition      = _value;
 	    
-	    public void LoadGridData(GridNodeData<NodeBase> _gridNodeData) => gridNodeData = _gridNodeData;
+	    public void LoadGridData(GridData<GridNode> _gridData) => GridData = _gridData;
 
-	    public void Initialized(IPathFinderController<NodeBase> _pathFinderController = null)
+	    public void Initialized(IPathFinderController<GridNode> _pathFinderController = null)
 	    {
 		    if(useGridNodeDataManager)
 				InjectGridNodeDataManager();
 		    else
-			    InjectCustomGridNodeData(gridNodeData);
+			    InjectCustomGridNodeData(GridData);
 		    
 		    InjectPathFinderController(_pathFinderController);
 	    }
@@ -80,21 +80,21 @@ namespace MugCup_PathFinder.Runtime
 			    return;
 		    }
 
-		    gridNodeData = gridNodeDataManager.GetGridNodeData();
+		    GridData = gridNodeDataManager.GetGridNodeData();
 	    }
 	    
-	    private void InjectCustomGridNodeData(GridNodeData<NodeBase> _gridNodeData)
+	    private void InjectCustomGridNodeData(GridData<GridNode> _gridData)
 	    {
-		    gridNodeData = _gridNodeData;
+		    GridData = _gridData;
 	    }
 	    
-	    public void InjectPathFinderController(IPathFinderController<NodeBase> _pathFinderController = null)
+	    public void InjectPathFinderController(IPathFinderController<GridNode> _pathFinderController = null)
 	    {
 		    pathFinderController = _pathFinderController ?? FindObjectOfType<PathFinderControllerNodeBase>();
 
 		    if (pathFinderController == null)
 		    {
-			    Debug.LogWarning($"{typeof(IPathFinderController<NodeBase>)} Missing Reference.");
+			    Debug.LogWarning($"{typeof(IPathFinderController<GridNode>)} Missing Reference.");
 		    }
 	    }
   #endregion
@@ -103,7 +103,7 @@ namespace MugCup_PathFinder.Runtime
 	    /// Get Complete Path from outside.
 	    /// </summary>
 	    /// <param name="_targetPath"></param>
-	    public Agent SetTargetPath(NodeBase[] _targetPath)
+	    public Agent SetTargetPath(GridNode[] _targetPath)
 	    {
 		    currentFollowedPath = _targetPath;
 		    return this;
@@ -152,16 +152,16 @@ namespace MugCup_PathFinder.Runtime
 
 		    if (!useNodeAsPosition)
 		    {
-			    startNode  = GridUtility.GetNode(startPosition,  gridNodeData);
-			    targetNode = GridUtility.GetNode(targetPosition, gridNodeData);
+			    StartGridNode  = GridUtility.GetNode(startPosition,  GridData);
+			    TargetGridNode = GridUtility.GetNode(targetPosition, GridData);
 		    }
 		    
-		    var _newPathRequest = new PathRequestNodeBase(startNode, targetNode, OnPathFoundHandler);
+		    var _newPathRequest = new PathRequestNodeBase(StartGridNode, TargetGridNode, OnPathFoundHandler);
 		    
 		    pathFinderController.RequestPath(_newPathRequest);
 	    }
 	    
-	    private void OnPathFoundHandler(NodeBase[] _nodePath, bool _pathSuccessful) 
+	    private void OnPathFoundHandler(GridNode[] _nodePath, bool _pathSuccessful) 
 	    {
 		    if (!_pathSuccessful) return;
 			    
@@ -186,8 +186,8 @@ namespace MugCup_PathFinder.Runtime
 
 		    while (followingPath)
 		    {
-			    nodeTo     = currentFollowedPath[_pathIndex];
-			    positionTo = nodeTo.ExitPosition + Vector3.up;//Temp plus one up
+			    GridNodeTo     = currentFollowedPath[_pathIndex];
+			    positionTo = GridNodeTo.ExitPosition + Vector3.up;//Temp plus one up
 			  
 			    if (directionChange != DirectionChange.None)
 			    {
@@ -200,14 +200,14 @@ namespace MugCup_PathFinder.Runtime
 				    {
 					    _pathIndex++;
 				    
-					    nodeFrom     = nodeTo;
+					    GridNodeFrom     = GridNodeTo;
 					    positionFrom = positionTo;
 				    
-					    nodeTo     = currentFollowedPath[_pathIndex];
-					    positionTo = nodeTo.ExitPosition + Vector3.up;//Temp plus one up
+					    GridNodeTo     = currentFollowedPath[_pathIndex];
+					    positionTo = GridNodeTo.ExitPosition + Vector3.up;//Temp plus one up
 
-					    directionChange = direction.GetDirectionChangeTo(nodeTo.Direction);
-					    direction       = nodeTo.Direction;
+					    directionChange = direction.GetDirectionChangeTo(GridNodeTo.Direction);
+					    direction       = GridNodeTo.Direction;
 				    
 					    directionAngleFrom = directionAngleTo;
 				    
@@ -233,14 +233,14 @@ namespace MugCup_PathFinder.Runtime
 				    {
 					    _pathIndex++;
 					    
-					    nodeFrom     = nodeTo;
+					    GridNodeFrom     = GridNodeTo;
 					    positionFrom = positionTo;
 					    
-					    nodeTo     = currentFollowedPath[_pathIndex];
-					    positionTo = nodeTo.ExitPosition + Vector3.up;//Temp plus one up
+					    GridNodeTo     = currentFollowedPath[_pathIndex];
+					    positionTo = GridNodeTo.ExitPosition + Vector3.up;//Temp plus one up
 
-					    directionChange = direction.GetDirectionChangeTo(nodeTo.Direction);
-					    direction       = nodeTo.Direction;
+					    directionChange = direction.GetDirectionChangeTo(GridNodeTo.Direction);
+					    direction       = GridNodeTo.Direction;
 					    
 					    directionAngleFrom = directionAngleTo;
 					    

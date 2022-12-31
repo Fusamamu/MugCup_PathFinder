@@ -7,7 +7,7 @@ namespace MugCup_PathFinder.Runtime
 {
     public static class Utilities
     {
-        public static T[] CovertAllNodes<T>(NodeBase[] _nodeBases) where T : NodeBase
+        public static T[] CovertAllNodes<T>(GridNode[] _nodeBases) where T : GridNode
         {
             var _newArray = new T[_nodeBases.Length];
 

@@ -9,7 +9,7 @@ namespace MugCup_PathFinder.Runtime
 	/// <summary>
     /// Using Heap sorting to find the node which least cost.
     /// </summary>
-    public class HeapPathFinderGeneric<T> : IPathFinder<T> where T : NodeBase, IHeapItem<T>
+    public class HeapPathFinderGeneric<T> : IPathFinder<T> where T : GridNode, IHeapItem<T>
     {
         public Vector3Int GridSize  { get; private set; }  
         public T[]        GridNodes { get; private set; }

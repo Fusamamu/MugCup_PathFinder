@@ -9,33 +9,33 @@ namespace MugCup_PathFinder.Runtime
 	/// <summary>
     /// Using Heap sorting to find the node which least cost.
     /// </summary>
-    public class HeapPathFinder : IPathFinder<NodeBase>
+    public class HeapPathFinder : IPathFinder<GridNode>
     {
         public Vector3Int GridSize  { get; set; }  
-        public NodeBase[] GridNodes { get; set; }
+        public GridNode[] GridNodes { get; set; }
         
         public Vector3Int GetGridSize()
         {
             return GridSize;
         }
-        public NodeBase[] GetGridNodes()
+        public GridNode[] GetGridNodes()
         {
             return GridNodes;
         }
         
         private readonly int maxIteration;
 
-        public HeapPathFinder(Vector3Int _gridSize, NodeBase[] _nodes, int _maxIteration = 50)
+        public HeapPathFinder(Vector3Int _gridSize, GridNode[] _nodes, int _maxIteration = 50)
         {
             GridSize     = _gridSize;
             GridNodes    = _nodes;
             maxIteration = _maxIteration;
         }
         
-        public IEnumerable<NodeBase> FindPath(NodeBase _origin, NodeBase _target)
+        public IEnumerable<GridNode> FindPath(GridNode _origin, GridNode _target)
         {
-            Heap   <NodeBase> _openSet   = new Heap   <NodeBase>(GridSize.x * GridSize.z);
-            HashSet<NodeBase> _closedSet = new HashSet<NodeBase>();
+            Heap   <GridNode> _openSet   = new Heap   <GridNode>(GridSize.x * GridSize.z);
+            HashSet<GridNode> _closedSet = new HashSet<GridNode>();
             
             _openSet.Add(_origin);
 
@@ -44,27 +44,27 @@ namespace MugCup_PathFinder.Runtime
             {
                 _iter++;
                 
-                NodeBase _node = _openSet.RemoveFirst();
+                GridNode _gridNode = _openSet.RemoveFirst();
                 
-                _closedSet.Add(_node);
+                _closedSet.Add(_gridNode);
 
-                if (_node == _target)
-                    return AStarPathFinder<NodeBase>.RetracePath(_origin, _target);
+                if (_gridNode == _target)
+                    return AStarPathFinder<GridNode>.RetracePath(_origin, _target);
 
-                List<NodeBase> _adjacentNodes = GridUtility.GetAdjacentNodes8Dir(_node, GridSize, GridNodes).ToList();
+                List<GridNode> _adjacentNodes = GridUtility.GetAdjacentNodes8Dir(_gridNode, GridSize, GridNodes).ToList();
 
-                foreach (NodeBase _adjacent in _adjacentNodes)
+                foreach (GridNode _adjacent in _adjacentNodes)
                 {
                     if(_closedSet.Contains(_adjacent) || _adjacent == null)
                         continue;
                     
-                    int _newCostToAdjacent = _node.G_Cost + AStarPathFinder<INode>.GetDistance(_node, _adjacent);
+                    int _newCostToAdjacent = _gridNode.G_Cost + AStarPathFinder<INode>.GetDistance(_gridNode, _adjacent);
 
                     if (_newCostToAdjacent < _adjacent.G_Cost || !_openSet.Contains(_adjacent))
                     {
                         _adjacent.G_Cost = _newCostToAdjacent;
                         _adjacent.H_Cost = AStarPathFinder<INode>.GetDistance(_adjacent, _target);
-                        _adjacent.NodeParent = _node;
+                        _adjacent.NodeParent = _gridNode;
                         
                         if(!_openSet.Contains(_adjacent))
                             _openSet.Add(_adjacent);
@@ -84,40 +84,40 @@ namespace MugCup_PathFinder.Runtime
         /// <param name="_onPathFound"></param>
         public void FindPath(PathRequestNodeBase _pathRequest, Action<PathResultNodeBase> _onPathFound)
         {
-            NodeBase[] _waypoints = Array.Empty<NodeBase>();
+            GridNode[] _waypoints = Array.Empty<GridNode>();
             
             bool _pathFound = false;
 
-            NodeBase _startNode  = _pathRequest.PathStart;
-            NodeBase _targetNode = _pathRequest.PathEnd;
+            GridNode _startGridNode  = _pathRequest.PathStart;
+            GridNode _targetGridNode = _pathRequest.PathEnd;
             
-            _startNode.NodeParent = _startNode;
+            _startGridNode.NodeParent = _startGridNode;
             
             //if (startNode.walkable && targetNode.walkable) 
             
-            Heap   <NodeBase> _openSet   = new Heap   <NodeBase>(GridSize.x * GridSize.z);
-            HashSet<NodeBase> _closedSet = new HashSet<NodeBase>();
+            Heap   <GridNode> _openSet   = new Heap   <GridNode>(GridSize.x * GridSize.z);
+            HashSet<GridNode> _closedSet = new HashSet<GridNode>();
             
-            _openSet.Add(_startNode);
+            _openSet.Add(_startGridNode);
 
             int _iter = 0;
             while (_openSet.Count > 0 && _iter < maxIteration)
             {
                 _iter++;
                 
-                NodeBase _currentNode = _openSet.RemoveFirst();
+                GridNode _currentGridNode = _openSet.RemoveFirst();
                 
-                _closedSet.Add(_currentNode);
+                _closedSet.Add(_currentGridNode);
 
-                if (_currentNode == _targetNode)
+                if (_currentGridNode == _targetGridNode)
                 {
                     _pathFound = true;
                     break;
                 }
 
-                List<NodeBase> _adjacentNodes = GridUtility.GetAdjacentNodes8Dir(_currentNode, GridSize, GridNodes).ToList();
+                List<GridNode> _adjacentNodes = GridUtility.GetAdjacentNodes8Dir(_currentGridNode, GridSize, GridNodes).ToList();
 
-                foreach (NodeBase _adjacent in _adjacentNodes)
+                foreach (GridNode _adjacent in _adjacentNodes)
                 {
                     // if (!neighbour.walkable || closedSet.Contains(neighbour)) {
                     //     continue;
@@ -126,13 +126,13 @@ namespace MugCup_PathFinder.Runtime
                     if(_closedSet.Contains(_adjacent) || _adjacent == null)
                         continue;
                     
-                    int _newCostToAdjacent = _currentNode.G_Cost + AStarPathFinder<INode>.GetDistance(_currentNode, _adjacent);
+                    int _newCostToAdjacent = _currentGridNode.G_Cost + AStarPathFinder<INode>.GetDistance(_currentGridNode, _adjacent);
 
                     if (_newCostToAdjacent < _adjacent.G_Cost || !_openSet.Contains(_adjacent))
                     {
                         _adjacent.G_Cost     = _newCostToAdjacent;
-                        _adjacent.H_Cost     = AStarPathFinder<INode>.GetDistance(_adjacent, _targetNode);
-                        _adjacent.NodeParent = _currentNode;
+                        _adjacent.H_Cost     = AStarPathFinder<INode>.GetDistance(_adjacent, _targetGridNode);
+                        _adjacent.NodeParent = _currentGridNode;
                         
                         if(!_openSet.Contains(_adjacent))
                             _openSet.Add(_adjacent);
@@ -144,7 +144,7 @@ namespace MugCup_PathFinder.Runtime
             
             if (_pathFound)
             {
-                _waypoints = AStarPathFinder<NodeBase>.RetracePath(_pathRequest.PathStart, _pathRequest.PathEnd).ToArray();
+                _waypoints = AStarPathFinder<GridNode>.RetracePath(_pathRequest.PathStart, _pathRequest.PathEnd).ToArray();
                 _pathFound = _waypoints.Length > 0;
             }
 
@@ -153,7 +153,7 @@ namespace MugCup_PathFinder.Runtime
             _onPathFound(_pathResult);
         }
         
-        public void FindPath<T>(PathRequest<T> _pathRequest, Action<PathResult<T>> _onPathFound) where T : NodeBase, IHeapItem<T>
+        public void FindPath<T>(PathRequest<T> _pathRequest, Action<PathResult<T>> _onPathFound) where T : GridNode, IHeapItem<T>
         {
             T[] _waypoints = Array.Empty<T>();
             

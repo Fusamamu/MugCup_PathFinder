@@ -16,8 +16,8 @@ namespace MugCup_PathFinder.Runtime
         private List<Agent> agents = new List<Agent>();
         
         [SerializeField] private Transform GridParent;
-        [SerializeField] private NodeBase NodePrefab;
-        [SerializeField] private GridNodeBaseData GridNodeBaseData;
+        [SerializeField] private GridNode GridNodePrefab;
+        [SerializeField] private GridNodeData GridNodeData;
 
         public Vector3Int SourceNodePos;
 
@@ -41,7 +41,7 @@ namespace MugCup_PathFinder.Runtime
 
         private void OnValidate()
         {
-            foreach (var _node in GridNodeBaseData.GridNodes)
+            foreach (var _node in GridNodeData.GridNodes)
             {
                 if(_node.gameObject.layer != LayerMask.NameToLayer("Structure")) continue;
                 
@@ -58,7 +58,7 @@ namespace MugCup_PathFinder.Runtime
 
         public void UpdateStructureNodes()
         {
-            foreach (var _node in GridNodeBaseData.GridNodes)
+            foreach (var _node in GridNodeData.GridNodes)
             {
                 if(_node.gameObject.layer != LayerMask.NameToLayer("Structure")) continue;
 
@@ -72,21 +72,21 @@ namespace MugCup_PathFinder.Runtime
 
         public void UpdateNodeWorldPosition()
         {
-            foreach (var _node in FindObjectsOfType<NodeBase>())
+            foreach (var _node in FindObjectsOfType<GridNode>())
                 _node.SetNodeWorldPosition(_node.transform.position);
         }
 
         public void GenerateGrid()
         {
-            if (!NodePrefab)
+            if (!GridNodePrefab)
             {
                 Debug.LogError("Need Node Prefab in Flow Filed");
                 return;
             }
             
-            GridNodeBaseData.GridNodes = GridUtility.GenerateGridINodes<NodeBase>(GridNodeBaseData.GridSize, NodePrefab.gameObject, GridParent.gameObject);
+            GridNodeData.GridNodes = GridUtility.GenerateGridINodes<GridNode>(GridNodeData.GridSize, GridNodePrefab.gameObject, GridParent.gameObject);
 
-            foreach (var _node in GridNodeBaseData.GridNodes)
+            foreach (var _node in GridNodeData.GridNodes)
             {
                 // if(Random.Range(0, 5) == 1)
                 // {
@@ -104,7 +104,7 @@ namespace MugCup_PathFinder.Runtime
 
         public void ClearGrid()
         {
-            foreach (var _node in GridNodeBaseData.GridNodes)
+            foreach (var _node in GridNodeData.GridNodes)
             {
                 if (!Application.isPlaying)
                     DestroyImmediate(_node.gameObject);
@@ -112,14 +112,14 @@ namespace MugCup_PathFinder.Runtime
                     Destroy(_node.gameObject);
             }
 
-            GridNodeBaseData.GridNodes = null;
+            GridNodeData.GridNodes = null;
         }
 
         public void StartSearch()
         {
             searchProcess = StartCoroutine(BreadthFirstSearch());
             
-            foreach (var _node in GridNodeBaseData.GridNodes)
+            foreach (var _node in GridNodeData.GridNodes)
             {
                 if(_node.gameObject.layer != LayerMask.NameToLayer("Structure")) continue;
 
@@ -151,13 +151,13 @@ namespace MugCup_PathFinder.Runtime
 
         public IEnumerator BreadthFirstSearch()
         {
-            var _openSet       = new Queue<NodeBase>();
-            var _closeSet      = new HashSet<NodeBase>();
+            var _openSet       = new Queue<GridNode>();
+            var _closeSet      = new HashSet<GridNode>();
             
-            var _structureNode = new HashSet<NodeBase>();
-            var _distTable     = new Dictionary<NodeBase, float>();
+            var _structureNode = new HashSet<GridNode>();
+            var _distTable     = new Dictionary<GridNode, float>();
 
-            var _startNode = GridUtility.GetNode(SourceNodePos, GridNodeBaseData);
+            var _startNode = GridUtility.GetNode(SourceNodePos, GridNodeData);
             _startNode.transform.position += Vector3.up;
             _startNode.NodeParent = null;
             _distTable.Add(_startNode, 0);
@@ -175,7 +175,7 @@ namespace MugCup_PathFinder.Runtime
                 SetNodeColor(_currentNode, CurrentNodeColor);
 
                 var _neighbors = GridUtility
-                    .GetAdjacentNodes8Dir(_currentNode, GridNodeBaseData.GridSize, GridNodeBaseData.GridNodes)
+                    .GetAdjacentNodes8Dir(_currentNode, GridNodeData.GridSize, GridNodeData.GridNodes)
                     .Where(_node => _node != null);
                 
                 foreach (var _node in _neighbors)
@@ -186,7 +186,7 @@ namespace MugCup_PathFinder.Runtime
                     SetNodeColor(_node, NeighborColor);
                 }
 
-                NodeBase _activeNeighbor = null;
+                GridNode _activeNeighbor = null;
 
                 foreach (var _node in _neighbors)
                 {
@@ -241,12 +241,12 @@ namespace MugCup_PathFinder.Runtime
         {
             for (var _i = 0; _i < AgentCount; _i++)
             {
-                var _xRandom = Random.Range(0, GridNodeBaseData.GridSize.x);
-                var _zRandom = Random.Range(0, GridNodeBaseData.GridSize.z);
+                var _xRandom = Random.Range(0, GridNodeData.GridSize.x);
+                var _zRandom = Random.Range(0, GridNodeData.GridSize.z);
 
                 var _targetPos = new Vector3Int(_xRandom, 0, _zRandom);
 
-                var _checkNode = GridUtility.GetNode(_targetPos, GridNodeBaseData.GridSize, GridNodeBaseData.GridNodes);
+                var _checkNode = GridUtility.GetNode(_targetPos, GridNodeData.GridSize, GridNodeData.GridNodes);
                 if (_checkNode != null && _checkNode.gameObject.layer != LayerMask.NameToLayer("Structure"))
                 {
                     var _newAgent = Instantiate(AgentPrefab, _targetPos + Vector3.up/2, Quaternion.identity);
@@ -259,7 +259,7 @@ namespace MugCup_PathFinder.Runtime
 
                     if (_checkNode.NodeParent != null)
                     {
-                        _followFlow.SetNextNode(_checkNode.NodeParent as NodeBase);
+                        _followFlow.SetNextNode(_checkNode.NodeParent as GridNode);
                         _followFlow.MoveToNextNode();
                     }
                 }
@@ -273,7 +273,7 @@ namespace MugCup_PathFinder.Runtime
                 var _agentPos = _agent.transform.position;
                 var _gridPos = new Vector3Int((int)_agentPos.x, 0, (int)_agentPos.z);
                 
-                var _currentNode = GridUtility.GetNode(_gridPos, GridNodeBaseData.GridSize, GridNodeBaseData.GridNodes);
+                var _currentNode = GridUtility.GetNode(_gridPos, GridNodeData.GridSize, GridNodeData.GridNodes);
 
                 if (_currentNode.NodeParent != null)
                 {
@@ -302,7 +302,7 @@ namespace MugCup_PathFinder.Runtime
             var _agentPos = _agent.transform.position;
             var _gridPos = new Vector3Int((int)_agentPos.x, 0, (int)_agentPos.z);
                 
-            var _currentNode = GridUtility.GetNode(_gridPos, GridNodeBaseData.GridSize, GridNodeBaseData.GridNodes);
+            var _currentNode = GridUtility.GetNode(_gridPos, GridNodeData.GridSize, GridNodeData.GridNodes);
             
             if (_currentNode.NodeParent != null)
             {
@@ -310,19 +310,19 @@ namespace MugCup_PathFinder.Runtime
             }
         }
 
-        private void SetNodeColor(NodeBase _node, float _value)
+        private void SetNodeColor(GridNode _gridNode, float _value)
         {
             //return;
             var _heatColor = HeatColor.Evaluate(_value / Divider);
-            SetNodeColor(_node, _heatColor);
+            SetNodeColor(_gridNode, _heatColor);
         }
         
-        private void SetNodeColor(NodeBase _node, Color _color)
+        private void SetNodeColor(GridNode _gridNode, Color _color)
         {
             //return;
             materialPropertyBlock ??= new MaterialPropertyBlock();
             materialPropertyBlock.SetColor(baseColor, _color);
-            _node.GetComponent<MeshRenderer>().SetPropertyBlock(materialPropertyBlock);
+            _gridNode.GetComponent<MeshRenderer>().SetPropertyBlock(materialPropertyBlock);
         }
         
     }

@@ -15,12 +15,12 @@ namespace MugCup_PathFinder.Runtime
     /// <summary>
     /// This is a Path Finder Component, used to custom your own properties
     /// </summary>
-    public class PathFinder : MonoBehaviour, IPathFinder<NodeBase>
+    public class PathFinder : MonoBehaviour, IPathFinder<GridNode>
     {
-        public NodeBase[] PathNodes => pathNodes;
+        public GridNode[] PathNodes => pathNodes;
         
         public Vector3Int GridSize  { get; private set; }  
-        public NodeBase[] GridNodes { get; private set; }
+        public GridNode[] GridNodes { get; private set; }
         
         public bool HasPath => pathNodes.Length > 1;
 
@@ -45,13 +45,13 @@ namespace MugCup_PathFinder.Runtime
         [SerializeField] private Vector3Int startPosition;
         [SerializeField] private Vector3Int targetPosition;
         
-        [SerializeField] private NodeBase startNode;
-        [SerializeField] private NodeBase targetNode;
+        [SerializeField] private GridNode StartGridNode;
+        [SerializeField] private GridNode TargetGridNode;
 
-        [SerializeField] private NodeBase[] gridNodes;
-        [SerializeField] private NodeBase[] pathNodes;
+        [SerializeField] private GridNode[] gridNodes;
+        [SerializeField] private GridNode[] pathNodes;
         
-        private IPathFinder<NodeBase> pathFinder;
+        private IPathFinder<GridNode> pathFinder;
 
         [SerializeField] private int maxIteration = 50;
         
@@ -77,7 +77,7 @@ namespace MugCup_PathFinder.Runtime
             gridSize = new Vector3Int(10, 1, 10);
             
             var _cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            gridNodes = GridUtility.GenerateGridINodes<NodeBase>(gridSize, _cube);
+            gridNodes = GridUtility.GenerateGridINodes<GridNode>(gridSize, _cube);
 
             var _path = GetPath(gridSize, gridNodes).ToArray();
             
@@ -93,38 +93,38 @@ namespace MugCup_PathFinder.Runtime
             _pathGizmos.SetGridRef(_path);
         }
 
-        public IEnumerable<NodeBase> GeneratePath()
+        public IEnumerable<GridNode> GeneratePath()
         {
             ClearPath();
             
-            gridNodes = GridUtility.GenerateGridINodes<NodeBase>(gridSize);
+            gridNodes = GridUtility.GenerateGridINodes<GridNode>(gridSize);
             
             var _pathFinder = new HeapPathFinder(gridSize, gridNodes, maxIteration);
 
-            NodeBase _startNode  = null;
-            NodeBase _targetNode = null;
+            GridNode _startGridNode  = null;
+            GridNode _targetGridNode = null;
 
             foreach (var _node in gridNodes)
             {
                 if (_node.NodePosition == startPosition) //Need to implement IComparable
-                    _startNode = _node;
+                    _startGridNode = _node;
 
                 if (_node.NodePosition == targetPosition)
-                    _targetNode = _node;
+                    _targetGridNode = _node;
             }
 
-            if (_startNode == null)
+            if (_startGridNode == null)
             {
                 Debug.Log("Start Node null");
                 return null;
             }
-            if (_targetNode == null)
+            if (_targetGridNode == null)
             {
                 Debug.Log("Target Node null");
                 return null;
             }
             
-            pathNodes = _pathFinder.FindPath(_startNode, _targetNode).ToArray();
+            pathNodes = _pathFinder.FindPath(_startGridNode, _targetGridNode).ToArray();
 
             return pathNodes;
         }
@@ -134,11 +134,11 @@ namespace MugCup_PathFinder.Runtime
             foreach (var _node in gridNodes)
                 DestroyImmediate(_node.gameObject);
             
-            gridNodes = Array.Empty<NodeBase>();
-            pathNodes = Array.Empty<NodeBase>();
+            gridNodes = Array.Empty<GridNode>();
+            pathNodes = Array.Empty<GridNode>();
         }
 
-        private IEnumerable<NodeBase> GetPath(Vector3Int _gridSize, NodeBase[] _gridNodes)
+        private IEnumerable<GridNode> GetPath(Vector3Int _gridSize, GridNode[] _gridNodes)
         {
             pathFinder = new HeapPathFinder(_gridSize, _gridNodes, maxIteration);
             
@@ -147,17 +147,17 @@ namespace MugCup_PathFinder.Runtime
             return _path;
         }
 
-        public IEnumerable<NodeBase> GetPath(Vector3Int _startPos, Vector3Int _targetPos)
+        public IEnumerable<GridNode> GetPath(Vector3Int _startPos, Vector3Int _targetPos)
         {
             return null;
         }
 
-        public IEnumerable<NodeBase> GetPath(NodeBase _startNode, NodeBase _targetNode)
+        public IEnumerable<GridNode> GetPath(GridNode _startGridNode, GridNode _targetGridNode)
         {
             return null;
         }
 
-        public IEnumerable<NodeBase> FindPath(NodeBase _origin, NodeBase _target)
+        public IEnumerable<GridNode> FindPath(GridNode _origin, GridNode _target)
         {
             throw new NotImplementedException();
         }

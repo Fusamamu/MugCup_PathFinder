@@ -6,13 +6,13 @@ using UnityEngine;
 
 namespace MugCup_PathFinder.Runtime
 {
-    public class PathFinderControllerGeneric<T> : MonoBehaviour, IPathFinderController<T> where T :NodeBase, IHeapItem<T>
+    public class PathFinderControllerGeneric<T> : MonoBehaviour, IPathFinderController<T> where T :GridNode, IHeapItem<T>
     {
         private readonly Queue<PathResult<T>> pathResults = new Queue<PathResult<T>>();
 
         private HeapPathFinderGeneric<T> pathFinder;
         
-        [SerializeField] private GridNodeData<T> gridNodeData;
+        [SerializeField] private GridData<T> GridData;
 
         private bool isInit;
 
@@ -20,11 +20,11 @@ namespace MugCup_PathFinder.Runtime
         /// Select Target GridDataNode Used to Calculate Path.
         /// Must be called before Initialized.
         /// </summary>
-        /// <param name="_gridNodeData"></param>
+        /// <param name="_gridData"></param>
         /// <returns></returns>
-        public IPathFinderController<T> SelectGridDataNode(GridNodeData<T> _gridNodeData)
+        public IPathFinderController<T> SelectGridDataNode(GridData<T> _gridData)
         {
-            gridNodeData = _gridNodeData;
+            GridData = _gridData;
             return this;
         }
         
@@ -36,8 +36,8 @@ namespace MugCup_PathFinder.Runtime
         {
             pathFinder = new HeapPathFinderGeneric<T>
             (
-                gridNodeData.GridSize, 
-                gridNodeData.GridNodes
+                GridData.GridSize, 
+                GridData.GridNodes
             );
             return this;
         }

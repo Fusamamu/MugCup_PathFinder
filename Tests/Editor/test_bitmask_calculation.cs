@@ -44,7 +44,10 @@ public class test_bitmask_calculation
         public int F_Cost {
             get;
         }
-        
+
+        public HashSet<INode> Neighbors {
+            get;
+        }
         public INode NorthNode { get; }
         public INode SouthNode { get; }
         public INode WestNode  { get; }

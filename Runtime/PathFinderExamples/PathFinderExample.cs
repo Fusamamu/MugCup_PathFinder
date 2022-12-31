@@ -19,6 +19,8 @@ namespace MugCup_PathFinder.Runtime.Examples
         public int G_Cost { get; set; }
         public int H_Cost { get; set; }
         public int F_Cost => G_Cost + H_Cost;
+
+        public HashSet<INode> Neighbors { get; }
         
         public INode NorthNode { get; }
         public INode SouthNode { get; }
@@ -26,7 +28,7 @@ namespace MugCup_PathFinder.Runtime.Examples
         public INode EastNode  { get; }
         
         public INode NextNodeOnPath { get; set; }
-
+    
         public NodeDirection Direction { get; set; }
         
         public void SetNextNodeOnPath(INode _node)
@@ -37,7 +39,7 @@ namespace MugCup_PathFinder.Runtime.Examples
         {
 		    
         }
-
+    
         public INode GrowPathTo(INode _neighbor, NodeDirection _direction)
         {
             return default;
@@ -46,19 +48,19 @@ namespace MugCup_PathFinder.Runtime.Examples
 
     public class PathFinderExample : MonoBehaviour
     {
-        [SerializeField] private NodeBase startNode;
-        [SerializeField] private NodeBase targetNode;
+        [SerializeField] private GridNode StartGridNode;
+        [SerializeField] private GridNode TargetGridNode;
         
         [SerializeField] private Vector3Int gridSize;
 
-        [SerializeField] private NodeBase[] gridNodes;
+        [SerializeField] private GridNode[] gridNodes;
 
-        private IPathFinder<NodeBase> pathFinder;
+        private IPathFinder<GridNode> pathFinder;
 
         void Start()
         {
             var _cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            gridNodes = GridUtility.GenerateGridINodes<NodeBase>(gridSize, _cube);
+            gridNodes = GridUtility.GenerateGridINodes<GridNode>(gridSize, _cube);
 
             var _path = GetPathUsingHeapPathFinder().ToArray();
 
@@ -67,7 +69,7 @@ namespace MugCup_PathFinder.Runtime.Examples
             _pathGizmos.SetGridRef(_path);
         }
 
-        private IEnumerable<NodeBase> GetPathUsingHeapPathFinder()
+        private IEnumerable<GridNode> GetPathUsingHeapPathFinder()
         {
             pathFinder = new HeapPathFinder(gridSize, gridNodes);
             var _path = pathFinder.FindPath(gridNodes[0], gridNodes[40]).ToArray();
@@ -75,11 +77,11 @@ namespace MugCup_PathFinder.Runtime.Examples
             return _path;
         }
 
-        private IEnumerable<NodeBase> GetPathUsingStaticPathFinder()
+        private IEnumerable<GridNode> GetPathUsingStaticPathFinder()
         {
-            AStarPathFinder<NodeBase>.InitializeGridData(gridSize, gridNodes);
+            AStarPathFinder<GridNode>.InitializeGridData(gridSize, gridNodes);
             
-            var _path = AStarPathFinder<NodeBase>.FindPath(gridNodes[0], gridNodes[40]).ToArray();
+            var _path = AStarPathFinder<GridNode>.FindPath(gridNodes[0], gridNodes[40]).ToArray();
 
             return _path;
         }

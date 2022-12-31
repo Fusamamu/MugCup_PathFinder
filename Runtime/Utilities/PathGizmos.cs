@@ -11,9 +11,9 @@ namespace MugCup_PathFinder.Runtime
             
         [SerializeField] private Color nodeColor = Color.blue;
         
-        private NodeBase[] grid;
+        private GridNode[] grid;
 
-        public void SetGridRef(NodeBase[] _grid)
+        public void SetGridRef(GridNode[] _grid)
         {
             grid = _grid;
         }

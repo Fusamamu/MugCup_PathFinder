@@ -12,9 +12,9 @@ namespace MugCup_PathFinder.Runtime
         }
     }
 
-    public class PathResultNodeBase : PathResult<NodeBase>
+    public class PathResultNodeBase : PathResult<GridNode>
     {
-        public PathResultNodeBase(NodeBase[] _path, bool _success, Action<NodeBase[], bool> _onPathFound) : base(_path, _success, _onPathFound)
+        public PathResultNodeBase(GridNode[] _path, bool _success, Action<GridNode[], bool> _onPathFound) : base(_path, _success, _onPathFound)
         {
         }
     }

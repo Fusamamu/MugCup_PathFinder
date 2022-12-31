@@ -8,7 +8,7 @@ namespace MugCup_PathFinder.Runtime
     public class GridNodeDataSetting : ScriptableObject
     {
         public Agent      AgentPrefab;
-        public NodeBase   NodePrefab;
+        public GridNode   GridNodePrefab;
         public Vector3Int GridSize;
     }
 }

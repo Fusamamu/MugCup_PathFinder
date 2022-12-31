@@ -6,8 +6,8 @@ namespace MugCup_PathFinder.Runtime
 {
     public class FollowFlowField : MonoBehaviour
     {
-        [field: SerializeField] public NodeBase CurrentNode { get; private set; }
-        [field: SerializeField] public NodeBase NextNode    { get; private set; }
+        [field: SerializeField] public GridNode CurrentGridNode { get; private set; }
+        [field: SerializeField] public GridNode NextGridNode    { get; private set; }
 
         [SerializeField] private float MoveSpeed = 1f;
 
@@ -18,14 +18,14 @@ namespace MugCup_PathFinder.Runtime
             MoveSpeed = _speed;
         }
 
-        public void SetCurrentNode(NodeBase _node)
+        public void SetCurrentNode(GridNode _gridNode)
         {
-            CurrentNode = _node;
+            CurrentGridNode = _gridNode;
         }
 
-        public void SetNextNode(NodeBase _node)
+        public void SetNextNode(GridNode _gridNode)
         {
-            NextNode = _node;
+            NextGridNode = _gridNode;
         }
 
         public void MoveToNextNode()
@@ -35,8 +35,8 @@ namespace MugCup_PathFinder.Runtime
 
         public IEnumerator MoveCoroutine()
         {
-            var _originPos  = CurrentNode.NodeWorldPosition  + Vector3.up / 2;
-            var _targetPos  = NextNode   .NodeWorldPosition  + Vector3.up / 2;
+            var _originPos  = CurrentGridNode.NodeWorldPosition  + Vector3.up / 2;
+            var _targetPos  = NextGridNode   .NodeWorldPosition  + Vector3.up / 2;
 
             float _tValue = 0;
 
@@ -51,17 +51,17 @@ namespace MugCup_PathFinder.Runtime
 
                 if (Vector3.Distance(transform.position, _targetPos) <= float.Epsilon)
                 {
-                    if(NextNode.NodeParent == null)
+                    if(NextGridNode.NodeParent == null)
                         yield break;
                     
-                    SetCurrentNode(NextNode);
+                    SetCurrentNode(NextGridNode);
 
-                    if (CurrentNode.NodeParent != null)
+                    if (CurrentGridNode.NodeParent != null)
                     {
-                        SetNextNode(CurrentNode.NodeParent as NodeBase);
+                        SetNextNode(CurrentGridNode.NodeParent as GridNode);
 
-                        _originPos = CurrentNode.NodeWorldPosition + Vector3.up / 2;
-                        _targetPos = NextNode.NodeWorldPosition    + Vector3.up / 2;
+                        _originPos = CurrentGridNode.NodeWorldPosition + Vector3.up / 2;
+                        _targetPos = NextGridNode.NodeWorldPosition    + Vector3.up / 2;
 
                         _tValue = 0;
                     }

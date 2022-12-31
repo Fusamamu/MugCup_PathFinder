@@ -267,7 +267,7 @@ namespace MugCup_PathFinder.Editor
             }
         }
 
-        private void DrawPath(NodeBase[] _path)
+        private void DrawPath(GridNode[] _path)
         {
             Handles.color = Color.red;
 
@@ -282,7 +282,7 @@ namespace MugCup_PathFinder.Editor
             }
         }
 
-        private void DrawArrow(NodeBase[] _path)
+        private void DrawArrow(GridNode[] _path)
         {
             Handles.color = Color.red;
             
@@ -290,7 +290,7 @@ namespace MugCup_PathFinder.Editor
             Handles.ArrowHandleCap(0, pathFinderHandleTransform.position + new Vector3(5,5,5), Quaternion.identity, 20, EventType.Ignore);
         }
 
-        private void DisplayText(NodeBase[] _nodes)
+        private void DisplayText(GridNode[] _nodes)
         {
             foreach (var _node in _nodes)
             {
