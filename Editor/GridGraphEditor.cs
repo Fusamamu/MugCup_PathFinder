@@ -29,6 +29,10 @@ namespace MugCup_PathFinder.Editor
             if (GUILayout.Button("Clear Vertex Data"))
             {
                 gridGraph.ClearVertexData();
+                
+                var _gridNodes = FindObjectsOfType<GridNode>();
+                foreach (var _node in _gridNodes)
+                    _node.SetVertexNodeInit(false);
             }
         }
     }

@@ -99,10 +99,10 @@ namespace MugCup_PathFinder.Runtime
                 _vertexNode.SetNodeWorldPosition(_vertexWorldPos);
                 _vertexNode.SetNodePosition     (_vertexGridPos);
 
+                GridVertexData.AddNode(_vertexNode, _vertexGridPos);
+                
                 if (!VertexToGirdNodeLut.ContainsKey(_vertexNode))
                     VertexToGirdNodeLut.Add(_vertexNode, _node);
-                        
-                GridVertexData.AddNode(_vertexNode, _vertexGridPos);
             }
         }
 
@@ -121,11 +121,13 @@ namespace MugCup_PathFinder.Runtime
                         .Where(_v => _v != null)
                         .ToArray();
 
-
                     if (VertexToGirdNodeLut.TryGetValue(_vertex, out var _gridNode))
                     {
+                        if (_gridNode.ConnectorCount == 0)
+                            _gridNode.Connect4Directions();
+                        
                         var _validVertexConnects = _gridNode
-                            .NodeConnectorsWorldPos
+                            .WorldNodeConnector
                             .Select(_connectPos => _connectPos + Vector3.up)
                             .Select(_vertexPos =>
                             {

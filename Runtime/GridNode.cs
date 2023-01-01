@@ -2,18 +2,11 @@ using System;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices.ComTypes;
 using UnityEngine;
 
 namespace MugCup_PathFinder.Runtime
 {
-	[Serializable]
-	public struct NodeData
-	{
-		public Vector3    WorldPos;
-		public Vector3Int GridPos;
-		public Vector3Int GridPosLocal;
-	}
-
 	public class GridNode : MonoBehaviour, INode, IHeapItem<GridNode>, IObstacle
 	{
 		[field: SerializeField] public bool IsObstacle       { get; protected set; } = true;
@@ -26,92 +19,102 @@ namespace MugCup_PathFinder.Runtime
 
 		public IEnumerable<(Vector3, Vector3Int)> GenerateVertexNodePositions()
 		{
-			var _width = Mathf.Abs(OccupiedDimension.x);
-			var _depth = Mathf.Abs(OccupiedDimension.z);
-			
-			for (var _i = 0; _i < _width + 1; _i++)
+			//Temp don't know why onvalidate not called
+			if (OccupiedPositions == null || OccupiedPositions.Count == 0)
 			{
-				for (var _j = 0; _j < _depth + 1; _j++)
+				OccupiedPositions = new List<Vector3>
 				{
-					int _x = _i;
-					int _z = _j;
+					NodeWorldPosition
+				};
+			}
 
-					if (OccupiedDimension.x < 0)
-						_x = _i * -1;
+			int _i = 0;
+			foreach (var _pos in OccupiedPositions)
+			{
+				var _targetVertexWorldPos = _pos + Vector3.up / 2;
 
-					if (OccupiedDimension.z < 0)
-						_z = _j * -1;
-
-					var _targetVertexWorldPos = NodeWorldPosition + Vector3.up / 2 + new Vector3(_x, 0, _z);
-					var _targetVertexGridPos  = NodePosition      + Vector3Int.up  + new Vector3Int(_x, 0, _z);
-
-					yield return (_targetVertexWorldPos, _targetVertexGridPos);
+				if (LocalVertexConnectors.Count != 0)
+				{
+					_targetVertexWorldPos = _pos + LocalVertexConnectors[_i];
 				}
+				_i++;
+				
+				var _targetVertexGridPos  =  new Vector3Int((int)_pos.x, (int)_pos.y, (int)_pos.z) + Vector3Int.up;
+
+				yield return (_targetVertexWorldPos, _targetVertexGridPos);
 			}
 		}
-
-		public IEnumerable<Vector3> NodeConnectorsWorldPos 
+		
+		[field: SerializeField] private List<Vector3> LocalNodeConnectors = new List<Vector3>();
+		
+		public IEnumerable<Vector3> WorldNodeConnector 
 		{
 			get
 			{
-				foreach (var _connect in NodeConnects)
-					yield return NodeWorldPosition + _connect;
+				foreach (var _pos in LocalNodeConnectors)
+					yield return _pos + NodeWorldPosition;
 			}
 		}
 
-		public List<Vector3> NodeConnects 
+		public int ConnectorCount => LocalNodeConnectors.Count;
+
+		public void Connect4Directions()
+		{
+			LocalNodeConnectors = new List<Vector3>
+			{
+				Vector3.forward,
+				Vector3.right,
+				Vector3.back,
+				Vector3.left
+			};
+		}
+
+		[SerializeField] private List<Vector3> LocalEdgeConnectors = new List<Vector3>();
+		
+		public IEnumerable<Vector3> WorldEdgeConnectors 
 		{
 			get
 			{
-				if (NodeConnectors == null || NodeConnectors.Count == 0)
+				foreach (var _pos in LocalEdgeConnectors)
+					yield return _pos + NodeWorldPosition;
+			}
+		}
+
+		[SerializeField] private List<Vector3> LocalVertexConnectors = new List<Vector3>();
+		
+		public IEnumerable<Vector3> WorldVertexConnectors 
+		{
+			get
+			{
+				if (OccupiedPositions == null || OccupiedPositions.Count == 0)
 				{
-					NodeConnectors = new List<Vector3>
+					OccupiedPositions = new List<Vector3>
 					{
-						Vector3.forward,
-						Vector3.right,
-						Vector3.back,
-						Vector3.left
+						Vector3.zero
 					};
 				}
 				
-				return NodeConnectors;
-			}
-			
-			protected set => NodeConnectors = value;
-		}
-
-		[SerializeField] private List<Vector3> NodeConnectors = new List<Vector3>();
-		
-		
-
-		public IEnumerable<Vector3> EdgeConnects 
-		{
-			get
-			{
-				foreach (var _pos in EdgeConnectors)
+				if (LocalVertexConnectors == null || LocalVertexConnectors.Count == 0)
 				{
-					yield return _pos + NodeWorldPosition;
+					LocalVertexConnectors = new List<Vector3>
+					{
+						Vector3.zero
+					};
 				}
+				
+				
+				for (var _i = 0; _i < OccupiedPositions.Count; _i++)
+					yield return OccupiedPositions[_i] + LocalVertexConnectors[_i];
 			}
 		}
-			
-		[SerializeField] private List<Vector3> EdgeConnectors = new List<Vector3>();
- 
 
 #region Occupy Area
 		[field: SerializeField] public Vector3 OccupiedDimension { get; private set; }
+		[field: SerializeField] public List<Vector3> OccupiedPositions = new List<Vector3>();
 
-		public List<Vector3> AllOccupiedPos {
-			get
-			{
-				return OccupiedPositions;
-			}
-		}
-
-		[SerializeField] private List<Vector3> OccupiedPositions = new List<Vector3>();
+		public int Width => (int)Mathf.Abs(OccupiedDimension.x) + 1;
+		public int Depth => (int)Mathf.Abs(OccupiedDimension.z) + 1;
 		
-		
-
 		private void OnValidate()
 		{
 			UpdateOccupiedPositions();
@@ -121,50 +124,23 @@ namespace MugCup_PathFinder.Runtime
 		{
 			OccupiedPositions.Clear();
 			
-			var _width = Mathf.Abs(OccupiedDimension.x);
-			var _depth = Mathf.Abs(OccupiedDimension.z);
-			
-			for (var _i = 0; _i < _width + 1; _i++)
-			{
-				for (var _j = 0; _j < _depth + 1; _j++)
+			for (var _i = 0; _i < Width; _i++)
+				for (var _j = 0; _j < Depth; _j++)
 				{
-					int _x = _i;
-					int _z = _j;
-
-					if (OccupiedDimension.x < 0)
-						_x = _i * -1;
-
-					if (OccupiedDimension.z < 0)
-						_z = _j * -1;
+					int _x = OccupiedDimension.x < 0 ? _i * -1 : _i;
+					int _z = OccupiedDimension.z < 0 ? _j * -1 : _j;
 					
 					var _targetPos = NodePosition + new Vector3(_x, 0, _z);
-
 					OccupiedPositions.Add(_targetPos);
 				}
-			}
 		}
 
 		public void AddSelfToGrid(GridNodeData _gridNodeData)
 		{
-			var _width = Mathf.Abs(OccupiedDimension.x);
-			var _depth = Mathf.Abs(OccupiedDimension.z);
-			
-			for (var _i = 0; _i < _width + 1; _i++)
+			foreach (var _position in OccupiedPositions)
 			{
-				for (var _j = 0; _j < _depth + 1; _j++)
-				{
-					int _x = _i;
-					int _z = _j;
-
-					if (OccupiedDimension.x < 0)
-						_x = _i * -1;
-
-					if (OccupiedDimension.z < 0)
-						_z = _j * -1;
-					
-					var _targetPos = NodePosition + new Vector3Int(_x, 0, _z);
-					GridUtility.AddNode(this, _targetPos, _gridNodeData.GridSize, ref _gridNodeData.GridNodes);
-				}
+				var _targetPos = new Vector3Int((int)_position.x, (int)_position.y, (int)_position.z);
+				GridUtility.AddNode(this, _targetPos, _gridNodeData.GridSize, ref _gridNodeData.GridNodes);
 			}
 		}
 #endregion
@@ -177,10 +153,10 @@ namespace MugCup_PathFinder.Runtime
 			OccupiedDimension = _rotation.MultiplyPoint(OccupiedDimension);
 			OccupiedDimension = new Vector3(Mathf.Round(OccupiedDimension.x), 0, Mathf.Round(OccupiedDimension.z));
 
-			for(int _i = 0; _i < NodeConnectors.Count; _i++)
+			for(int _i = 0; _i < LocalNodeConnectors.Count; _i++)
 			{
-				var _newVec = _rotation.MultiplyPoint(NodeConnectors[_i]);
-				NodeConnectors[_i] = new Vector3(Mathf.Round(_newVec.x), NodeConnectors[_i].y, Mathf.Round(_newVec.z));
+				var _newVec = _rotation.MultiplyPoint(LocalNodeConnectors[_i]);
+				LocalNodeConnectors[_i] = new Vector3(Mathf.Round(_newVec.x), LocalNodeConnectors[_i].y, Mathf.Round(_newVec.z));
 			}
 			
 			UpdateOccupiedPositions();
@@ -269,9 +245,9 @@ namespace MugCup_PathFinder.Runtime
 		
 		private void OnDrawGizmosSelected()
 		{
-			if (NodeConnectors != null && NodeConnectors.Count > 0)
+			if (LocalNodeConnectors != null && LocalNodeConnectors.Count > 0)
 			{
-				foreach (var _node in NodeConnectors)
+				foreach (var _node in LocalNodeConnectors)
 				{
 					Gizmos.color = Color.green;
 					var _size = 1.1f;
@@ -286,11 +262,19 @@ namespace MugCup_PathFinder.Runtime
 				Gizmos.DrawWireCube(_pos, new Vector3(_size, _size, _size));
 			}
 
-			foreach (var _edgeConnect in EdgeConnects)　　
+			// foreach (var _edgeConnect in WorldEdgeConnectors)　　
+			// {
+			// 	var _size = 0.2f;
+			// 	Gizmos.color = Color.blue;
+			// 	Gizmos.DrawCube(_edgeConnect, new Vector3(_size, _size, _size));
+			// }
+			
+			
+			foreach (var _vertexConnect in WorldVertexConnectors)　　
 			{
 				var _size = 0.2f;
 				Gizmos.color = Color.blue;
-				Gizmos.DrawCube(_edgeConnect, new Vector3(_size, _size, _size));
+				Gizmos.DrawCube(_vertexConnect, new Vector3(_size, _size, _size));
 			}
 		}
 	}
