@@ -13,8 +13,10 @@ namespace MugCup_PathFinder.Runtime
     {
         public Dictionary<VertexNode, VertexNode[]> Edges { get; private set; }
 
+        public Dictionary<VertexNode, GridNode> VertexToGirdNodeLut { get; private set; } = new Dictionary<VertexNode, GridNode>();
+
         [SerializeField] private GridNodeData GridData;
-        [SerializeField] private GridVertexData   GridVertexData;
+        [SerializeField] private GridVertexData GridVertexData;
 
         [SerializeField] private VertexNode VertexPrefab;
         [SerializeField] private Transform VertexParent;
@@ -64,29 +66,14 @@ namespace MugCup_PathFinder.Runtime
 
                 if (!GridUtility.HasNodeOnTop(_node, GridData.GridSize, GridData.GridNodes))
                 {
-                    var _targetVertexPos = _node.NodeWorldPosition + Vector3.up / 2;
-                    
-                    var _vertexNode = Instantiate(VertexPrefab, _targetVertexPos, Quaternion.identity, VertexParent);
-                    
-                    _vertexNode.SetNodePosition     (_node.NodePosition + Vector3Int.up);
-                    _vertexNode.SetNodeWorldPosition(_targetVertexPos);
-                    
-                    GridVertexData.AddNode(_vertexNode, _vertexNode.NodePosition);
+                    AddVertex(_node);
                 }
                 else
                 {
                     var _topNode = GridUtility.GetNodeUp(_node.NodePosition, GridData.GridSize, GridData.GridNodes);
-
                     if (!_topNode.IsObstacle)
                     {
-                        var _targetVertexPos = _node.NodeWorldPosition + Vector3.up / 2;
-                    
-                        var _vertexNode = Instantiate(VertexPrefab, _targetVertexPos, Quaternion.identity, VertexParent);
-                    
-                        _vertexNode.SetNodePosition     (_node.NodePosition + Vector3Int.up);
-                        _vertexNode.SetNodeWorldPosition(_targetVertexPos);
-                    
-                        GridVertexData.AddNode(_vertexNode, _vertexNode.NodePosition);
+                        AddVertex(_node);
                     }
                 }
             }
@@ -97,6 +84,26 @@ namespace MugCup_PathFinder.Runtime
             if (!Application.isPlaying)
                 EditorUtility.SetDirty(GridVertexData);
             #endif
+        }
+
+        private void AddVertex(GridNode _node)
+        {
+            if(_node.IsVertexNodeInit) return;
+            
+            _node.SetVertexNodeInit(true);
+
+            foreach ((Vector3 _vertexWorldPos, Vector3Int _vertexGridPos) in _node.GenerateVertexNodePositions())
+            {
+                var _vertexNode = Instantiate(VertexPrefab, _vertexWorldPos, Quaternion.identity, VertexParent);
+                        
+                _vertexNode.SetNodeWorldPosition(_vertexWorldPos);
+                _vertexNode.SetNodePosition     (_vertexGridPos);
+
+                if (!VertexToGirdNodeLut.ContainsKey(_vertexNode))
+                    VertexToGirdNodeLut.Add(_vertexNode, _node);
+                        
+                GridVertexData.AddNode(_vertexNode, _vertexGridPos);
+            }
         }
 
         private void MapGraph()
@@ -110,9 +117,24 @@ namespace MugCup_PathFinder.Runtime
                 if (!Edges.ContainsKey(_vertex))
                 {
                     var _vertices = GridUtility
-                        .GetAdjacentNodes8Dir(_vertex, GridVertexData.GridSize, GridVertexData.GridNodes)
+                        .GetNodesFrom3x3Cubes(_vertex, GridVertexData.GridSize, GridVertexData.GridNodes)
                         .Where(_v => _v != null)
                         .ToArray();
+
+
+                    if (VertexToGirdNodeLut.TryGetValue(_vertex, out var _gridNode))
+                    {
+                        var _validVertexConnects = _gridNode
+                            .NodeConnectorsWorldPos
+                            .Select(_connectPos => _connectPos + Vector3.up)
+                            .Select(_vertexPos =>
+                            {
+                                var _vertexGridPos = new Vector3Int((int)_vertexPos.x, (int)_vertexPos.y, (int)_vertexPos.z);
+                                return _vertexGridPos;
+                            });
+
+                        _vertices = _vertices.Where(_v => _validVertexConnects.Contains(_v.NodePosition)).ToArray();
+                    }
                     
                     Edges.Add(_vertex, _vertices);
                 }
