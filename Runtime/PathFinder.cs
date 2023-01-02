@@ -84,7 +84,7 @@ namespace MugCup_PathFinder.Runtime
             _path.ToList().ForEach(_p =>
             {
                 //_p.NodePosition += new Vector3Int(0, 1, 0);
-                var _newPos = _p.NodePosition + new Vector3Int(0, 1, 0);
+                var _newPos = _p.NodeGridPosition + new Vector3Int(0, 1, 0);
                 _p.SetNodePosition(_newPos);
             });
 
@@ -106,10 +106,10 @@ namespace MugCup_PathFinder.Runtime
 
             foreach (var _node in gridNodes)
             {
-                if (_node.NodePosition == startPosition) //Need to implement IComparable
+                if (_node.NodeGridPosition == startPosition) //Need to implement IComparable
                     _startGridNode = _node;
 
-                if (_node.NodePosition == targetPosition)
+                if (_node.NodeGridPosition == targetPosition)
                     _targetGridNode = _node;
             }
 
@@ -183,7 +183,7 @@ namespace MugCup_PathFinder.Runtime
             
             foreach (var _node in gridNodes)
             {
-                Gizmos.DrawSphere(_node.NodePosition, nodeRadius);
+                Gizmos.DrawSphere(_node.NodeGridPosition, nodeRadius);
             }
         }
         

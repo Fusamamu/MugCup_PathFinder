@@ -7,12 +7,12 @@ namespace MugCup_PathFinder.Runtime
     public class VertexNode : MonoBehaviour, INode
     {
 #region Node Position Information
-        [field: SerializeField] public Vector3Int NodePosition      { get; private set; }
+        [field: SerializeField] public Vector3Int NodeGridPosition      { get; private set; }
         [field: SerializeField] public Vector3    NodeWorldPosition { get; private set; }
 	    
         public INode SetNodePosition(Vector3Int _nodePosition)
         {
-            NodePosition = _nodePosition;
+            NodeGridPosition = _nodePosition;
             return this;
         }
 
@@ -33,7 +33,7 @@ namespace MugCup_PathFinder.Runtime
         public void SetNextNodeOnPath(INode _node)
         {
             NextNodeOnPath   = _node;
-            NextNodePosition = _node.NodePosition;
+            NextNodePosition = _node.NodeGridPosition;
 		    
             ExitPosition = (NodeWorldPosition + NextNodeOnPath.NodeWorldPosition) / 2.0f;
         }

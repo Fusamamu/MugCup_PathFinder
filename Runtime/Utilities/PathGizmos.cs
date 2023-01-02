@@ -28,7 +28,7 @@ namespace MugCup_PathFinder.Runtime
             
             foreach (var _node in grid)
             {
-                Gizmos.DrawSphere(_node.NodePosition, nodeRadius);
+                Gizmos.DrawSphere(_node.NodeGridPosition, nodeRadius);
             }
             
         }

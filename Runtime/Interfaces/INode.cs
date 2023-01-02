@@ -7,7 +7,7 @@ namespace MugCup_PathFinder.Runtime
 {
 	public interface INode
 	{
-		public Vector3Int NodePosition      { get; }
+		public Vector3Int NodeGridPosition      { get; }
 		public Vector3    NodeWorldPosition { get; }
 		
 		public void SetNextNodeOnPath   (INode _node);

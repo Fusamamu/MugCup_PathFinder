@@ -198,8 +198,8 @@ namespace MugCup_PathFinder.Runtime
                 
                 _currentNode.SetNextNodeOnPath(_nextNode);
 
-                var _currentPos = _currentNode.NodePosition;
-                var _nextPos    = _nextNode   .NodePosition;
+                var _currentPos = _currentNode.NodeGridPosition;
+                var _nextPos    = _nextNode   .NodeGridPosition;
 
                 _currentNode.NextNodePosition = _nextPos;
                 
@@ -228,8 +228,8 @@ namespace MugCup_PathFinder.Runtime
         
         public static int GetDistance(T _nodeA, T _nodeB)
         {
-            int _distanceX = Math.Abs(_nodeA.NodePosition.x - _nodeB.NodePosition.x);
-            int _distanceY = Math.Abs(_nodeA.NodePosition.y - _nodeB.NodePosition.y);
+            int _distanceX = Math.Abs(_nodeA.NodeGridPosition.x - _nodeB.NodeGridPosition.x);
+            int _distanceY = Math.Abs(_nodeA.NodeGridPosition.y - _nodeB.NodeGridPosition.y);
 
             if (_distanceX > _distanceY)
                 return 14 * _distanceY + 10 * (_distanceX - _distanceY);

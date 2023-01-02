@@ -273,8 +273,8 @@ namespace MugCup_PathFinder.Editor
 
             for (var _i = 0; _i < _path.Length - 1; _i++)
             {
-                var _p0 = _path[_i].NodePosition;
-                var _p1 = _path[_i + 1].NodePosition;
+                var _p0 = _path[_i].NodeGridPosition;
+                var _p1 = _path[_i + 1].NodeGridPosition;
       
                 var _thickness = 7;
                 
@@ -294,7 +294,7 @@ namespace MugCup_PathFinder.Editor
         {
             foreach (var _node in _nodes)
             {
-                var _textPos = _node.NodePosition + Vector3Int.up;
+                var _textPos = _node.NodeGridPosition + Vector3Int.up;
                 var _nodeCost = 
                     $"F : {_node.F_Cost}\n" +
                     $"G : {_node.G_Cost}\n" +

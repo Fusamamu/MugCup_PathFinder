@@ -12,7 +12,7 @@ namespace MugCup_PathFinder.Runtime
     {
         public static bool HasNodeOnTop<T>(T _node, Vector3Int _gridSize, T[] _grid) where T: INode
         {
-            return HasNodeOnTop(_node.NodePosition, _gridSize, _grid);
+            return HasNodeOnTop(_node.NodeGridPosition, _gridSize, _grid);
         }
         
         public static bool HasNodeOnTop<T>(Vector3Int _nodePos, Vector3Int _gridSize, T[] _grid) where T: INode
@@ -25,10 +25,10 @@ namespace MugCup_PathFinder.Runtime
         {
             List<T> _adjacentBlocks = new List<T>
             {
-                GetNodeLeft        (_node.NodePosition, _gridSize, _grid),
-                GetNodeRight       (_node.NodePosition, _gridSize, _grid),
-                GetNodeForward     (_node.NodePosition, _gridSize, _grid),
-                GetNodeBack        (_node.NodePosition, _gridSize, _grid)
+                GetNodeLeft        (_node.NodeGridPosition, _gridSize, _grid),
+                GetNodeRight       (_node.NodeGridPosition, _gridSize, _grid),
+                GetNodeForward     (_node.NodeGridPosition, _gridSize, _grid),
+                GetNodeBack        (_node.NodeGridPosition, _gridSize, _grid)
             };
 
             return _adjacentBlocks;
@@ -41,7 +41,7 @@ namespace MugCup_PathFinder.Runtime
         
         public static IEnumerable<T> GetAdjacentNodes8Dir<T>(T _node, Vector3Int _gridSize, T[] _grid) where T : INode
         {
-            return GetAdjacentNodes8Dir(_node.NodePosition, _gridSize, _grid);
+            return GetAdjacentNodes8Dir(_node.NodeGridPosition, _gridSize, _grid);
         }
         
         public static IEnumerable<T> GetAdjacentNodes8Dir<T>(Vector3Int _nodePos, Vector3Int _gridSize, T[] _grid) where T : INode
@@ -77,15 +77,15 @@ namespace MugCup_PathFinder.Runtime
         {
             List<T> _topSectionNodes = new List<T>
             {
-                GetNodeUpBackLeft    (_node.NodePosition, _gridSize, _grid),
-                GetNodeUpLeft        (_node.NodePosition, _gridSize, _grid),
-                GetNodeUpForwardLeft (_node.NodePosition, _gridSize, _grid),
-                GetNodeUpBack        (_node.NodePosition, _gridSize, _grid),
-                GetNodeUp            (_node.NodePosition, _gridSize, _grid),
-                GetNodeUpForward     (_node.NodePosition, _gridSize, _grid),
-                GetNodeUpBackRight   (_node.NodePosition, _gridSize, _grid),
-                GetNodeUpRight       (_node.NodePosition, _gridSize, _grid),
-                GetNodeUpForwardRight(_node.NodePosition, _gridSize, _grid)
+                GetNodeUpBackLeft    (_node.NodeGridPosition, _gridSize, _grid),
+                GetNodeUpLeft        (_node.NodeGridPosition, _gridSize, _grid),
+                GetNodeUpForwardLeft (_node.NodeGridPosition, _gridSize, _grid),
+                GetNodeUpBack        (_node.NodeGridPosition, _gridSize, _grid),
+                GetNodeUp            (_node.NodeGridPosition, _gridSize, _grid),
+                GetNodeUpForward     (_node.NodeGridPosition, _gridSize, _grid),
+                GetNodeUpBackRight   (_node.NodeGridPosition, _gridSize, _grid),
+                GetNodeUpRight       (_node.NodeGridPosition, _gridSize, _grid),
+                GetNodeUpForwardRight(_node.NodeGridPosition, _gridSize, _grid)
             };
 
             return _topSectionNodes;
@@ -95,15 +95,15 @@ namespace MugCup_PathFinder.Runtime
         {
             List<T> _middleSectionNodes = new List<T>
             {
-                GetNodeBackLeft    (_node.NodePosition, _gridSize, _grid),
-                GetNodeLeft        (_node.NodePosition, _gridSize, _grid),
-                GetNodeForwardLeft (_node.NodePosition, _gridSize, _grid),
-                GetNodeBack        (_node.NodePosition, _gridSize, _grid),
-                GetNode            (_node.NodePosition, _gridSize, _grid),
-                GetNodeForward     (_node.NodePosition, _gridSize, _grid),
-                GetNodeBackRight   (_node.NodePosition, _gridSize, _grid),
-                GetNodeRight       (_node.NodePosition, _gridSize, _grid),
-                GetNodeForwardRight(_node.NodePosition, _gridSize, _grid)
+                GetNodeBackLeft    (_node.NodeGridPosition, _gridSize, _grid),
+                GetNodeLeft        (_node.NodeGridPosition, _gridSize, _grid),
+                GetNodeForwardLeft (_node.NodeGridPosition, _gridSize, _grid),
+                GetNodeBack        (_node.NodeGridPosition, _gridSize, _grid),
+                GetNode            (_node.NodeGridPosition, _gridSize, _grid),
+                GetNodeForward     (_node.NodeGridPosition, _gridSize, _grid),
+                GetNodeBackRight   (_node.NodeGridPosition, _gridSize, _grid),
+                GetNodeRight       (_node.NodeGridPosition, _gridSize, _grid),
+                GetNodeForwardRight(_node.NodeGridPosition, _gridSize, _grid)
             };
 
             return _middleSectionNodes;
@@ -113,15 +113,15 @@ namespace MugCup_PathFinder.Runtime
         {
             List<T> _bottomSectionNodes = new List<T>
             {
-                GetNodeDownBackLeft    (_node.NodePosition, _gridSize, _grid),
-                GetNodeDownLeft        (_node.NodePosition, _gridSize, _grid),
-                GetNodeDownForwardLeft (_node.NodePosition, _gridSize, _grid),
-                GetNodeDownBack        (_node.NodePosition, _gridSize, _grid),
-                GetNodeDown            (_node.NodePosition, _gridSize, _grid),
-                GetNodeDownForward     (_node.NodePosition, _gridSize, _grid),
-                GetNodeDownBackRight   (_node.NodePosition, _gridSize, _grid),
-                GetNodeDownRight       (_node.NodePosition, _gridSize, _grid),
-                GetNodeDownForwardRight(_node.NodePosition, _gridSize, _grid)
+                GetNodeDownBackLeft    (_node.NodeGridPosition, _gridSize, _grid),
+                GetNodeDownLeft        (_node.NodeGridPosition, _gridSize, _grid),
+                GetNodeDownForwardLeft (_node.NodeGridPosition, _gridSize, _grid),
+                GetNodeDownBack        (_node.NodeGridPosition, _gridSize, _grid),
+                GetNodeDown            (_node.NodeGridPosition, _gridSize, _grid),
+                GetNodeDownForward     (_node.NodeGridPosition, _gridSize, _grid),
+                GetNodeDownBackRight   (_node.NodeGridPosition, _gridSize, _grid),
+                GetNodeDownRight       (_node.NodeGridPosition, _gridSize, _grid),
+                GetNodeDownForwardRight(_node.NodeGridPosition, _gridSize, _grid)
             };
 
             return _bottomSectionNodes;

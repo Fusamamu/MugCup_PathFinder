@@ -70,7 +70,7 @@ namespace MugCup_PathFinder.Runtime
                 }
                 else
                 {
-                    var _topNode = GridUtility.GetNodeUp(_node.NodePosition, GridData.GridSize, GridData.GridNodes);
+                    var _topNode = GridUtility.GetNodeUp(_node.NodeGridPosition, GridData.GridSize, GridData.GridNodes);
                     if (!_topNode.IsObstacle)
                     {
                         AddVertex(_node);
@@ -135,7 +135,7 @@ namespace MugCup_PathFinder.Runtime
                                 return _vertexGridPos;
                             });
 
-                        _vertices = _vertices.Where(_v => _validVertexConnects.Contains(_v.NodePosition)).ToArray();
+                        _vertices = _vertices.Where(_v => _validVertexConnects.Contains(_v.NodeGridPosition)).ToArray();
                     }
                     
                     Edges.Add(_vertex, _vertices);

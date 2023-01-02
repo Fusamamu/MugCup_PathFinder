@@ -14,7 +14,7 @@ public class test_bitmask_calculation
             get;
             set;
         }
-        public Vector3Int NodePosition {
+        public Vector3Int NodeGridPosition {
             get;
             set;
         }
