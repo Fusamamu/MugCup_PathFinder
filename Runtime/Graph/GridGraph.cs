@@ -11,13 +11,19 @@ namespace MugCup_PathFinder.Runtime
 {
     public class GridGraph : MonoBehaviour, IGraph<VertexNode>
     {
-        public Dictionary<VertexNode, VertexNode[]> Edges { get; private set; }
-
-        public Dictionary<VertexNode, GridNode> VertexToGirdNodeLut { get; private set; } = new Dictionary<VertexNode, GridNode>();
-
-        [SerializeField] private GridNodeData GridData;
+        [Header("Grid Data")]
+        [SerializeField] private GridNodeData   GridData;
         [SerializeField] private GridVertexData GridVertexData;
 
+        [field: SerializeField] public List<GraphEdge> GraphEdges { get; private set; }   = new List<GraphEdge>();
+        
+        public Dictionary<VertexNode, VertexNode[]> Edges { get; private set; }
+
+        public Dictionary<VertexNode, GridNode> VertexToGirdNodeTable { get; private set; } = new Dictionary<VertexNode, GridNode>();
+        
+        
+
+        [Header("Game Object")]
         [SerializeField] private VertexNode VertexPrefab;
         [SerializeField] private Transform VertexParent;
 
@@ -27,8 +33,6 @@ namespace MugCup_PathFinder.Runtime
         [SerializeField] private bool DisplayLine;
         [SerializeField] private float EdgeWidth;
         
-        public Vector3 StartTangent;
-        public Vector3 EndTangent;
 
         private void OnValidate()
         {
@@ -43,10 +47,16 @@ namespace MugCup_PathFinder.Runtime
             }
 
             if (Edges == null)
-            {
                 MapGraph();
-            }
         }
+        
+        
+        
+        
+        
+        
+        
+        
 
         public GridGraph Initialized(GridNodeData _gridData)
         {
@@ -60,10 +70,10 @@ namespace MugCup_PathFinder.Runtime
                 .InitializeGridUnitSize(GridData.GridSize)
                 .InitializeGridArray();
             
-            foreach (var _node in GridData.GridNodes)
+            
+            
+            foreach (var _node in GridData.GridNodes.Where(_node => _node != null))
             {
-                if(_node == null) continue;
-
                 if (!GridUtility.HasNodeOnTop(_node, GridData.GridSize, GridData.GridNodes))
                 {
                     AddVertex(_node);
@@ -77,9 +87,16 @@ namespace MugCup_PathFinder.Runtime
                     }
                 }
             }
+            
+            
+            
+            
+            
+            
            
             MapGraph();
 
+            //Must move to somewhereelse
             #if UNITY_EDITOR
             if (!Application.isPlaying)
                 EditorUtility.SetDirty(GridVertexData);
@@ -89,22 +106,75 @@ namespace MugCup_PathFinder.Runtime
         private void AddVertex(GridNode _node)
         {
             if(_node.IsVertexNodeInit) return;
-            
             _node.SetVertexNodeInit(true);
 
             foreach ((Vector3 _vertexWorldPos, Vector3Int _vertexGridPos) in _node.GenerateVertexNodePositions())
             {
-                var _vertexNode = Instantiate(VertexPrefab, _vertexWorldPos, Quaternion.identity, VertexParent);
-                        
-                _vertexNode.SetNodeWorldPosition(_vertexWorldPos);
-                _vertexNode.SetNodePosition     (_vertexGridPos);
-
-                GridVertexData.AddNode(_vertexNode, _vertexGridPos);
+                var _vertexNode = AddVertex(_vertexGridPos, _vertexWorldPos);
                 
-                if (!VertexToGirdNodeLut.ContainsKey(_vertexNode))
-                    VertexToGirdNodeLut.Add(_vertexNode, _node);
+                if (!VertexToGirdNodeTable.ContainsKey(_vertexNode))
+                    VertexToGirdNodeTable.Add(_vertexNode, _node);
             }
         }
+
+        private VertexNode AddVertex(Vector3Int _atGridPos, Vector3 _atWorldPosition)
+        {
+            var _vertexNode = Instantiate(VertexPrefab, _atWorldPosition, Quaternion.identity, VertexParent);
+                        
+            _vertexNode.SetNodeWorldPosition(_atWorldPosition);
+            _vertexNode.SetNodePosition     (_atGridPos);
+
+            GridVertexData.AddNode(_vertexNode, _atGridPos);
+
+            return _vertexNode;
+        }
+
+        private void AddEdge(VertexNode _from, VertexNode _to)
+        {
+            var _edge = new GraphEdge(_from, _to);
+            GraphEdges.Add(_edge);
+        }
+
+        private void MapGraphRevised()
+        {
+            
+            foreach (var _vertex in GridVertexData.GridNodes.Where(_vertex => _vertex != null))
+            {
+                var _vertices = GetVertexNeighbors(_vertex);
+
+                if (VertexToGirdNodeTable.TryGetValue(_vertex, out var _gridNode))
+                {
+                    //Should find a way to set this beforehand
+                    if (_gridNode.ConnectorCount == 0)
+                        _gridNode.Connect4Directions();
+                        
+                    var _validVertexConnects = _gridNode
+                        .WorldNodeConnector
+                        .Select(_connectPos => _connectPos + Vector3.up)
+                        .Select(_vertexPos =>
+                        {
+                            var _vertexGridPos = new Vector3Int((int)_vertexPos.x, (int)_vertexPos.y, (int)_vertexPos.z);
+                            return _vertexGridPos;
+                        });
+
+                    _vertices = _vertices.Where(_v => _validVertexConnects.Contains(_v.NodeGridPosition)).ToArray();
+                }
+                    
+            }
+        }
+
+        public IEnumerable<VertexNode> GetVertexNeighbors(VertexNode _vertex)
+        {
+            return GridUtility
+                .GetNodesFrom3x3Cubes(_vertex, GridVertexData.GridSize, GridVertexData.GridNodes)
+                .Where(_v => _v != null);
+        }
+        
+        
+        
+        
+        
+        
 
         private void MapGraph()
         {
@@ -121,7 +191,7 @@ namespace MugCup_PathFinder.Runtime
                         .Where(_v => _v != null)
                         .ToArray();
 
-                    if (VertexToGirdNodeLut.TryGetValue(_vertex, out var _gridNode))
+                    if (VertexToGirdNodeTable.TryGetValue(_vertex, out var _gridNode))
                     {
                         if (_gridNode.ConnectorCount == 0)
                             _gridNode.Connect4Directions();
@@ -143,21 +213,25 @@ namespace MugCup_PathFinder.Runtime
             }
         }
 
+        
+        
+        
+        
         public void ClearVertexData()
         {
             GridVertexData.ClearData();
             Edges.Clear();
         }
 
-        public VertexNode[] GetNeighbors(VertexNode _node)
-        {
-            return null;
-        }
-        
-        public double GetWeightCost(VertexNode _nodeA, VertexNode _nodeB)
-        {
-            return 0;
-        }
+        // public VertexNode[] GetNeighbors(VertexNode _node)
+        // {
+        //     return null;
+        // }
+        //
+        // public double GetWeightCost(VertexNode _nodeA, VertexNode _nodeB)
+        // {
+        //     return 0;
+        // }
 
         private void OnDrawGizmos()
         {

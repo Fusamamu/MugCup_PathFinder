@@ -134,7 +134,6 @@ namespace MugCup_PathFinder.Runtime
 			{
 				var _occupiedPos = OccupiedPositions[_i];
 
-
 				var _vertexPos = _i < LocalVertexConnectors.Count ? LocalVertexConnectors[_i] : new Vector3(0, 0.5f, 0);
 
 				if (!OccupiedToVertexTable.ContainsKey(_occupiedPos))
@@ -170,6 +169,13 @@ namespace MugCup_PathFinder.Runtime
 				var _newVec = _rotation.MultiplyPoint(LocalNodeConnectors[_i]);
 				LocalNodeConnectors[_i] = new Vector3(Mathf.Round(_newVec.x), LocalNodeConnectors[_i].y, Mathf.Round(_newVec.z));
 			}
+			
+			//Rotate Local Vertex Pos still not working because rounding 0.5 to 0 or 1
+			// for(int _i = 0; _i < LocalVertexConnectors.Count; _i++)
+			// {
+			// 	var _newVec = _rotation.MultiplyPoint(LocalVertexConnectors[_i]);
+			// 	LocalVertexConnectors[_i] = new Vector3(Mathf.Round(_newVec.x), LocalVertexConnectors[_i].y, Mathf.Round(_newVec.z));
+			// }
 			
 			UpdateOccupiedPositions();
 		}

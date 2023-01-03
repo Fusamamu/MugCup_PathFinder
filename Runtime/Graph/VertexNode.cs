@@ -6,6 +6,12 @@ namespace MugCup_PathFinder.Runtime
 {
     public class VertexNode : MonoBehaviour, INode
     {
+        [field: SerializeField] public int Id       { get; set; }
+        [field: SerializeField] public string Label { get; set; }
+        [field: SerializeField] public bool Visited { get; set; }
+        
+        [field: SerializeField] public List<GraphEdge> Edges { get; set; }
+        
 #region Node Position Information
         [field: SerializeField] public Vector3Int NodeGridPosition      { get; private set; }
         [field: SerializeField] public Vector3    NodeWorldPosition { get; private set; }
