@@ -16,6 +16,12 @@ namespace MugCup_PathFinder.Runtime
         public void AddEdges(IEnumerable<GraphEdge> _edges)
         {
             Edges.AddRange(_edges);
+
+            foreach (var _edge in _edges)
+            {
+                var _node = _edge.To;
+                Neighbors.Add(_node);
+            }
         }
         
 #region Node Position Information
@@ -75,7 +81,20 @@ namespace MugCup_PathFinder.Runtime
         
 #region Node Neighbors
         public INode NodeParent { get; set; }
-        public HashSet<INode> Neighbors { get;  }
+        public HashSet<INode> Neighbors { get; private set; }
+        
+        public IEnumerable<T> GetNeighbors<T>() where T : INode
+        {
+            foreach (var _edge in Edges)
+            {
+                yield return (T)_edge.To;
+            }
+        }
+        
+        public void SetNeighbors<T>(IEnumerable<T> _neighbors) where T : INode
+        {
+            throw new NotImplementedException();
+        }
 #endregion
 
         private void OnDrawGizmosSelected()

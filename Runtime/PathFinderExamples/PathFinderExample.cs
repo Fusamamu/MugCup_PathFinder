@@ -21,7 +21,15 @@ namespace MugCup_PathFinder.Runtime.Examples
         public int F_Cost => G_Cost + H_Cost;
 
         public HashSet<INode> Neighbors { get; }
-        
+        public IEnumerable<T> GetNeighbors<T>() where T : INode
+        {
+            throw new System.NotImplementedException();
+        }
+        public void SetNeighbors<T>(IEnumerable<T> _neighbors) where T : INode
+        {
+            throw new System.NotImplementedException();
+        }
+
         public INode NorthNode { get; }
         public INode SouthNode { get; }
         public INode WestNode  { get; }

@@ -76,12 +76,22 @@ namespace MugCup_PathFinder.Runtime
 		[field: SerializeField] public INode NodeParent { get; set; }
 		[field: SerializeField] public HashSet<INode> Neighbors { get; }
 
-	    public void SetNeighbors<T>(GridData<T> _gridNodeData) where T : INode
+	    public void SetNeighbors<T>(IEnumerable<T> _neighbors) where T : INode
+		{
+			
+		}
+	    
+		public void SetNeighbors<T>(GridData<T> _gridNodeData) where T : INode
 	    {
 		    var _neighbors = GridUtility.GetAdjacentNodes8Dir(NodeGridPosition, _gridNodeData.GridSize, _gridNodeData.GridNodes);
 
 		    foreach (var _node in _neighbors)
 			    Neighbors.Add(_node);
+	    }
+
+	    public IEnumerable<T> GetNeighbors<T>() where T : INode
+	    {
+		    yield break;
 	    }
 	    
 	    public INode NorthNode { get; private set; }

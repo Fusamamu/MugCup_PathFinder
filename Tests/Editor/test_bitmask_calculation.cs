@@ -48,6 +48,15 @@ public class test_bitmask_calculation
         public HashSet<INode> Neighbors {
             get;
         }
+        public IEnumerable<T> GetNeighbors<T>() where T : INode
+        {
+            throw new System.NotImplementedException();
+        }
+        public void SetNeighbors<T>(IEnumerable<T> _neighbors) where T : INode
+        {
+            throw new System.NotImplementedException();
+        }
+        
         public INode NorthNode { get; }
         public INode SouthNode { get; }
         public INode WestNode  { get; }

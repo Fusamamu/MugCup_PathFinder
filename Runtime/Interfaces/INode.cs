@@ -23,7 +23,10 @@ namespace MugCup_PathFinder.Runtime
 		/*Neighbor references*/
 		public INode NodeParent { get; set; }
 		public HashSet<INode> Neighbors { get; }
-		
+
+		public IEnumerable<T> GetNeighbors<T>() where T : INode;
+		public void SetNeighbors<T>(IEnumerable<T> _neighbors) where T : INode;
+
 		public INode NextNodeOnPath { get; set; }
 		public NodeDirection Direction { get; set; }
 	}

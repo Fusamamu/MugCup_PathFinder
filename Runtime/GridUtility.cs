@@ -225,7 +225,7 @@ namespace MugCup_PathFinder.Runtime
             );
         }
         
-        public static T GetNode<T>(Vector3Int _nodePos, GridData<T> _gridData) where T : GridNode
+        public static T GetNode<T>(Vector3Int _nodePos, GridData<T> _gridData) where T : INode
         {
             var _gridSize = _gridData.GridSize;
             var _grid     = _gridData.GridNodes;

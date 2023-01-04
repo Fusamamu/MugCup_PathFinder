@@ -207,7 +207,7 @@ namespace MugCup_PathFinder.Runtime
 
             foreach (var _edge in GraphEdges)
             {
-                var _startPos = _edge.To.NodeWorldPosition;
+                var _startPos  = _edge.To.NodeWorldPosition;
                 var _targetPos = _edge.From.NodeWorldPosition;
                 
                 var _dir = _targetPos - _startPos;
