@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,8 +10,13 @@ namespace MugCup_PathFinder.Runtime
         [field: SerializeField] public int Id       { get; set; }
         [field: SerializeField] public string Label { get; set; }
         [field: SerializeField] public bool Visited { get; set; }
-        
-        [field: SerializeField] public List<GraphEdge> Edges { get; set; }
+
+        [field: SerializeField] public List<GraphEdge> Edges { get; private set; } = new List<GraphEdge>();
+
+        public void AddEdges(IEnumerable<GraphEdge> _edges)
+        {
+            Edges.AddRange(_edges);
+        }
         
 #region Node Position Information
         [field: SerializeField] public Vector3Int NodeGridPosition      { get; private set; }
@@ -71,5 +77,17 @@ namespace MugCup_PathFinder.Runtime
         public INode NodeParent { get; set; }
         public HashSet<INode> Neighbors { get;  }
 #endregion
+
+        private void OnDrawGizmosSelected()
+        {
+            foreach (var _edge in Edges)
+            {
+                var _startPos  = _edge.From.NodeWorldPosition;
+                var _targetPos = _edge.To.NodeWorldPosition;
+                
+                Gizmos.color = Color.magenta;
+                Gizmos.DrawLine(_startPos, _targetPos);
+            }
+        }
     }
 }

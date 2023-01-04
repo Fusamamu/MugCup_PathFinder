@@ -109,6 +109,11 @@ namespace MugCup_PathFinder.Runtime
 		
 		private void OnValidate()
 		{
+			UpdatePosition();
+		}
+
+		protected void UpdatePosition()
+		{
 			UpdateOccupiedPositions();
 			UpdateLocalVertexPositions();
 		}
@@ -130,6 +135,8 @@ namespace MugCup_PathFinder.Runtime
 
 		public void UpdateLocalVertexPositions()
 		{
+			OccupiedToVertexTable.Clear();
+			
 			for (var _i = 0; _i < OccupiedPositions.Count; _i++)
 			{
 				var _occupiedPos = OccupiedPositions[_i];

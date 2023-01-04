@@ -17,11 +17,7 @@ namespace MugCup_PathFinder.Runtime
 
         [field: SerializeField] public List<GraphEdge> GraphEdges { get; private set; }   = new List<GraphEdge>();
         
-        public Dictionary<VertexNode, VertexNode[]> Edges { get; private set; }
-
         public Dictionary<VertexNode, GridNode> VertexToGirdNodeTable { get; private set; } = new Dictionary<VertexNode, GridNode>();
-        
-        
 
         [Header("Game Object")]
         [SerializeField] private VertexNode VertexPrefab;
@@ -33,7 +29,6 @@ namespace MugCup_PathFinder.Runtime
         [SerializeField] private bool DisplayLine;
         [SerializeField] private float EdgeWidth;
         
-
         private void OnValidate()
         {
             if (VertexParent == null)
@@ -45,18 +40,7 @@ namespace MugCup_PathFinder.Runtime
 
                 VertexParent = _vertexParentObj.transform;
             }
-
-            if (Edges == null)
-                MapGraph();
         }
-        
-        
-        
-        
-        
-        
-        
-        
 
         public GridGraph Initialized(GridNodeData _gridData)
         {
@@ -88,12 +72,6 @@ namespace MugCup_PathFinder.Runtime
                 }
             }
             
-            
-            
-            
-            
-            
-           
             MapGraph();
 
             //Must move to somewhereelse
@@ -129,15 +107,16 @@ namespace MugCup_PathFinder.Runtime
             return _vertexNode;
         }
 
-        private void AddEdge(VertexNode _from, VertexNode _to)
+        private GraphEdge AddEdge(VertexNode _from, VertexNode _to)
         {
             var _edge = new GraphEdge(_from, _to);
             GraphEdges.Add(_edge);
+
+            return _edge;
         }
 
-        private void MapGraphRevised()
+        private void MapGraph()
         {
-            
             foreach (var _vertex in GridVertexData.GridNodes.Where(_vertex => _vertex != null))
             {
                 var _vertices = GetVertexNeighbors(_vertex);
@@ -158,8 +137,17 @@ namespace MugCup_PathFinder.Runtime
                         });
 
                     _vertices = _vertices.Where(_v => _validVertexConnects.Contains(_v.NodeGridPosition)).ToArray();
-                }
+
+                    var _edges = new List<GraphEdge>();
+
+                    foreach (var _toVertex in _vertices)
+                    {
+                        var _edge = AddEdge(_vertex, _toVertex);
+                        _edges.Add(_edge);
+                    }
                     
+                    _vertex.AddEdges(_edges);
+                }
             }
         }
 
@@ -169,99 +157,70 @@ namespace MugCup_PathFinder.Runtime
                 .GetNodesFrom3x3Cubes(_vertex, GridVertexData.GridSize, GridVertexData.GridNodes)
                 .Where(_v => _v != null);
         }
-        
-        
-        
-        
-        
-        
 
-        private void MapGraph()
-        {
-            Edges = new Dictionary<VertexNode, VertexNode[]>();
-            
-            foreach (var _vertex in GridVertexData.GridNodes)
-            {
-                if(_vertex == null) continue;
-                
-                if (!Edges.ContainsKey(_vertex))
-                {
-                    var _vertices = GridUtility
-                        .GetNodesFrom3x3Cubes(_vertex, GridVertexData.GridSize, GridVertexData.GridNodes)
-                        .Where(_v => _v != null)
-                        .ToArray();
-
-                    if (VertexToGirdNodeTable.TryGetValue(_vertex, out var _gridNode))
-                    {
-                        if (_gridNode.ConnectorCount == 0)
-                            _gridNode.Connect4Directions();
-                        
-                        var _validVertexConnects = _gridNode
-                            .WorldNodeConnector
-                            .Select(_connectPos => _connectPos + Vector3.up)
-                            .Select(_vertexPos =>
-                            {
-                                var _vertexGridPos = new Vector3Int((int)_vertexPos.x, (int)_vertexPos.y, (int)_vertexPos.z);
-                                return _vertexGridPos;
-                            });
-
-                        _vertices = _vertices.Where(_v => _validVertexConnects.Contains(_v.NodeGridPosition)).ToArray();
-                    }
-                    
-                    Edges.Add(_vertex, _vertices);
-                }
-            }
-        }
-
-        
-        
-        
+        // private void MapGraph()
+        // {
+        //     Edges = new Dictionary<VertexNode, VertexNode[]>();
+        //     
+        //     foreach (var _vertex in GridVertexData.GridNodes)
+        //     {
+        //         if(_vertex == null) continue;
+        //         
+        //         if (!Edges.ContainsKey(_vertex))
+        //         {
+        //             var _vertices = GridUtility
+        //                 .GetNodesFrom3x3Cubes(_vertex, GridVertexData.GridSize, GridVertexData.GridNodes)
+        //                 .Where(_v => _v != null)
+        //                 .ToArray();
+        //
+        //             if (VertexToGirdNodeTable.TryGetValue(_vertex, out var _gridNode))
+        //             {
+        //                 if (_gridNode.ConnectorCount == 0)
+        //                     _gridNode.Connect4Directions();
+        //                 
+        //                 var _validVertexConnects = _gridNode
+        //                     .WorldNodeConnector
+        //                     .Select(_connectPos => _connectPos + Vector3.up)
+        //                     .Select(_vertexPos =>
+        //                     {
+        //                         var _vertexGridPos = new Vector3Int((int)_vertexPos.x, (int)_vertexPos.y, (int)_vertexPos.z);
+        //                         return _vertexGridPos;
+        //                     });
+        //
+        //                 _vertices = _vertices.Where(_v => _validVertexConnects.Contains(_v.NodeGridPosition)).ToArray();
+        //             }
+        //             
+        //             Edges.Add(_vertex, _vertices);
+        //         }
+        //     }
+        // }
         
         public void ClearVertexData()
         {
             GridVertexData.ClearData();
-            Edges.Clear();
+            GraphEdges    .Clear();
         }
-
-        // public VertexNode[] GetNeighbors(VertexNode _node)
-        // {
-        //     return null;
-        // }
-        //
-        // public double GetWeightCost(VertexNode _nodeA, VertexNode _nodeB)
-        // {
-        //     return 0;
-        // }
 
         private void OnDrawGizmos()
         {
             if (!IsDebug) return;
-            
-            if(Edges == null) return;
 
-
-            foreach (var _kvp in Edges)
+            foreach (var _edge in GraphEdges)
             {
-                var _originVertex = _kvp.Key;
-                var _neighbors    = _kvp.Value;
-
-                foreach (var _vertex in _neighbors)
-                {
-                    var _startPos  = _originVertex.NodeWorldPosition;
-                    var _targetPos = _vertex.NodeWorldPosition;
-            
-                    var _dir = _targetPos - _startPos;
-
-                    var _startTangent = _startPos + Vector3.up / 2;
-                    var _endTangent   = _startTangent + _dir;
+                var _startPos = _edge.To.NodeWorldPosition;
+                var _targetPos = _edge.From.NodeWorldPosition;
+                
+                var _dir = _targetPos - _startPos;
+                
+                var _startTangent = _startPos + Vector3.up / 2;
+                var _endTangent   = _startTangent + _dir;
 
                     
-                    if(DisplayBezier)
-                        Handles.DrawBezier(_startPos, _targetPos, _startTangent, _endTangent, Color.red, null, EdgeWidth);
+                if(DisplayBezier)
+                    Handles.DrawBezier(_startPos, _targetPos, _startTangent, _endTangent, Color.red, null, EdgeWidth);
                     
-                    if(DisplayLine)
-                        Gizmos.DrawLine(_startPos, _targetPos);
-                }
+                if(DisplayLine)
+                    Gizmos.DrawLine(_startPos, _targetPos);
             }
         }
     }
