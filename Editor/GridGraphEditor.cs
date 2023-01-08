@@ -24,8 +24,6 @@ namespace MugCup_PathFinder.Editor
             if (GUILayout.Button("Generate Vertices"))
             {
                 gridGraph.GenerateValidVertices();
-                
-              
             }
 
             if (GUILayout.Button("Clear Vertex Data"))

@@ -11,11 +11,14 @@ namespace MugCup_PathFinder.Runtime
 {
     public class GridGraph : MonoBehaviour, IGraph<VertexNode>
     {
+        [Header("Selected Source Vertex Node")]
+        [SerializeField] private VertexNode SourceVertexNode;
+        
         [Header("Grid Data")]
         [SerializeField] private GridNodeData   GridData;
         [SerializeField] private GridVertexData GridVertexData;
 
-        [field: SerializeField] public List<GraphEdge> GraphEdges { get; private set; }   = new List<GraphEdge>();
+        [field: SerializeField] public List<GraphEdge> GraphEdges { get; private set; } = new List<GraphEdge>();
         
         public Dictionary<VertexNode, GridNode> VertexToGirdNodeTable { get; private set; } = new Dictionary<VertexNode, GridNode>();
 
@@ -158,6 +161,11 @@ namespace MugCup_PathFinder.Runtime
                 .Where(_v => _v != null);
         }
 
+        public void CalculateFlowField()
+        {
+            StartCoroutine(BreadFirstSearch<VertexNode>.BreadthFirstSearch(SourceVertexNode.NodeGridPosition, GridVertexData));
+        }
+
         // private void MapGraph()
         // {
         //     Edges = new Dictionary<VertexNode, VertexNode[]>();
@@ -204,7 +212,11 @@ namespace MugCup_PathFinder.Runtime
         private void OnDrawGizmos()
         {
             if (!IsDebug) return;
+            
+            if(Application.isPlaying) return;
 
+            if(GraphEdges == null || GraphEdges.Count == 0) return;
+            
             foreach (var _edge in GraphEdges)
             {
                 var _startPos  = _edge.To.NodeWorldPosition;
