@@ -37,6 +37,8 @@ namespace MugCup_PathFinder.Runtime
                     }
                 }
             }
+            
+            Debug.Log("Flow Field Completed !");
         }
     }
 }

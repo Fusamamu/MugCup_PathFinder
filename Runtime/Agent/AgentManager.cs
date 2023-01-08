@@ -17,9 +17,17 @@ namespace MugCup_PathFinder.Runtime
 
         [SerializeField] private GridVertexData GridVertexData;
 
-        private void Start()
+        public void PopulateAgents()
         {
             PopulateAgents(GridVertexData);
+        }
+
+        public void ClearAgents()
+        {
+            foreach (var _agent in Agents)
+                Destroy(_agent.gameObject);
+            
+            Agents.Clear();
         }
 
         public void PopulateAgents<T>(GridData<T> _data) where T : INode
@@ -34,6 +42,17 @@ namespace MugCup_PathFinder.Runtime
                 var _newAgent = Instantiate(AgentPrefab, _node.NodeWorldPosition, Quaternion.identity);
 
                 Agents.Add(_newAgent);
+
+                var _movement = _newAgent.gameObject.AddComponent<AgentMovement>();
+                
+                _movement.SetCurrentNode(_node);
+                _movement.SetMoveSpeed(AgentSpeed);
+
+                if (_node.NodeParent != null)
+                {
+                    _movement.SetNextNode(_node.NodeParent);
+                    _movement.MoveToNextNode();
+                }
 
                 // var _followFlow = _newAgent.gameObject.AddComponent<FollowFlowField>();
                 //

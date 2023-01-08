@@ -41,14 +41,14 @@ namespace MugCup_PathFinder.Runtime
 
         private void OnValidate()
         {
-            foreach (var _node in GridNodeData.GridNodes)
-            {
-                if(_node.gameObject.layer != LayerMask.NameToLayer("Structure")) continue;
-                
-                SetNodeColor(_node, StructureColor);
-                
-                _node.SetNodeWorldPosition(_node.transform.position);
-            }
+            // foreach (var _node in GridNodeData.GridNodes)
+            // {
+            //     if(_node.gameObject.layer != LayerMask.NameToLayer("Structure")) continue;
+            //     
+            //     SetNodeColor(_node, StructureColor);
+            //     
+            //     _node.SetNodeWorldPosition(_node.transform.position);
+            // }
         }
 
         private void Start()

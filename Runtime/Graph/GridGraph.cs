@@ -18,7 +18,7 @@ namespace MugCup_PathFinder.Runtime
         [SerializeField] private GridNodeData   GridData;
         [SerializeField] private GridVertexData GridVertexData;
 
-        [field: SerializeField] public List<GraphEdge> GraphEdges { get; private set; } = new List<GraphEdge>();
+        [field: SerializeField] public List<GraphEdgeVertexNode> GraphEdges { get; private set; } = new List<GraphEdgeVertexNode>();
         
         public Dictionary<VertexNode, GridNode> VertexToGirdNodeTable { get; private set; } = new Dictionary<VertexNode, GridNode>();
 
@@ -110,9 +110,9 @@ namespace MugCup_PathFinder.Runtime
             return _vertexNode;
         }
 
-        private GraphEdge AddEdge(VertexNode _from, VertexNode _to)
+        private GraphEdgeVertexNode AddEdge(VertexNode _from, VertexNode _to)
         {
-            var _edge = new GraphEdge(_from, _to);
+            var _edge = new GraphEdgeVertexNode(_from, _to);
             GraphEdges.Add(_edge);
 
             return _edge;
@@ -141,7 +141,7 @@ namespace MugCup_PathFinder.Runtime
 
                     _vertices = _vertices.Where(_v => _validVertexConnects.Contains(_v.NodeGridPosition)).ToArray();
 
-                    var _edges = new List<GraphEdge>();
+                    var _edges = new List<GraphEdgeVertexNode>();
 
                     foreach (var _toVertex in _vertices)
                     {
@@ -212,8 +212,6 @@ namespace MugCup_PathFinder.Runtime
         private void OnDrawGizmos()
         {
             if (!IsDebug) return;
-            
-            if(Application.isPlaying) return;
 
             if(GraphEdges == null || GraphEdges.Count == 0) return;
             

@@ -6,17 +6,26 @@ using UnityEngine;
 namespace MugCup_PathFinder.Runtime
 {
     [Serializable]
-    public struct GraphEdge
+    public class GraphEdgeVertexNode : GraphEdge<VertexNode>
     {
-        [field: SerializeField] public INode From { get; set; }
-        [field: SerializeField] public INode To   { get; set; }
+        public GraphEdgeVertexNode(VertexNode _from, VertexNode _to, int _weight = 0, bool _isDirected = false, string _label = "") 
+            : base(_from, _to, _weight, _isDirected, _label)
+        {
+        }
+    }
+
+    [Serializable]
+    public class GraphEdge<T> where T : INode
+    {
+        [field: SerializeField] public T From { get; set; }
+        [field: SerializeField] public T To   { get; set; }
         
         [field: SerializeField] public int Weight      { get; set; }
         [field: SerializeField] public bool IsDirected { get; set; }
         
         [field: SerializeField] public string Label    { get; set; }
 
-        public GraphEdge(INode _from, INode _to, int _weight = 0, bool _isDirected = false, string _label = "")
+        public GraphEdge(T _from, T _to, int _weight = 0, bool _isDirected = false, string _label = "")
         {
             From       = _from;
             To         = _to;

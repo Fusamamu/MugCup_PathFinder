@@ -34,6 +34,11 @@ namespace MugCup_PathFinder.Editor
                 foreach (var _node in _gridNodes)
                     _node.SetVertexNodeInit(false);
             }
+
+            if (GUILayout.Button("Calculate Flow Field"))
+            {
+                gridGraph.CalculateFlowField();
+            }
         }
     }
 }

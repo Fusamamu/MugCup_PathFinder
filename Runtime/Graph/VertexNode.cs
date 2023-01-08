@@ -11,9 +11,9 @@ namespace MugCup_PathFinder.Runtime
         [field: SerializeField] public string Label { get; set; }
         [field: SerializeField] public bool Visited { get; set; }
 
-        [field: SerializeField] public List<GraphEdge> Edges { get; private set; } = new List<GraphEdge>();
+        [field: SerializeField] public List<GraphEdgeVertexNode> Edges { get; private set; } = new List<GraphEdgeVertexNode>();
 
-        public void AddEdges(IEnumerable<GraphEdge> _edges)
+        public void AddEdges(IEnumerable<GraphEdgeVertexNode> _edges)
         {
             foreach (var _edge in _edges)
             {
@@ -87,10 +87,21 @@ namespace MugCup_PathFinder.Runtime
         {
             foreach (var _edge in Edges)
             {
-                yield return (T)_edge.To;
+                if (_edge.To is T _node)
+                {
+                    yield return _node;
+                }
             }
         }
-        
+
+        public IEnumerable<VertexNode> GetNeighbors()
+        {
+            foreach (var _edge in Edges)
+            {
+                yield return _edge.To;
+            }
+        }
+
         public void SetNeighbors<T>(IEnumerable<T> _neighbors) where T : INode
         {
             throw new NotImplementedException();
