@@ -186,7 +186,7 @@ namespace MugCup_PathFinder.Runtime
 
 		    while (followingPath)
 		    {
-			    GridNodeTo     = currentFollowedPath[_pathIndex];
+			    GridNodeTo = currentFollowedPath[_pathIndex];
 			    positionTo = GridNodeTo.ExitPosition + Vector3.up;//Temp plus one up
 			  
 			    if (directionChange != DirectionChange.None)
