@@ -18,7 +18,7 @@ namespace MugCup_PathFinder.Runtime
 		}
 
 #region Node Position Information
-	    [field: SerializeField] public Vector3Int NodeGridPosition      { get; private set; }
+	    [field: SerializeField] public Vector3Int NodeGridPosition  { get; private set; }
 	    [field: SerializeField] public Vector3    NodeWorldPosition { get; private set; }
 	    
 	    public INode SetNodePosition(Vector3Int _nodePosition)
@@ -117,7 +117,7 @@ namespace MugCup_PathFinder.Runtime
 		public int Width => (int)Mathf.Abs(OccupiedDimension.x) + 1;
 		public int Depth => (int)Mathf.Abs(OccupiedDimension.z) + 1;
 		
-		private void OnValidate()
+		protected virtual void OnValidate()
 		{
 			UpdatePosition();
 		}

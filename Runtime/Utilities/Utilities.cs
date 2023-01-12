@@ -23,5 +23,10 @@ namespace MugCup_PathFinder.Runtime
 
             return _newArray;
         }
+        
+        public static Vector3Int CastVec3ToVec3Int(Vector3 _pos)
+        {
+            return new Vector3Int((int)_pos.x, (int)_pos.y, (int)_pos.z);
+        }
     }
 }

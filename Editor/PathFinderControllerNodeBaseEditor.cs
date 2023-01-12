@@ -8,7 +8,7 @@ using MugCup_PathFinder.Runtime;
 
 namespace MugCup_PathFinder.Editor
 {
-    [CustomEditor(typeof(PathFinderControllerNodeBase))]
+    [CustomEditor(typeof(PathFinderControllerGridNode))]
     public class PathFinderControllerNodeBaseEditor : UnityEditor.Editor
     {
         private enum GridDataSettingMode
@@ -18,14 +18,14 @@ namespace MugCup_PathFinder.Editor
 
         private GridDataSettingMode dataSettingMode = GridDataSettingMode.Custom;
         
-        private PathFinderControllerNodeBase pathFinderController;
+        private PathFinderControllerGridNode pathFinderControllerGrid;
 
         private SerializedProperty gridDataSetting;
         private SerializedProperty gridSize;
 
         private void OnEnable()
         {
-            pathFinderController = (PathFinderControllerNodeBase)target;
+            pathFinderControllerGrid = (PathFinderControllerGridNode)target;
 
             gridDataSetting = serializedObject.FindProperty("gridNodeDataSetting");
             gridSize        = serializedObject.FindProperty("gridSize");

@@ -9,7 +9,7 @@ namespace MugCup_PathFinder.Runtime
     /// <summary>
     /// Inherit PathFinderControllerGeneric so that it can be attached to gameObject.
     /// </summary>
-    public class PathFinderControllerNodeBase : PathFinderControllerGeneric<GridNode>
+    public class PathFinderControllerGridNode : PathFinderController<GridNode>
     {
         [SerializeField] private bool useGridNodeDataManager;
         

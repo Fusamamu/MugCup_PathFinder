@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace MugCup_PathFinder.Runtime
 {
-    public class PathFinderControllerGeneric<T> : MonoBehaviour, IPathFinderController<T> where T :GridNode, IHeapItem<T>
+    public class PathFinderController<T> : MonoBehaviour, IPathFinderController<T> where T :GridNode, IHeapItem<T>
     {
         private readonly Queue<PathResult<T>> pathResults = new Queue<PathResult<T>>();
 

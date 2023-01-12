@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -24,7 +25,7 @@ namespace MugCup_PathFinder.Runtime
 #endregion
 
 #region Dependencies
-	    [SerializeField] private GridNodeDataManager    gridNodeDataManager;
+	    [SerializeField] private GridNodeDataManager gridNodeDataManager;
 	    [SerializeField] private GridData<GridNode> GridData;
 	    
 	    private IPathFinderController<GridNode> pathFinderController;
@@ -49,18 +50,33 @@ namespace MugCup_PathFinder.Runtime
 	    [SerializeField] private float directionAngleFrom, directionAngleTo;
 
 	    private Coroutine followPathCoroutine;
-
-	    public void SetUseGridNodeDataManager(bool _value) => useGridNodeDataManager = _value;
-	    public void SetUseNodeAsPosition     (bool _value) => useNodeAsPosition      = _value;
 	    
-	    public void LoadGridData(GridData<GridNode> _gridData) => GridData = _gridData;
+	    public event Action OnTargetArrived = delegate { };
+
+	    public Agent SetUseGridNodeDataManager(bool _value)
+	    {
+		    useGridNodeDataManager = _value;
+		    return this;
+	    }
+	    
+	    public Agent SetUseNodeAsPosition(bool _value)
+	    {
+		    useNodeAsPosition = _value;
+		    return this;
+	    }
+
+	    public Agent LoadGridData(GridData<GridNode> _gridData)
+	    {
+		    GridData = _gridData;
+		    return this;
+	    }
 
 	    public void Initialized(IPathFinderController<GridNode> _pathFinderController = null)
 	    {
 		    if(useGridNodeDataManager)
 				InjectGridNodeDataManager();
 		    else
-			    InjectCustomGridNodeData(GridData);
+			    LoadGridData(GridData);
 		    
 		    InjectPathFinderController(_pathFinderController);
 	    }
@@ -69,7 +85,7 @@ namespace MugCup_PathFinder.Runtime
 	    /// <summary>
 	    /// Use GridNodeData as Default Initialization.
 	    /// </summary>
-	    private void InjectGridNodeDataManager(GridNodeDataManager _gridNodeDataManager = null)
+	    private Agent InjectGridNodeDataManager(GridNodeDataManager _gridNodeDataManager = null)
 	    {
 		    if(gridNodeDataManager == null)
 				gridNodeDataManager = _gridNodeDataManager != null ? _gridNodeDataManager : FindObjectOfType<GridNodeDataManager>();
@@ -77,32 +93,27 @@ namespace MugCup_PathFinder.Runtime
 		    if (!gridNodeDataManager)
 		    {
 			    Debug.LogWarning($"GridNodeData Missing Reference.");
-			    return;
+			    return this;
 		    }
 
 		    GridData = gridNodeDataManager.GetGridNodeData();
+		    return this;
 	    }
 	    
-	    private void InjectCustomGridNodeData(GridData<GridNode> _gridData)
+	    public Agent InjectPathFinderController(IPathFinderController<GridNode> _pathFinderController = null)
 	    {
-		    GridData = _gridData;
-	    }
-	    
-	    public void InjectPathFinderController(IPathFinderController<GridNode> _pathFinderController = null)
-	    {
-		    pathFinderController = _pathFinderController ?? FindObjectOfType<PathFinderControllerNodeBase>();
+		    pathFinderController = _pathFinderController ?? FindObjectOfType<PathFinderControllerGridNode>();
 
 		    if (pathFinderController == null)
 		    {
 			    Debug.LogWarning($"{typeof(IPathFinderController<GridNode>)} Missing Reference.");
 		    }
-	    }
-  #endregion
 
-	    /// <summary>
-	    /// Get Complete Path from outside.
-	    /// </summary>
-	    /// <param name="_targetPath"></param>
+		    return this;
+	    }
+#endregion
+	    
+#region Get Complete Path from outside.
 	    public Agent SetTargetPath(GridNode[] _targetPath)
 	    {
 		    currentFollowedPath = _targetPath;
@@ -126,10 +137,9 @@ namespace MugCup_PathFinder.Runtime
 
 		    return this;
 	    }
-
-	    /// <summary>
-	    /// Calculate Path by agent itself
-	    /// </summary>
+#endregion
+	    
+#region Calculate Path by agent itself
 	    public Agent SetStartPos(Vector3Int _startPos)
 	    {
 		    startPosition = _startPos;
@@ -168,6 +178,7 @@ namespace MugCup_PathFinder.Runtime
 		    currentFollowedPath = _nodePath;
 		    followPathCoroutine = StartCoroutine(FollowPath());
 	    }
+#endregion
 
 	    private IEnumerator FollowPath()
 	    {
@@ -200,10 +211,10 @@ namespace MugCup_PathFinder.Runtime
 				    {
 					    _pathIndex++;
 				    
-					    GridNodeFrom     = GridNodeTo;
+					    GridNodeFrom = GridNodeTo;
 					    positionFrom = positionTo;
 				    
-					    GridNodeTo     = currentFollowedPath[_pathIndex];
+					    GridNodeTo = currentFollowedPath[_pathIndex];
 					    positionTo = GridNodeTo.ExitPosition + Vector3.up;//Temp plus one up
 
 					    directionChange = direction.GetDirectionChangeTo(GridNodeTo.Direction);
@@ -226,17 +237,16 @@ namespace MugCup_PathFinder.Runtime
 				    if (_distToNextNode > float.Epsilon)
 				    {
 					    transform.position = Vector3.MoveTowards(transform.position, positionTo, speed * Time.deltaTime);
-					    
 					    yield return null;
 				    }
 				    else
 				    {
 					    _pathIndex++;
 					    
-					    GridNodeFrom     = GridNodeTo;
+					    GridNodeFrom = GridNodeTo;
 					    positionFrom = positionTo;
 					    
-					    GridNodeTo     = currentFollowedPath[_pathIndex];
+					    GridNodeTo = currentFollowedPath[_pathIndex];
 					    positionTo = GridNodeTo.ExitPosition + Vector3.up;//Temp plus one up
 
 					    directionChange = direction.GetDirectionChangeTo(GridNodeTo.Direction);
@@ -253,10 +263,16 @@ namespace MugCup_PathFinder.Runtime
 					    }
 				    }
 			    }
-			    
 
 			    if (_pathIndex >= _lastIndex)
+			    {
+				    StartGridNode = GridNodeTo;
+				    startPosition = Utilities.CastVec3ToVec3Int(positionTo) - Vector3Int.up;
+				    
 				    followingPath = false;
+				    
+				    OnTargetArrived?.Invoke();
+			    }
 		    }
 	    }
 	    
