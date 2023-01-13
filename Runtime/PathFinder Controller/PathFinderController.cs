@@ -59,6 +59,8 @@ namespace MugCup_PathFinder.Runtime
                     PathResult<T> _result = pathResults.Dequeue();
                     
                     _result.OnPathFound(_result.Path, _result.Success);
+                    
+                    Debug.Log(_result.Path.Length);
                 }
             }
         }

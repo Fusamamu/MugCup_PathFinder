@@ -19,21 +19,22 @@ namespace MugCup_PathFinder.Runtime
         static Vector3[] halfVectors = 
         {
             Vector3.forward * 0.5f,
-            Vector3.right * 0.5f,
-            Vector3.back * 0.5f,
-            Vector3.left * 0.5f
+            Vector3.right   * 0.5f,
+            Vector3.back    * 0.5f,
+            Vector3.left    * 0.5f
         };
 
         static Quaternion[] rotations = 
         {
             Quaternion.identity,
-            Quaternion.Euler(0f, 90f, 0f),
+            Quaternion.Euler(0f,  90f, 0f),
             Quaternion.Euler(0f, 180f, 0f),
             Quaternion.Euler(0f, 270f, 0f)
         };
 
-        public static float GetAngle (this NodeDirection direction) {
-            return (float)direction * 90f;
+        public static float GetAngle (this NodeDirection _direction) 
+        {
+            return (float)_direction * 90f;
         }
 
         public static DirectionChange GetDirectionChangeTo (this NodeDirection _current, NodeDirection _next) 

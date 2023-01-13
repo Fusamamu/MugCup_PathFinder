@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.Graphs;
@@ -26,7 +27,11 @@ namespace MugCup_PathFinder.Runtime
         
         public static Vector3Int CastVec3ToVec3Int(Vector3 _pos)
         {
-            return new Vector3Int((int)_pos.x, (int)_pos.y, (int)_pos.z);
+            var _xPos = (int)Mathf.Round(_pos.x);
+            var _yPos = (int)Mathf.Round(_pos.y);
+            var _zPos = (int)Mathf.Round(_pos.z);
+
+            return new Vector3Int(_xPos, _yPos, _zPos);
         }
     }
 }

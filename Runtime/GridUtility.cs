@@ -718,7 +718,47 @@ namespace MugCup_PathFinder.Runtime
             _grid[_z + _gridSize.x * (_x + _gridSize.y * _y)] = default;
         }
 #endregion
-        
+
+        public static bool IsWestOf<T>(this T _node, T _comparedNode) where T : INode
+        {
+            return _node.NodeGridPosition.x < _comparedNode.NodeGridPosition.x;
+        }
+
+        public static bool IsEastOf<T>(this T _node, T _comparedNode) where T : INode
+        {
+            return _node.NodeGridPosition.x > _comparedNode.NodeGridPosition.x;
+        }
+
+        public static bool IsNorthOf<T>(this T _node, T _comparedNode) where T : INode
+        {
+            return _node.NodeGridPosition.z > _comparedNode.NodeGridPosition.z;
+        }
+
+        public static bool IsSouthOf<T>(this T _node, T _comparedNode) where T : INode
+        {
+            return _node.NodeGridPosition.z < _comparedNode.NodeGridPosition.z;
+        }
+
+        public static NodeDirection GetDirectionTo<T>(this T _node, T _comparedNode) where T : INode
+        {
+            if (_node.IsWestOf(_comparedNode))
+            {
+                return NodeDirection.East;
+            }
+            if (_node.IsEastOf(_comparedNode))
+            {
+                return NodeDirection.West;
+            }
+            if (_node.IsNorthOf(_comparedNode))
+            {
+                return NodeDirection.South;
+            }
+            if (_node.IsSouthOf(_comparedNode))
+            {
+                return NodeDirection.North;
+            }
+            return default;
+        }
         // public Node NodeFromWorldPoint(Vector3 worldPosition) {
         //     float percentX = (worldPosition.x + gridWorldSize.x/2) / gridWorldSize.x;
         //     float percentY = (worldPosition.z + gridWorldSize.y/2) / gridWorldSize.y;

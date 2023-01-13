@@ -39,7 +39,7 @@ namespace MugCup_PathFinder.Runtime
 	    public Vector3Int NextNodePosition  { get; set; }
 	    public Vector3    ExitPosition      { get; set; }
 	    
-	    public NodeDirection Direction { get; set; }
+	    [field: SerializeField] public NodeDirection Direction { get; set; }
 
 	    public void SetNextNodeOnPath(INode _node)
 	    {

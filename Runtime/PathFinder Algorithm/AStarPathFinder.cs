@@ -115,26 +115,31 @@ namespace MugCup_PathFinder.Runtime
 
                 _currentNode.NextNodePosition = _nextPos;
                 
-                NodeDirection _direction = NodeDirection.North;
+                // NodeDirection _direction = NodeDirection.North;
+                //
+                // if (_nextPos.x > _currentPos.x)
+                // {
+                //     _direction = NodeDirection.East;
+                // }
+                // else if (_nextPos.x < _currentPos.x)
+                // {
+                //     _direction = NodeDirection.West;
+                // }
+                // else if (_nextPos.z > _currentPos.z)
+                // {
+                //     _direction = NodeDirection.North;
+                // }
+                // else if (_nextPos.z < _currentPos.z)
+                // {
+                //     _direction = NodeDirection.South;
+                // }
 
-                if (_nextPos.x > _currentPos.x)
-                {
-                    _direction = NodeDirection.East;
-                }
-                else if (_nextPos.x < _currentPos.x)
-                {
-                    _direction = NodeDirection.West;
-                }
-                else if (_nextPos.z > _currentPos.z)
-                {
-                    _direction = NodeDirection.North;
-                }
-                else if (_nextPos.z < _currentPos.z)
-                {
-                    _direction = NodeDirection.South;
-                }
+                NodeDirection _direction = _currentNode.GetDirectionTo(_nextNode);
                 
                 _currentNode.SetNodePathDirection(_direction);
+
+                if (_i + 1 == _path.Count - 1)
+                    _nextNode.SetNodePathDirection(_direction);
             }
         }
         

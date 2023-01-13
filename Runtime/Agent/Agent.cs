@@ -20,8 +20,8 @@ namespace MugCup_PathFinder.Runtime
 	    [SerializeField] private GridNode StartGridNode;
 	    [SerializeField] private GridNode TargetGridNode;
 
-	    [SerializeField] private Vector3Int startPosition ;
-	    [SerializeField] private Vector3Int targetPosition;
+	    [field: SerializeField] public Vector3Int StartPosition  { get; private set; }
+	    [field: SerializeField] public Vector3Int TargetPosition { get; private set; }
 #endregion
 
 #region Dependencies
@@ -142,13 +142,13 @@ namespace MugCup_PathFinder.Runtime
 #region Calculate Path by agent itself
 	    public Agent SetStartPos(Vector3Int _startPos)
 	    {
-		    startPosition = _startPos;
+		    StartPosition = _startPos;
 		    return this;
 	    }
 
 	    public Agent SetTargetPos(Vector3Int _targetPos)
 	    {
-		    targetPosition = _targetPos;
+		    TargetPosition = _targetPos;
 		    return this;
 	    }
 
@@ -162,8 +162,8 @@ namespace MugCup_PathFinder.Runtime
 
 		    if (!useNodeAsPosition)
 		    {
-			    StartGridNode  = GridUtility.GetNode(startPosition,  GridData);
-			    TargetGridNode = GridUtility.GetNode(targetPosition, GridData);
+			    StartGridNode  = GridUtility.GetNode(StartPosition,  GridData);
+			    TargetGridNode = GridUtility.GetNode(TargetPosition, GridData);
 		    }
 		    
 		    var _newPathRequest = new PathRequestNodeBase(StartGridNode, TargetGridNode, OnPathFoundHandler);
@@ -173,67 +173,83 @@ namespace MugCup_PathFinder.Runtime
 	    
 	    private void OnPathFoundHandler(GridNode[] _nodePath, bool _pathSuccessful) 
 	    {
-		    if (!_pathSuccessful) return;
+		    if (!_pathSuccessful)
+		    {
+			    Debug.LogWarning("Path not found");
+			    return;
+		    }
+		    
+		    if(_nodePath.Length == 0 || _nodePath.Length == 1) return;
+
+		    var _startNode = _nodePath[0];
+		    var _nextNode  = _nodePath[1];
+
+		    if (_startNode.NodeGridPosition.x < _nextNode.NodeGridPosition.x)
+		    {
+			    direction = NodeDirection.East;
+		    }
+		    else if (_startNode.NodeGridPosition.x > _nextNode.NodeGridPosition.x)
+		    {
+			    direction = NodeDirection.West;
+		    }
+		    else if (_startNode.NodeGridPosition.z > _nextNode.NodeGridPosition.z)
+		    {
+			    direction = NodeDirection.North;
+		    }
+		    else if (_startNode.NodeGridPosition.z < _nextNode.NodeGridPosition.z)
+		    {
+			    direction = NodeDirection.South;
+		    }
+		    
+		    SetStartDirection();
 			    
 		    currentFollowedPath = _nodePath;
 		    followPathCoroutine = StartCoroutine(FollowPath());
 	    }
 #endregion
 
-	    private IEnumerator FollowPath()
+	    private void SetStartDirection()
 	    {
-		    direction       = NodeDirection.East;
+		    //direction = NodeDirection.East;
 		    directionChange = DirectionChange.None;
 
 		    directionAngleFrom = direction.GetAngle();
 		    directionAngleTo   = direction.GetAngle();
 
 		    transform.localRotation = direction.GetRotation();
-		    
+	    }
+
+	    private IEnumerator FollowPath()
+	    {
 		    followingPath  = true;
 		    
 		    int _pathIndex = 0;
 		    int _lastIndex = currentFollowedPath.Length - 1;
+		    
+		    GridNodeTo = currentFollowedPath[_pathIndex];
+		    positionTo = GridNodeTo.ExitPosition + Vector3.up;//Temp plus one up
 
 		    while (followingPath)
 		    {
-			    GridNodeTo = currentFollowedPath[_pathIndex];
-			    positionTo = GridNodeTo.ExitPosition + Vector3.up;//Temp plus one up
-			  
 			    if (directionChange != DirectionChange.None)
 			    {
 				    Quaternion _to = Quaternion.Euler(0, directionAngleTo,   0);
 				    transform.localRotation = Quaternion.RotateTowards(transform.localRotation, _to, turnSpeed * Time.deltaTime);
-
+			    
 				    yield return null;
-
+			    
 				    if (transform.localRotation == _to)
 				    {
 					    _pathIndex++;
-				    
-					    GridNodeFrom = GridNodeTo;
-					    positionFrom = positionTo;
-				    
-					    GridNodeTo = currentFollowedPath[_pathIndex];
-					    positionTo = GridNodeTo.ExitPosition + Vector3.up;//Temp plus one up
-
-					    directionChange = direction.GetDirectionChangeTo(GridNodeTo.Direction);
-					    direction       = GridNodeTo.Direction;
-				    
-					    directionAngleFrom = directionAngleTo;
-				    
-					    switch (directionChange) 
-					    {
-						    case DirectionChange.None     : PrepareForward()   ; break;
-						    case DirectionChange.TurnRight: PrepareTurnRight() ; break;
-						    case DirectionChange.TurnLeft : PrepareTurnLeft()  ; break;
-						    default:                        PrepareTurnAround(); break;
-					    }
+					    
+					    if(_pathIndex <= _lastIndex) 
+						    SetNextNode(_pathIndex);
 				    }
 			    }
 			    else
 			    {
 				    var _distToNextNode = Vector3.Distance(transform.position, positionTo);
+				    
 				    if (_distToNextNode > float.Epsilon)
 				    {
 					    transform.position = Vector3.MoveTowards(transform.position, positionTo, speed * Time.deltaTime);
@@ -243,36 +259,50 @@ namespace MugCup_PathFinder.Runtime
 				    {
 					    _pathIndex++;
 					    
-					    GridNodeFrom = GridNodeTo;
-					    positionFrom = positionTo;
-					    
-					    GridNodeTo = currentFollowedPath[_pathIndex];
-					    positionTo = GridNodeTo.ExitPosition + Vector3.up;//Temp plus one up
-
-					    directionChange = direction.GetDirectionChangeTo(GridNodeTo.Direction);
-					    direction       = GridNodeTo.Direction;
-					    
-					    directionAngleFrom = directionAngleTo;
-					    
-					    switch (directionChange) 
-					    {
-						    case DirectionChange.None     : PrepareForward()   ; break;
-						    case DirectionChange.TurnRight: PrepareTurnRight() ; break;
-						    case DirectionChange.TurnLeft : PrepareTurnLeft()  ; break;
-						    default:                        PrepareTurnAround(); break;
-					    }
+					    if(_pathIndex <= _lastIndex)
+							SetNextNode(_pathIndex);
 				    }
 			    }
 
-			    if (_pathIndex >= _lastIndex)
+			    if (_pathIndex > _lastIndex)
 			    {
 				    StartGridNode = GridNodeTo;
-				    startPosition = Utilities.CastVec3ToVec3Int(positionTo) - Vector3Int.up;
+				    StartPosition = GridNodeTo.NodeGridPosition;
 				    
 				    followingPath = false;
 				    
 				    OnTargetArrived?.Invoke();
 			    }
+		    }
+	    }
+
+	    private void SetNextNode(int _index)
+	    {
+		    GridNodeFrom = GridNodeTo;
+		    positionFrom = positionTo;
+					    
+		    GridNodeTo = currentFollowedPath[_index];
+
+		    if (_index == currentFollowedPath.Length - 1)
+		    {
+			    positionTo = GridNodeTo.NodeWorldPosition + Vector3.up;//Temp plus one up
+		    }
+		    else
+		    {
+				positionTo = GridNodeTo.ExitPosition + Vector3.up;//Temp plus one up
+		    }
+
+		    directionChange = direction.GetDirectionChangeTo(GridNodeTo.Direction);
+		    direction       = GridNodeTo.Direction;
+					    
+		    directionAngleFrom = directionAngleTo;
+					    
+		    switch (directionChange) 
+		    {
+			    case DirectionChange.None     : PrepareForward()   ; break;
+			    case DirectionChange.TurnRight: PrepareTurnRight() ; break;
+			    case DirectionChange.TurnLeft : PrepareTurnLeft()  ; break;
+			    default:                        PrepareTurnAround(); break;
 		    }
 	    }
 	    
@@ -347,6 +377,30 @@ namespace MugCup_PathFinder.Runtime
 			    //}
 
 			    yield return null;
+		    }
+	    }
+
+	    private void OnDrawGizmos()
+	    {
+		    if (currentFollowedPath is { Length: > 0 })
+		    {
+			    for(var _i = 0; _i < currentFollowedPath.Length - 1; _i++)
+			    {
+				    var _node     = currentFollowedPath[_i];
+				    var _nextNode = currentFollowedPath[_i + 1];
+
+				    var _nodePos     = _node.NodeWorldPosition + Vector3.up;
+				    var _nextNodePos = _nextNode.NodeWorldPosition + Vector3.up;
+				    
+				    Gizmos.color = Color.red;
+				    Gizmos.DrawLine(_nodePos, _nextNodePos);
+				    
+				    Gizmos.color = Color.green;
+				    Gizmos.DrawSphere(_nodePos, 0.1f);
+
+				    if (_i == currentFollowedPath.Length - 2)
+					    Gizmos.DrawSphere(_nextNodePos, 0.1f);
+			    }
 		    }
 	    }
     }
