@@ -168,7 +168,7 @@ namespace MugCup_PathFinder.Runtime
 		    
 		    var _newPathRequest = new PathRequestNodeBase(StartGridNode, TargetGridNode, OnPathFoundHandler);
 		    
-		    pathFinderController.RequestPath(_newPathRequest);
+		    pathFinderController.RequestPath(_newPathRequest, _waitForComplete: true);
 	    }
 	    
 	    private void OnPathFoundHandler(GridNode[] _nodePath, bool _pathSuccessful) 
