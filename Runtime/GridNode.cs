@@ -74,7 +74,7 @@ namespace MugCup_PathFinder.Runtime
 
 #region Node Neighbors
 		[field: SerializeField] public INode NodeParent { get; set; }
-		[field: SerializeField] public HashSet<INode> Neighbors { get; }
+		[field: SerializeField] public HashSet<INode> Neighbors { get; private set; } = new HashSet<INode>();
 
 	    public void SetNeighbors<T>(IEnumerable<T> _neighbors) where T : INode
 		{
@@ -91,7 +91,11 @@ namespace MugCup_PathFinder.Runtime
 
 	    public IEnumerable<T> GetNeighbors<T>() where T : INode
 	    {
-		    yield break;
+		    foreach (var _neighbor in Neighbors)
+		    {
+			    if (_neighbor is T _node)
+				    yield return _node;
+		    }
 	    }
 	    
 	    public INode NorthNode { get; private set; }

@@ -5,13 +5,6 @@ using UnityEngine;
 
 namespace MugCup_PathFinder.Runtime
 {
-    public class PathResultVec3 : PathResult<Vector3>
-    {
-        public PathResultVec3(Vector3[] _path, bool _success, Action<Vector3[], bool> _onPathFound) : base(_path, _success, _onPathFound)
-        {
-        }
-    }
-
     public class PathResultNodeBase : PathResult<GridNode>
     {
         public PathResultNodeBase(GridNode[] _path, bool _success, Action<GridNode[], bool> _onPathFound) : base(_path, _success, _onPathFound)
@@ -19,13 +12,13 @@ namespace MugCup_PathFinder.Runtime
         }
     }
 
-    public class PathResult<T> 
+    public class PathResult<T> where T : INode
     {
-        public T[] Path;
+        public readonly T[] Path;
         
-        public bool Success;
+        public readonly bool Success;
         
-        public Action<T[], bool> OnPathFound;
+        public readonly Action<T[], bool> OnPathFound;
 
         public PathResult (T[] _path, bool _success, Action<T[], bool> _onPathFound)
         {
@@ -33,5 +26,18 @@ namespace MugCup_PathFinder.Runtime
             Success     = _success    ;
             OnPathFound = _onPathFound;
         }
+    }
+
+    public struct NodeData
+    {
+        public Vector3Int NodeGridPosition ;
+        public Vector3    NodeWorldPosition;
+		
+        public Vector3Int NextNodePosition;
+        public Vector3    ExitPosition    ;
+
+        public INode NodeParent;
+
+        public NodeDirection Direction;
     }
 }

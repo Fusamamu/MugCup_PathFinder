@@ -22,10 +22,10 @@ namespace MugCup_PathFinder.Runtime
 
 	public class PathRequest<T>
 	{
-	    public T PathStart;
-	    public T PathEnd  ;
+	    public readonly T PathStart;
+	    public readonly T PathEnd  ;
 	    
-	    public Action<T[], bool> Callback;
+	    public readonly Action<T[], bool> Callback;
 	
 	    public PathRequest(T _start, T _end, Action<T[], bool> _callback) 
 	    {
