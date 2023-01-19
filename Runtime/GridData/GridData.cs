@@ -15,7 +15,7 @@ namespace MugCup_PathFinder.Runtime
             GridSize = _gridSize;
             return this;
         }
-        
+        //Duplicate Code
         public GridData<T> InitializeGridArray()
         { 
             int _rowUnit    = GridSize.x;
@@ -31,15 +31,25 @@ namespace MugCup_PathFinder.Runtime
 
             return this;
         }
-        
+        //Duplicate Code
         public T GetNode(Vector3Int _nodePos)
         {
             return GridUtility.GetNode(_nodePos, GridSize, GridNodes);
         }
         
+        public TU GetNode<TU>(Vector3Int _nodePos) where TU : class, INode
+        {
+            return GridUtility.GetNode(_nodePos, GridSize, GridNodes) as TU;
+        }
+        
         public void AddNode(T _newNode, Vector3Int _nodePos)
         {
             GridUtility.AddNode(_newNode, _nodePos, GridSize, ref GridNodes);
+        }
+        
+        public void AddNode<TU>(TU _newNode, Vector3Int _nodePos) where TU : class, INode
+        {
+            //GridUtility.AddNode(_newNode, _nodePos, GridSize, ref GridNodes);
         }
 		
         public void RemoveNode(Vector3Int _nodePos)

@@ -22,6 +22,14 @@ public class test_bitmask_calculation
             get; 
             set;
         }
+        public INode SetNodePosition(Vector3Int _nodePosition)
+        {
+            throw new System.NotImplementedException();
+        }
+        public INode SetNodeWorldPosition(Vector3 _worldPosition)
+        {
+            throw new System.NotImplementedException();
+        }
 
         public Vector3Int NextNodePosition {
             get; 
