@@ -7,6 +7,18 @@ namespace MugCup_PathFinder.Runtime
 {
     public class GridData<T>: MonoBehaviour where T : INode
     {
+        public IEnumerable<T> ValidNodes 
+        {
+            get
+            {
+                foreach (var _node in GridNodes)
+                {
+                    if (_node != null)
+                        yield return _node;
+                }
+            }
+        }
+
         public T[]        GridNodes;
         public Vector3Int GridSize ;
         
@@ -31,7 +43,35 @@ namespace MugCup_PathFinder.Runtime
 
             return this;
         }
-        //Duplicate Code
+        
+        // public IEnumerable<TU> AvailableNodes<TU>() where TU : class, INode
+        // {
+        //     foreach (var _node in GridNodes)
+        //     {
+        //         if(_node == null) continue;
+        //
+        //         if (_node is TU _block)
+        //             yield return _block;
+        //     }
+        // }
+
+        public void ApplyAllNode(Action<T> _action)
+        {
+            foreach (var _node in ValidNodes)
+            {
+                _action?.Invoke(_node);
+            }
+        }
+        
+        public void ApplyAllNodes<TU>(Action<TU> _action) where TU : class, INode
+        {
+            foreach (var _node in ValidNodes)
+            {
+                if(_node is TU _castNode)
+                    _action?.Invoke(_castNode);
+            }
+        }
+        
         public T GetNode(Vector3Int _nodePos)
         {
             return GridUtility.GetNode(_nodePos, GridSize, GridNodes);
@@ -56,23 +96,38 @@ namespace MugCup_PathFinder.Runtime
         {
             GridUtility.RemoveNode(_nodePos, GridSize, ref GridNodes); //Need ref?? Probably not
         }
+        
+        public void RemoveNode<TU>(Vector3Int _nodePos) where TU : class, INode
+        {
+            GridUtility.RemoveNode(_nodePos, GridSize, ref GridNodes);
+        }
+        
+        public TU[] GetAllNodeBasesAtLevel<TU>(int _gridLevel) where TU : class, INode
+        {
+            int _rowUnit    = GridSize.x;
+            int _columnUnit = GridSize.z;
+            int _heightUnit = GridSize.y;
+            
+            var _nodesAtLevel = new TU[_rowUnit * _columnUnit];
+            
+            for (var _x = 0; _x < _rowUnit   ; _x++)
+            for (var _z = 0; _z < _columnUnit; _z++)
+                _nodesAtLevel[_z + _rowUnit * _x] = GridNodes[_z + _rowUnit * (_x + _heightUnit * _gridLevel)] as TU;
+
+            return _nodesAtLevel;
+        }
+        
+        public void EmptyGrid()
+        {
+            for (var _i = 0; _i < GridNodes.Length; _i++)
+            {
+                GridNodes[_i] = default;
+            }
+        }
 
         public virtual void ClearData()
         {
             GridNodes = null;
         }
-        
-        // public void EmptyGridUnitNodeBases()
-        // {
-        //     for (var _i = 0; _i < GridUnitNodes.Length; _i++)
-        //     {
-        //         GridUnitNodes[_i] = null;
-        //     }
-        // }
-        //
-        // public void ClearGridUnitNodeBases()
-        // {
-        //     GridUnitNodes = null;
-        // }
     }
 }
