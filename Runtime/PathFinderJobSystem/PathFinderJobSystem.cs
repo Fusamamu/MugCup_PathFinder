@@ -7,19 +7,48 @@ using Unity.Mathematics;
 
 namespace MugCup_PathFinder.Runtime
 {
-    public class PathFinderJobSystem : MonoBehaviour
+    public class PathFinderJobSystem : MonoBehaviour, IPathFinderController<GridNode>
     {
-        private readonly Queue<PathRequest<Vector3Int>> requests = new Queue<PathRequest<Vector3Int>>();
-        
+	    private bool isInit;
+	    
+	    [SerializeField] private GridData<GridNode> GridData;
+	    
+        private GridStructure gridStructure;
+	    
         private PathRequest<Vector3Int> currentRequest;
+        private readonly Queue<PathRequest<Vector3Int>> requests = new Queue<PathRequest<Vector3Int>>();
         
         private ProcessPathJob job;
         private JobHandle jobHandle;
         
-        private int framesProcessed = 0;
+        private int framesProcessed;
 
-        private GridStructure grid;
-        
+        public IPathFinderController<GridNode> SetGridData(GridData<GridNode> _gridData)
+		{
+			GridData = _gridData;
+			
+			gridStructure.Dispose();
+			gridStructure = GridData.CopyData();
+			
+			return this;
+		}
+		
+		public IPathFinderController<GridNode> SetPathFinder()
+		{
+			return this;
+		}
+		
+		public void Initialized()
+		{
+			if(isInit) return;
+			isInit = true;
+		}
+
+		public void RequestPath(PathRequest<Vector3Int> _request, bool _waitForComplete = false)
+		{
+			requests.Enqueue(_request);
+		}
+
 		private void Update () 
 		{
 			framesProcessed++;
@@ -30,30 +59,21 @@ namespace MugCup_PathFinder.Runtime
 				{
 					jobHandle.Complete();
 
-					var _path = new PathResult<Vector3Int>();
-
 					if (job.Result.Length == 0)// || Vector3.Distance(currentRequest.PathEnd, job.GridStructure.GetNodePosition(job.Result[0])) > 3) 
 					{
-						//_path.Success = false;
+						currentRequest.Callback(null, false);
 					} 
-					else 
+					else
 					{
-						//_path.nodes = new List<Vector3>(job.Result.Length);
+						var _path = new Vector3Int[job.Result.Length];
 
 						for (var _i = job.Result.Length - 1; _i >= 0; _i--) 
-						{
-							//_path.nodes.Add(job.GridStructure.GetNodePosition(job.Result[_i].x, job.Result[_i].y));
-						}
+							_path[_i] = job.Result[_i].AsVector3Int();
+
+						currentRequest.Callback(_path, true);
 					}
 
-					// currentRequest.result = path;
-					// currentRequest.done = true;
-
-					job.GridStructure.Dispose();
-					job.Result       .Dispose();
-					job.Open         .Dispose();
-					job.Closed       .Dispose();
-					
+					job.ForceDispose();
 					currentRequest = null;
 				}
 			}
@@ -65,12 +85,12 @@ namespace MugCup_PathFinder.Runtime
 				
 				job = new ProcessPathJob
 				{
-					StartNodePos  = Vec3IntToInt3(currentRequest.PathStart),
-					TargetNodePos = Vec3IntToInt3(currentRequest.PathEnd),
+					StartNodePos  = currentRequest.PathStart.AsInt3(),
+					TargetNodePos = currentRequest.PathEnd  .AsInt3(),
 					
-					GridStructure  = grid.Copy(),
+					GridStructure  = gridStructure.Copy(),
 					Result         = new NativeList<int3>(Allocator.TempJob),
-					Open           = new NativeBinaryHeap<NodeCost>(grid.NodeCount, Allocator.TempJob),
+					Open           = new NativeBinaryHeap<NodeCost>(gridStructure.NodeCount, Allocator.TempJob),
 					Closed         = new NativeHashMap<int3,NodeCost>(128, Allocator.TempJob)
 				};
 				
@@ -80,40 +100,12 @@ namespace MugCup_PathFinder.Runtime
 			}
 		}
 
-		private int3 Vec3IntToInt3(Vector3Int _vector3)
-		{
-			return new int3(_vector3.x, _vector3.y, _vector3.z);
-		}
-
-		public void QueueJob(PathRequest<Vector3Int> _request) 
-		{
-			requests.Enqueue(_request);
-		}
-
-		public void UpdateGrid (GridStructure _grid) 
-		{
-			grid.Dispose();
-			if (grid.NodeSize > 0) 
-			{
-				grid = _grid;
-			}	
-		}
-
 		private void OnDestroy () 
 		{
 			jobHandle.Complete();
-			job.GridStructure.Dispose();
-
-			if (job.Result.IsCreated)
-				job.Result.Dispose();
 			
-			if (job.Open.Items.IsCreated)
-				job.Open.Dispose();
-			
-			if (job.Closed.IsCreated)
-				job.Closed.Dispose();
-
-			grid.Dispose();
+			job.Dispose();
+			gridStructure.Dispose();
 		}
     }
 }

@@ -6,6 +6,8 @@ using UnityEngine;
 
 namespace MugCup_PathFinder.Runtime
 {
+    //Broken
+    
     /// <summary>
     /// Using simple loop iteration to find the node with least cost.
     /// </summary>
@@ -13,6 +15,11 @@ namespace MugCup_PathFinder.Runtime
     {
         public Vector3Int GridSize  { get; set; }
         public INode[]    GridNodes { get; set; }
+        
+        public void FindPath(PathRequest<INode> _pathRequest, Action<PathResult<INode>> _onPathFound)
+        {
+            throw new NotImplementedException();
+        }
 
         public Vector3Int GetGridSize()
         {
@@ -75,10 +82,14 @@ namespace MugCup_PathFinder.Runtime
             
             return null;
         }
-
-        public IEnumerable<Vector3Int> FindPath(Vector3Int _origin, Vector3Int _target)
+        
+        //New interface
+        public GridData<INode> GridData {
+            get;
+        }
+        public void FindPath(PathRequest<Vector3Int> _pathRequest, Action<PathResult<Vector3Int>> _onPathFound)
         {
-            return null;
+            throw new NotImplementedException();
         }
     }
 }

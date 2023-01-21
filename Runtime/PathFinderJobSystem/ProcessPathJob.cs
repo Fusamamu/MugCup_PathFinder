@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace MugCup_PathFinder.Runtime
 {
-	public struct ProcessPathJob : IJob
+	public struct ProcessPathJob : IJob, IDisposable
 	{
 		public GridStructure GridStructure;
 		
@@ -56,7 +56,7 @@ namespace MugCup_PathFinder.Runtime
 
 						if (math.all(_newIdx >= _boundsMin & _newIdx < _boundsMax))
 						{
-							NodeNativeData _neighbor = GridStructure.GetNode(_newIdx);
+							//NodeNativeData _neighbor = GridStructure.GetNode(_newIdx);
 
 							var _newCost = new NodeCost(_newIdx, _currentNode.Index);
 
@@ -69,8 +69,6 @@ namespace MugCup_PathFinder.Runtime
 
 							_newCost.GCost = _nodeGCost;
 							_newCost.HCost = NodeDistance(_newIdx, TargetNodePos);
-
-
 
 							int _oldIdx = Open.IndexOf(_newCost);
 							if (_oldIdx >= 0)
@@ -108,7 +106,7 @@ namespace MugCup_PathFinder.Runtime
 			}
 		}
 			
-		private int NodeDistance (int3 _nodeA, int3 _nodeB) 
+		private int NodeDistance(int3 _nodeA, int3 _nodeB) 
 		{
 			int3 _d = _nodeA - _nodeB;
 			
@@ -119,6 +117,23 @@ namespace MugCup_PathFinder.Runtime
 				return 14 * _distZ + 10 * (_distX - _distZ);
 				
 			return 14 * _distX + 10 * (_distZ - _distX);
+		}
+
+		public void ForceDispose()
+		{
+			GridStructure.Dispose();
+			Result       .Dispose();
+			Open         .Dispose();
+			Closed       .Dispose();
+		}
+		
+		public void Dispose()
+		{
+			GridStructure.Dispose();
+			
+			if(Result.IsCreated)     Result.Dispose();
+			if(Open.Items.IsCreated) Open.Dispose();
+			if(Closed.IsCreated)     Closed.Dispose();
 		}
 	}
 }

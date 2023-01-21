@@ -20,11 +20,6 @@ namespace MugCup_PathFinder.Runtime
         
         public readonly Action<T[], bool> OnPathFound;
 
-        public PathResult()
-        {
-            
-        }
-
         public PathResult (T[] _path, bool _success, Action<T[], bool> _onPathFound)
         {
             Path        = _path       ;
@@ -32,17 +27,4 @@ namespace MugCup_PathFinder.Runtime
             OnPathFound = _onPathFound;
         }
     }
-
-    // public struct NodeData
-    // {
-    //     public Vector3Int NodeGridPosition ;
-    //     public Vector3    NodeWorldPosition;
-		  //
-    //     public Vector3Int NextNodePosition;
-    //     public Vector3    ExitPosition    ;
-    //
-    //     public INode NodeParent;
-    //
-    //     public NodeDirection Direction;
-    // }
 }

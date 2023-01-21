@@ -6,42 +6,66 @@ using UnityEngine;
 
 namespace MugCup_PathFinder.Runtime
 {
-    /// <summary>
-    /// Inherit PathFinderControllerGeneric so that it can be attached to gameObject.
-    /// </summary>
-    public class PathFinderControllerGridNode : PathFinderController<GridNode>
+    public class PathFinderControllerGridNode : MonoBehaviour, IPathFinderController<GridNode>
     {
-        [SerializeField] private bool useGridNodeDataManager;
+        private bool isInit;
         
-        [SerializeField] private GridNodeDataManager gridNodeDataManager;
+        [SerializeField] private GridData<GridNode> GridData;
         
-        public void SetUseGridNodeDataManager(bool _value)
+        private IPathFinder<GridNode> pathFinder;
+        
+        private readonly Queue<PathResult<Vector3Int>> pathResults = new Queue<PathResult<Vector3Int>>();
+
+        public IPathFinderController<GridNode> SetGridData(GridData<GridNode> _gridData)
         {
-            useGridNodeDataManager = _value;
+            GridData = _gridData;
+            return this;
         }
         
-        public override void Initialized()
+        public IPathFinderController<GridNode> SetPathFinder()
         {
-            if(useGridNodeDataManager)
-                InjectGridNodeDataManager(gridNodeDataManager);
-            else
-                base.Initialized();
+            pathFinder = new HeapPathFinder(GridData);
+            return this;
         }
-    
-        private void InjectGridNodeDataManager(GridNodeDataManager _gridNodeDataManager = null)
-        {
-            /*Using GridNodeData from GridNodeDataManager this is out of the box data from Path Finder Package*/
-            gridNodeDataManager = 
-                _gridNodeDataManager != null ? 
-                    _gridNodeDataManager : FindObjectOfType<GridNodeDataManager>();
         
-            if (!gridNodeDataManager)
+        public void Initialized()
+        {
+            if(isInit) return;
+            isInit = true;
+        }
+        
+        public void RequestPath(PathRequest<Vector3Int> _request, bool _waitForComplete)
+        {
+            Task _findPathTask = Task.Run(() =>
             {
-                Debug.LogWarning($"GridNodeData Missing Reference.");
-                return;
-            }
+                pathFinder.FindPath(_request, FinishedProcessingPath);
+            });
+
+            if (_waitForComplete)
+                _findPathTask.Wait();
+        }
+
+        private void FinishedProcessingPath(PathResult<Vector3Int> _result) 
+        {
+            pathResults.Enqueue(_result);
             
-            SelectGridDataNode(gridNodeDataManager.GetGridNodeData());
+            Debug.Log("Path Process Completed. Path's result enqueued.");
+        }
+        
+        private void Update() 
+        {
+            if (pathResults.Count > 0) 
+            {
+                var _itemsInQueue = pathResults.Count;
+                
+                for(var _i = 0; _i < _itemsInQueue; _i++) 
+                {
+                    PathResult<Vector3Int> _result = pathResults.Dequeue();
+                    
+                    _result.OnPathFound(_result.Path, _result.Success);
+                }
+            }
         }
     }
 }
+

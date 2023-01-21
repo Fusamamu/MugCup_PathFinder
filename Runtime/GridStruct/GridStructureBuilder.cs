@@ -26,11 +26,15 @@ namespace MugCup_PathFinder.Runtime
             return _gridStructure;
         }
 
-        public static void CopyData<T>(this GridData<T> _gridData, ref GridStructure _gridStructure) where T : INode
+        public static GridStructure CopyData<T>(this GridData<T> _gridData) where T : INode
         {
+            var _gridStructure = GenerateGridStructure(_gridData.GridSize);
+            
             for(var _i = 0; _i < _gridData.GridNodes.Length; _i++)
             {
                 var _node = _gridData.GridNodes[_i];
+                
+                if(_node == null) continue;
                 
                 var _newNode = new NodeNativeData
                 {
@@ -40,6 +44,8 @@ namespace MugCup_PathFinder.Runtime
 
                 _gridStructure.Grid[_i] = _newNode;
             }
+
+            return _gridStructure;
         }
     }
 }

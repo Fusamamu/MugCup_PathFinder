@@ -6,6 +6,9 @@ using UnityEngine.InputSystem;
 
 namespace MugCup_PathFinder.Runtime
 {
+    //!!!!Broken right now need to update to new interface
+    
+    
     //Todo
     //Path Finder Methods
     //1. By code using class AStarPathFinder
@@ -93,13 +96,18 @@ namespace MugCup_PathFinder.Runtime
             _pathGizmos.SetGridRef(_path);
         }
 
+        public void FindPath(PathRequest<GridNode> _pathRequest, Action<PathResult<GridNode>> _onPathFound)
+        {
+            
+        }
+
         public IEnumerable<GridNode> GeneratePath()
         {
             ClearPath();
             
             gridNodes = GridUtility.GenerateGridINodes<GridNode>(gridSize);
             
-            var _pathFinder = new HeapPathFinder(gridSize, gridNodes, maxIteration);
+            //var _pathFinder = new HeapPathFinder(gridSize, gridNodes, maxIteration);
 
             GridNode _startGridNode  = null;
             GridNode _targetGridNode = null;
@@ -123,8 +131,8 @@ namespace MugCup_PathFinder.Runtime
                 Debug.Log("Target Node null");
                 return null;
             }
-            
-            pathNodes = _pathFinder.FindPath(_startGridNode, _targetGridNode).ToArray();
+            //need update to new interface
+            //pathNodes = _pathFinder.FindPath(_startGridNode, _targetGridNode).ToArray();
 
             return pathNodes;
         }
@@ -140,11 +148,12 @@ namespace MugCup_PathFinder.Runtime
 
         private IEnumerable<GridNode> GetPath(Vector3Int _gridSize, GridNode[] _gridNodes)
         {
-            pathFinder = new HeapPathFinder(_gridSize, _gridNodes, maxIteration);
+            //pathFinder = new HeapPathFinder(_gridSize, _gridNodes, maxIteration);
             
-            var _path = pathFinder.FindPath(_gridNodes[0], _gridNodes[40]).ToArray();
+            //Need update to new interface
+            //var _path = pathFinder.FindPath(_gridNodes[0], _gridNodes[40]).ToArray();
 
-            return _path;
+            return null;
         }
 
         public IEnumerable<GridNode> GetPath(Vector3Int _startPos, Vector3Int _targetPos)
@@ -186,6 +195,14 @@ namespace MugCup_PathFinder.Runtime
                 Gizmos.DrawSphere(_node.NodeGridPosition, nodeRadius);
             }
         }
-        
+
+        //New Interface
+        public GridData<GridNode> GridData {
+            get;
+        }
+        public void FindPath(PathRequest<Vector3Int> _pathRequest, Action<PathResult<Vector3Int>> _onPathFound)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

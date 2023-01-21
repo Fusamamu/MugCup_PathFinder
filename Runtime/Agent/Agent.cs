@@ -1,21 +1,17 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace MugCup_PathFinder.Runtime
 {
     public class Agent : MonoBehaviour
     {
-	    [SerializeField] private bool useNodeAsPosition;
 	    [SerializeField] private bool followingPath;
 	    
-
 	    [SerializeField] private GridNode[] currentFollowedPath;
-
-	    //public PathRequestVec3 PathRequestVec3;
 	    
-	    //Replace with Path Request
 #region Selected Start/Target Position
 	    [SerializeField] private GridNode StartGridNode;
 	    [SerializeField] private GridNode TargetGridNode;
@@ -28,9 +24,22 @@ namespace MugCup_PathFinder.Runtime
 #region Dependencies
 	    [SerializeField] private GridData<GridNode> GridData;
 	    
+	    public Agent SetGridData(GridData<GridNode> _gridData)
+	    {
+		    GridData = _gridData;
+		    return this;
+	    }
+	    
 	    private IPathFinderController<GridNode> pathFinderController;
-#endregion
+	    
+	    public Agent SetPathFinderController(IPathFinderController<GridNode> _pathFinderController)
+	    {
+		    pathFinderController = _pathFinderController;
+		    pathFinderController.SetGridData(GridData);
 
+		    return this;
+	    }
+#endregion
 	    
 	    [Header("Agent Properties")]
 	    [SerializeField] private float speed     = 10f;
@@ -55,42 +64,14 @@ namespace MugCup_PathFinder.Runtime
 	    [Space(10)]
 	    [SerializeField] private float directionAngleFrom, directionAngleTo;
 	    
-	    
-	    
-	    
-	    
 
 	    private Coroutine followPathCoroutine;
 	    
 	    public event Action OnTargetArrived = delegate { };
-	    
-	    public Agent SetUseNodeAsPosition(bool _value)
-	    {
-		    useNodeAsPosition = _value;
-		    return this;
-	    }
 
-	    public Agent LoadGridData(GridData<GridNode> _gridData)
-	    {
-		    GridData = _gridData;
-		    return this;
-	    }
-	    
-#region Inject Dependencies
-	    public Agent SetPathFinderController(IPathFinderController<GridNode> _pathFinderController = null)
-	    {
-		    pathFinderController = _pathFinderController ?? FindObjectOfType<PathFinderControllerGridNode>();
-
-		    if (pathFinderController == null)
-		    {
-			    Debug.LogWarning($"{typeof(IPathFinderController<GridNode>)} Missing Reference.");
-		    }
-
-		    return this;
-	    }
-#endregion
 	    
 #region Get Complete Path from outside.
+	    //Might not need it or move to on path found
 	    public Agent SetTargetPath(GridNode[] _targetPath)
 	    {
 		    currentFollowedPath = _targetPath;
@@ -130,18 +111,12 @@ namespace MugCup_PathFinder.Runtime
 
 	    public void RequestPath()
 	    {
-		    if (!useNodeAsPosition)
-		    {
-			    StartGridNode  = GridUtility.GetNode(StartPosition,  GridData);
-			    TargetGridNode = GridUtility.GetNode(TargetPosition, GridData);
-		    }
+		    var _newPathRequest = new PathRequest<Vector3Int>(StartPosition, TargetPosition, OnPathFoundHandler);
 		    
-		    var _newPathRequest = new PathRequestNodeBase(StartGridNode, TargetGridNode, OnPathFoundHandler);
-		    
-		    pathFinderController.RequestPath(_newPathRequest, _waitForComplete: true);
+		    pathFinderController.RequestPath(_newPathRequest);
 	    }
 	    
-	    private void OnPathFoundHandler(GridNode[] _nodePath, bool _pathSuccessful) 
+	    private void OnPathFoundHandler(Vector3Int[] _wayPoints, bool _pathSuccessful) 
 	    {
 		    if (!_pathSuccessful)
 		    {
@@ -149,38 +124,37 @@ namespace MugCup_PathFinder.Runtime
 			    return;
 		    }
 		    
-		    if(_nodePath.Length == 0 || _nodePath.Length == 1) return;
+		    if(_wayPoints.Length == 0 || _wayPoints.Length == 1) return;
 
-		    var _startNode = _nodePath[0];
-		    var _nextNode  = _nodePath[1];
+		    var _startNode = _wayPoints[0];
+		    var _nextNode  = _wayPoints[1];
 
-		    if (_startNode.NodeGridPosition.x < _nextNode.NodeGridPosition.x)
+		    if (_startNode.x < _nextNode.x)
 		    {
 			    direction = NodeDirection.East;
 		    }
-		    else if (_startNode.NodeGridPosition.x > _nextNode.NodeGridPosition.x)
+		    else if (_startNode.x > _nextNode.x)
 		    {
 			    direction = NodeDirection.West;
 		    }
-		    else if (_startNode.NodeGridPosition.z > _nextNode.NodeGridPosition.z)
+		    else if (_startNode.z > _nextNode.z)
 		    {
 			    direction = NodeDirection.North;
 		    }
-		    else if (_startNode.NodeGridPosition.z < _nextNode.NodeGridPosition.z)
+		    else if (_startNode.z < _nextNode.z)
 		    {
 			    direction = NodeDirection.South;
 		    }
 		    
 		    SetStartDirection();
 			    
-		    currentFollowedPath = _nodePath;
+		    currentFollowedPath = _wayPoints.Select(_point => GridData.GetNode(_point)).ToArray();
 		    followPathCoroutine = StartCoroutine(FollowPath());
 	    }
 #endregion
 
 	    private void SetStartDirection()
 	    {
-		    //direction = NodeDirection.East;
 		    directionChange = DirectionChange.None;
 
 		    directionAngleFrom = direction.GetAngle();

@@ -8,12 +8,10 @@ namespace MugCup_PathFinder.Runtime
 {
     public interface IPathFinderController<T> where T : INode
     {
+        public IPathFinderController<T> SetGridData(GridData<T> _gridData);
+        public IPathFinderController<T> SetPathFinder();
+        
         public void Initialized();
-
-        public IPathFinderController<T> SelectGridDataNode(GridData<T> _gridData);
-        public IPathFinderController<T> InitializePathFinder();
-   
-        public void RequestPath(PathRequest<T> _request, bool _waitForComplete = false);
-        public Task RequestPathAsync(PathRequest<T> _request, Action _onCompleted);
+        public void RequestPath(PathRequest<Vector3Int> _request, bool _waitForComplete = false);
     }
 }
