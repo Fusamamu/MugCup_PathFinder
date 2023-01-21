@@ -7,12 +7,9 @@ namespace MugCup_PathFinder.Runtime
 {
     public class Agent : MonoBehaviour
     {
-	    [SerializeField] private bool useGridNodeDataManager;
 	    [SerializeField] private bool useNodeAsPosition;
 	    [SerializeField] private bool followingPath;
 	    
-	    [SerializeField] private float speed     = 10f;
-	    [SerializeField] private float turnSpeed = 5f;
 
 	    [SerializeField] private GridNode[] currentFollowedPath;
 
@@ -27,13 +24,19 @@ namespace MugCup_PathFinder.Runtime
 	    [field: SerializeField] public Vector3Int TargetPosition { get; private set; }
 #endregion
 
+	    
 #region Dependencies
-	    [SerializeField] private GridNodeDataManager gridNodeDataManager;
 	    [SerializeField] private GridData<GridNode> GridData;
 	    
 	    private IPathFinderController<GridNode> pathFinderController;
 #endregion
 
+	    
+	    [Header("Agent Properties")]
+	    [SerializeField] private float speed     = 10f;
+	    [SerializeField] private float turnSpeed = 5f;
+	    
+	    
 	    [Header("Path Node Tracking Data")]
 	    [SerializeField] private Transform model = default;
 	    
@@ -51,16 +54,15 @@ namespace MugCup_PathFinder.Runtime
 	    
 	    [Space(10)]
 	    [SerializeField] private float directionAngleFrom, directionAngleTo;
+	    
+	    
+	    
+	    
+	    
 
 	    private Coroutine followPathCoroutine;
 	    
 	    public event Action OnTargetArrived = delegate { };
-
-	    public Agent SetUseGridNodeDataManager(bool _value)
-	    {
-		    useGridNodeDataManager = _value;
-		    return this;
-	    }
 	    
 	    public Agent SetUseNodeAsPosition(bool _value)
 	    {
@@ -73,37 +75,9 @@ namespace MugCup_PathFinder.Runtime
 		    GridData = _gridData;
 		    return this;
 	    }
-
-	    public void Initialized(IPathFinderController<GridNode> _pathFinderController = null)
-	    {
-		    if(useGridNodeDataManager)
-				InjectGridNodeDataManager();
-		    else
-			    LoadGridData(GridData);
-		    
-		    InjectPathFinderController(_pathFinderController);
-	    }
 	    
 #region Inject Dependencies
-	    /// <summary>
-	    /// Use GridNodeData as Default Initialization.
-	    /// </summary>
-	    private Agent InjectGridNodeDataManager(GridNodeDataManager _gridNodeDataManager = null)
-	    {
-		    if(gridNodeDataManager == null)
-				gridNodeDataManager = _gridNodeDataManager != null ? _gridNodeDataManager : FindObjectOfType<GridNodeDataManager>();
-
-		    if (!gridNodeDataManager)
-		    {
-			    Debug.LogWarning($"GridNodeData Missing Reference.");
-			    return this;
-		    }
-
-		    GridData = gridNodeDataManager.GetGridNodeData();
-		    return this;
-	    }
-	    
-	    public Agent InjectPathFinderController(IPathFinderController<GridNode> _pathFinderController = null)
+	    public Agent SetPathFinderController(IPathFinderController<GridNode> _pathFinderController = null)
 	    {
 		    pathFinderController = _pathFinderController ?? FindObjectOfType<PathFinderControllerGridNode>();
 
@@ -132,12 +106,11 @@ namespace MugCup_PathFinder.Runtime
 
 	    public Agent StopFollowPath()
 	    {
-		    if (followPathCoroutine == null) 
-			    return this;
-		    
-		    StopCoroutine(followPathCoroutine);
-		    followPathCoroutine = null;
-
+		    if (followPathCoroutine != null)
+		    {
+			    StopCoroutine(followPathCoroutine);
+			    followPathCoroutine = null;
+		    } 
 		    return this;
 	    }
 #endregion
@@ -157,12 +130,6 @@ namespace MugCup_PathFinder.Runtime
 
 	    public void RequestPath()
 	    {
-		    if (followPathCoroutine != null)
-		    {
-			    StopCoroutine(followPathCoroutine);
-			    followPathCoroutine = null;
-		    }
-
 		    if (!useNodeAsPosition)
 		    {
 			    StartGridNode  = GridUtility.GetNode(StartPosition,  GridData);

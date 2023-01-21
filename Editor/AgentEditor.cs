@@ -19,15 +19,17 @@ namespace MugCup_PathFinder.Editor
         {
             DrawDefaultInspector();
 
-            if (GUILayout.Button("Demo Use GridNodeDataManager"))
-            {
-                agent.SetUseGridNodeDataManager(true);
-                agent.Initialized();
-            }
+            // if (GUILayout.Button("Demo Use GridNodeDataManager"))
+            // {
+            //     agent.SetUseGridNodeDataManager(true);
+            //     agent.Initialized();
+            // }
             
             if (GUILayout.Button("Start Find Path"))
             {
-                agent.RequestPath();
+                agent
+                    .StopFollowPath()
+                    .RequestPath();
             }
         }
     }
