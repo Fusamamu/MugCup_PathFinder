@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Unity.Collections;
 using UnityEngine;
 
+//Will remove and use just GridData!!!!!!
 namespace MugCup_PathFinder.Runtime
 {
     //Need to Change to global manager for grid node
@@ -86,7 +87,7 @@ namespace MugCup_PathFinder.Runtime
             }
             
             GridData.GridNodes = null;
-            isInit                 = false;
+            isInit = false;
         }
 
         private bool IsInitialized()

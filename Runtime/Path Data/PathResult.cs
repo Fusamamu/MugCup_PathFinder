@@ -12,13 +12,18 @@ namespace MugCup_PathFinder.Runtime
         }
     }
 
-    public class PathResult<T> where T : INode
+    public class PathResult<T> 
     {
         public readonly T[] Path;
         
         public readonly bool Success;
         
         public readonly Action<T[], bool> OnPathFound;
+
+        public PathResult()
+        {
+            
+        }
 
         public PathResult (T[] _path, bool _success, Action<T[], bool> _onPathFound)
         {

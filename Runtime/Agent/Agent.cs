@@ -15,7 +15,10 @@ namespace MugCup_PathFinder.Runtime
 	    [SerializeField] private float turnSpeed = 5f;
 
 	    [SerializeField] private GridNode[] currentFollowedPath;
+
+	    //public PathRequestVec3 PathRequestVec3;
 	    
+	    //Replace with Path Request
 #region Selected Start/Target Position
 	    [SerializeField] private GridNode StartGridNode;
 	    [SerializeField] private GridNode TargetGridNode;
@@ -152,7 +155,7 @@ namespace MugCup_PathFinder.Runtime
 		    return this;
 	    }
 
-	    public void StartFindPath()
+	    public void RequestPath()
 	    {
 		    if (followPathCoroutine != null)
 		    {

@@ -246,7 +246,7 @@ namespace MugCup_PathFinder.Runtime
             return _node;
         }
         
-        public static T[] GetNodesByLevel<T>(int _gridLevel, Vector3Int _gridSize, T[] _grid) where T : GridNode
+        public static T[] GetNodesByLevel<T>(int _gridLevel, Vector3Int _gridSize, T[] _grid) where T : Component, INode
         {
             int _rowUnit    = _gridSize.x;
             int _columnUnit = _gridSize.z;
@@ -664,19 +664,6 @@ namespace MugCup_PathFinder.Runtime
 #endregion
 
 #region Add/Remove Nodes Methods
-        // public static void AddNodes<T>(T _newNode, Vector3Int _nodePos, Vector3Int _gridSize, ref T[] _grid) where T : INode
-        // {
-        //     int _x = _nodePos.x;
-        //     int _y = _nodePos.y;
-        //     int _z = _nodePos.z;
-        //
-        //     if (_x < 0 || _x >= _gridSize.x) return;
-        //     if (_y < 0 || _y >= _gridSize.y) return;
-        //     if (_z < 0 || _z >= _gridSize.z) return;
-        //     
-        //     _grid[_z + _gridSize.x * (_x + _gridSize.y * _y)] = _newNode;
-        // }
-        
         public static void AddNode<T>(T _newNode, Vector3Int _nodePos, Vector3Int _gridSize, ref T[] _grid)
         {
             int _x = _nodePos.x;
@@ -690,7 +677,7 @@ namespace MugCup_PathFinder.Runtime
             _grid[_z + _gridSize.x * (_x + _gridSize.y * _y)] = _newNode;
         }
         
-        public static void RemoveNode<T>(Vector3Int _nodePos, Vector3Int _gridSize, ref T[] _grid)
+        public static void RemoveNode<T>(Vector3Int _nodePos, Vector3Int _gridSize, ref T[] _grid) 
         {
             int _x = _nodePos.x;
             int _y = _nodePos.y;
@@ -744,6 +731,7 @@ namespace MugCup_PathFinder.Runtime
             }
             return default;
         }
+        
         // public Node NodeFromWorldPoint(Vector3 worldPosition) {
         //     float percentX = (worldPosition.x + gridWorldSize.x/2) / gridWorldSize.x;
         //     float percentY = (worldPosition.z + gridWorldSize.y/2) / gridWorldSize.y;

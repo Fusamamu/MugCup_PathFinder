@@ -1,9 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 using Unity.Collections;
 using Unity.Mathematics;
-using UnityEditor.IMGUI.Controls;
-using UnityEngine;
 
 namespace MugCup_PathFinder.Runtime
 {

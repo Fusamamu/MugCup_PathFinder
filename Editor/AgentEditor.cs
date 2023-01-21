@@ -27,7 +27,7 @@ namespace MugCup_PathFinder.Editor
             
             if (GUILayout.Button("Start Find Path"))
             {
-                agent.StartFindPath();
+                agent.RequestPath();
             }
         }
     }

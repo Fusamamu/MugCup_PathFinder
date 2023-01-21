@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace MugCup_PathFinder.Runtime
 {
-    public interface IPathFinderController<T> where T : GridNode
+    public interface IPathFinderController<T> where T : INode
     {
         public void Initialized();
 
