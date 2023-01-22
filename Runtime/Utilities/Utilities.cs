@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Collections;
 using Unity.Mathematics;
 using UnityEditor.Graphs;
 using UnityEngine;
@@ -49,10 +50,37 @@ namespace MugCup_PathFinder.Runtime
         {
             return new int3(_vector3.x, _vector3.y, _vector3.z);
         }
-        
-        // private Vector3Int CastVec3ToVec3Int(Vector3 _value)
-        // {
-        //     return new Vector3Int((int)_value.x, (int)_value.y, (int)_value.z);
-        // }
+
+        public static NativeList<int3> NeighborIndices4Dir(this int3 _index)
+        {
+            var _neighbors = new NativeList<int3>();
+
+            _neighbors.Add(_index.LeftIndex());
+            _neighbors.Add(_index.RightIndex());
+            _neighbors.Add(_index.Forward());
+            _neighbors.Add(_index.Back());
+            
+            return _neighbors;
+        }
+
+        public static int3 LeftIndex(this int3 _index)
+        {
+            return _index + new int3(-1, 0, 0);
+        }
+
+        public static int3 RightIndex(this int3 _index)
+        {
+            return _index + new int3(1, 0, 0);
+        }
+
+        public static int3 Forward(this int3 _index)
+        {
+            return _index + new int3(0, 0, 1);
+        }
+
+        public static int3 Back(this int3 _index)
+        { 
+            return _index + new int3(0, 0, -1);
+        }
     }
 }

@@ -1,10 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.Collections;
-using Unity.Jobs;
-using Unity.Mathematics;
 using UnityEngine;
+using Unity.Jobs;
+using Unity.Collections;
+using Unity.Mathematics;
 
 namespace MugCup_PathFinder.Runtime
 {
@@ -44,9 +44,7 @@ namespace MugCup_PathFinder.Runtime
 					break;
 
 				if (math.all(_currentNode.Index == TargetNodePos))
-				{
 					break;
-				}
 
 				for (int _xC = -1; _xC <= 1; _xC++)
 				{
@@ -82,13 +80,9 @@ namespace MugCup_PathFinder.Runtime
 							else
 							{
 								if (Open.CurrentItemCount < Open.Capacity)
-								{
 									Open.Add(_newCost);
-								}
 								else
-								{
 									return;
-								}
 							}
 						}
 					}
@@ -105,7 +99,7 @@ namespace MugCup_PathFinder.Runtime
 				_currentNode = _next;
 			}
 		}
-			
+		
 		private int NodeDistance(int3 _nodeA, int3 _nodeB) 
 		{
 			int3 _d = _nodeA - _nodeB;
