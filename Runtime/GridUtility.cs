@@ -10,18 +10,18 @@ namespace MugCup_PathFinder.Runtime
 {
     public static class GridUtility
     {
-        public static bool HasNodeOnTop<T>(T _node, Vector3Int _gridSize, T[] _grid) where T: INode
+        public static bool HasNodeOnTop<T>(T _node, Vector3Int _gridSize, T[] _grid) where T: IGridCoord
         {
             return HasNodeOnTop(_node.NodeGridPosition, _gridSize, _grid);
         }
         
-        public static bool HasNodeOnTop<T>(Vector3Int _nodePos, Vector3Int _gridSize, T[] _grid) where T: INode
+        public static bool HasNodeOnTop<T>(Vector3Int _nodePos, Vector3Int _gridSize, T[] _grid) where T: IGridCoord
         {
             var _topNode = GetNodeUp(_nodePos, _gridSize, _grid);
             return _topNode != null;
         }
 
-        public static IEnumerable<T> GetAdjacentNodes4Dir<T>(T _node, Vector3Int _gridSize, T[] _grid) where T: INode
+        public static IEnumerable<T> GetAdjacentNodes4Dir<T>(T _node, Vector3Int _gridSize, T[] _grid) where T: IGridCoord
         {
             List<T> _adjacentBlocks = new List<T>
             {
@@ -34,17 +34,17 @@ namespace MugCup_PathFinder.Runtime
             return _adjacentBlocks;
         }
 
-        public static IEnumerable<T> GetAdjacentNodes8Dir<T>(T _node, GridData<T> _gridData) where T : INode
+        public static IEnumerable<T> GetAdjacentNodes8Dir<T>(T _node, GridData<T> _gridData) where T : IGridCoord
         {
             yield return (T)GetAdjacentNodes4Dir(_node, _gridData.GridSize, _gridData.GridNodes);
         }
         
-        public static IEnumerable<T> GetAdjacentNodes8Dir<T>(T _node, Vector3Int _gridSize, T[] _grid) where T : INode
+        public static IEnumerable<T> GetAdjacentNodes8Dir<T>(T _node, Vector3Int _gridSize, T[] _grid) where T : IGridCoord
         {
             return GetAdjacentNodes8Dir(_node.NodeGridPosition, _gridSize, _grid);
         }
         
-        public static IEnumerable<T> GetAdjacentNodes8Dir<T>(Vector3Int _nodePos, Vector3Int _gridSize, T[] _grid) where T : INode
+        public static IEnumerable<T> GetAdjacentNodes8Dir<T>(Vector3Int _nodePos, Vector3Int _gridSize, T[] _grid) where T : IGridCoord
         {
             List<T> _adjacentBlocks = new List<T>
             {
@@ -62,7 +62,7 @@ namespace MugCup_PathFinder.Runtime
         }
 
 #region GetNodes From 3x3 Cube [by node reference]
-        public static IEnumerable<T> GetNodesFrom3x3Cubes<T>(T _node, Vector3Int _gridSize, T[] _grid) where T : INode
+        public static IEnumerable<T> GetNodesFrom3x3Cubes<T>(T _node, Vector3Int _gridSize, T[] _grid) where T : IGridCoord
         {
             List<T> _cubeNodes = new List<T>();
             
@@ -73,7 +73,7 @@ namespace MugCup_PathFinder.Runtime
             return _cubeNodes;
         }
         
-        public static IEnumerable<T> GetTopSectionNodesFrom3x3Cube<T>(T _node, Vector3Int _gridSize, T[] _grid) where T: INode
+        public static IEnumerable<T> GetTopSectionNodesFrom3x3Cube<T>(T _node, Vector3Int _gridSize, T[] _grid) where T: IGridCoord
         {
             List<T> _topSectionNodes = new List<T>
             {
@@ -91,7 +91,7 @@ namespace MugCup_PathFinder.Runtime
             return _topSectionNodes;
         }
         
-        public static IEnumerable<T> GetMiddleSectionNodesFrom3x3Cube<T>(T _node, Vector3Int _gridSize, T[] _grid) where T: INode
+        public static IEnumerable<T> GetMiddleSectionNodesFrom3x3Cube<T>(T _node, Vector3Int _gridSize, T[] _grid) where T: IGridCoord
         {
             List<T> _middleSectionNodes = new List<T>
             {
@@ -109,7 +109,7 @@ namespace MugCup_PathFinder.Runtime
             return _middleSectionNodes;
         }
         
-        public static IEnumerable<T> GetBottomSectionNodesFrom3x3Cube<T>(T _node, Vector3Int _gridSize, T[] _grid) where T: INode
+        public static IEnumerable<T> GetBottomSectionNodesFrom3x3Cube<T>(T _node, Vector3Int _gridSize, T[] _grid) where T: IGridCoord
         {
             List<T> _bottomSectionNodes = new List<T>
             {
@@ -129,7 +129,7 @@ namespace MugCup_PathFinder.Runtime
 #endregion
         
 #region GetNodes From 3x3 Cube [by node position]
-        public static IEnumerable<T> GetNodesFrom3x3Cubes<T>(Vector3Int _nodePos, Vector3Int _gridSize, T[] _grid) where T : INode
+        public static IEnumerable<T> GetNodesFrom3x3Cubes<T>(Vector3Int _nodePos, Vector3Int _gridSize, T[] _grid) where T : IGridCoord
         {
             List<T> _cubeNodes = new List<T>();
             
@@ -140,7 +140,7 @@ namespace MugCup_PathFinder.Runtime
             return _cubeNodes;
         }
         
-        public static IEnumerable<T> GetTopSectionNodesFrom3x3Cube<T>(Vector3Int _nodePos, Vector3Int _gridSize, T[] _grid) where T : INode
+        public static IEnumerable<T> GetTopSectionNodesFrom3x3Cube<T>(Vector3Int _nodePos, Vector3Int _gridSize, T[] _grid) where T : IGridCoord
         {
             List<T> _topSectionNodes = new List<T>
             {
@@ -158,7 +158,7 @@ namespace MugCup_PathFinder.Runtime
             return _topSectionNodes;
         }
         
-        public static IEnumerable<T> GetMiddleSectionNodesFrom3x3Cube<T>(Vector3Int _nodePos, Vector3Int _gridSize, T[] _grid) where T : INode
+        public static IEnumerable<T> GetMiddleSectionNodesFrom3x3Cube<T>(Vector3Int _nodePos, Vector3Int _gridSize, T[] _grid) where T : IGridCoord
         {
             List<T> _middleSectionNodes = new List<T>
             {
@@ -176,7 +176,7 @@ namespace MugCup_PathFinder.Runtime
             return _middleSectionNodes;
         }
         
-        public static IEnumerable<T> GetBottomSectionNodesFrom3x3Cube<T>(Vector3Int _nodePos, Vector3Int _gridSize, T[] _grid) where T : INode
+        public static IEnumerable<T> GetBottomSectionNodesFrom3x3Cube<T>(Vector3Int _nodePos, Vector3Int _gridSize, T[] _grid) where T : IGridCoord
         {
             List<T> _bottomSectionNodes = new List<T>
             {
@@ -196,7 +196,7 @@ namespace MugCup_PathFinder.Runtime
 #endregion
         
 #region Request Nodes Method;
-        public static List<T> GetNodesRectArea<T>(Vector3Int _startCorner, Vector3Int _endCorner, Vector3Int _gridSize, T[] _grid) where T : INode
+        public static List<T> GetNodesRectArea<T>(Vector3Int _startCorner, Vector3Int _endCorner, Vector3Int _gridSize, T[] _grid) where T : IGridCoord
         {
             if (!NodePositionInsideGrid(_startCorner, _gridSize)) return default;
 
@@ -225,7 +225,7 @@ namespace MugCup_PathFinder.Runtime
             );
         }
         
-        public static T GetNode<T>(Vector3Int _nodePos, GridData<T> _gridData) where T : INode
+        public static T GetNode<T>(Vector3Int _nodePos, GridData<T> _gridData) where T : IGridCoord
         {
             var _gridSize = _gridData.GridSize;
             var _grid     = _gridData.GridNodes;
@@ -233,7 +233,7 @@ namespace MugCup_PathFinder.Runtime
             return GetNode<T>(_nodePos, _gridSize, _grid);
         }
         
-        public static T GetNode<T>(Vector3Int _nodePos, Vector3Int _gridSize, T[] _grid) where T : INode
+        public static T GetNode<T>(Vector3Int _nodePos, Vector3Int _gridSize, T[] _grid) where T : IGridCoord
         {
             if (!NodePositionInsideGrid(_nodePos, _gridSize)) return default;
             
@@ -246,7 +246,7 @@ namespace MugCup_PathFinder.Runtime
             return _node;
         }
         
-        public static T[] GetNodesByLevel<T>(int _gridLevel, Vector3Int _gridSize, T[] _grid) where T : Component, INode
+        public static T[] GetNodesByLevel<T>(int _gridLevel, Vector3Int _gridSize, T[] _grid) where T : Component, IGridCoord
         {
             int _rowUnit    = _gridSize.x;
             int _columnUnit = _gridSize.z;
@@ -272,25 +272,25 @@ namespace MugCup_PathFinder.Runtime
 #endregion
 
 #region Get Node Left, Right, Forward, Back
-        public static T GetNodeLeft<T>(Vector3Int _nodePos, Vector3Int _gridSize, T[] _grid) where T : INode
+        public static T GetNodeLeft<T>(Vector3Int _nodePos, Vector3Int _gridSize, T[] _grid) where T : IGridCoord
         {
             _nodePos += Vector3Int.left;
             return GetNode(_nodePos, _gridSize, _grid);
         }
         
-        public static T GetNodeRight<T>(Vector3Int _nodePos, Vector3Int _gridSize, T[] _grid) where T : INode 
+        public static T GetNodeRight<T>(Vector3Int _nodePos, Vector3Int _gridSize, T[] _grid) where T : IGridCoord 
         {
             _nodePos += Vector3Int.right;
             return GetNode(_nodePos, _gridSize, _grid);
         }
         
-        public static T GetNodeForward<T>(Vector3Int _nodePos, Vector3Int _gridSize, T[] _grid) where T : INode 
+        public static T GetNodeForward<T>(Vector3Int _nodePos, Vector3Int _gridSize, T[] _grid) where T : IGridCoord 
         {
             _nodePos += Vector3Int.forward;
             return GetNode(_nodePos, _gridSize, _grid);
         }
         
-        public static T GetNodeBack<T>(Vector3Int _nodePos, Vector3Int _gridSize, T[] _grid) where T : INode
+        public static T GetNodeBack<T>(Vector3Int _nodePos, Vector3Int _gridSize, T[] _grid) where T : IGridCoord
         {
             _nodePos += Vector3Int.back;
             return GetNode(_nodePos, _gridSize, _grid);
@@ -298,28 +298,28 @@ namespace MugCup_PathFinder.Runtime
 #endregion
 
 #region Get Node ForwardLeft, ForwardRight, BackLeft, BackRight
-        public static T GetNodeForwardLeft<T>(Vector3Int _nodePos, Vector3Int _gridSize, T[] _grid) where T : INode 
+        public static T GetNodeForwardLeft<T>(Vector3Int _nodePos, Vector3Int _gridSize, T[] _grid) where T : IGridCoord 
         {
             _nodePos += Vector3Int.forward;
             _nodePos += Vector3Int.left;
             return GetNode(_nodePos, _gridSize, _grid);
         }
         
-        public static T GetNodeForwardRight<T>(Vector3Int _nodePos, Vector3Int _gridSize, T[] _grid) where T : INode 
+        public static T GetNodeForwardRight<T>(Vector3Int _nodePos, Vector3Int _gridSize, T[] _grid) where T : IGridCoord 
         {
             _nodePos += Vector3Int.forward;
             _nodePos += Vector3Int.right;
             return GetNode(_nodePos, _gridSize, _grid);
         }
         
-        public static T GetNodeBackLeft<T>(Vector3Int _nodePos, Vector3Int _gridSize, T[] _grid) where T : INode 
+        public static T GetNodeBackLeft<T>(Vector3Int _nodePos, Vector3Int _gridSize, T[] _grid) where T : IGridCoord 
         {
             _nodePos += Vector3Int.back;
             _nodePos += Vector3Int.left;
             return GetNode(_nodePos, _gridSize, _grid);
         }
         
-        public static T GetNodeBackRight<T>(Vector3Int _nodePos, Vector3Int _gridSize, T[] _grid) where T : INode  
+        public static T GetNodeBackRight<T>(Vector3Int _nodePos, Vector3Int _gridSize, T[] _grid) where T : IGridCoord  
         {
             _nodePos += Vector3Int.back;
             _nodePos += Vector3Int.right;
@@ -328,34 +328,34 @@ namespace MugCup_PathFinder.Runtime
 #endregion
 
 #region Get Node Up, UpLeft, UpRight, UpForward, UpBack
-        public static T GetNodeUp<T>(Vector3Int _nodePos, Vector3Int _gridSize, T[] _grid) where T : INode 
+        public static T GetNodeUp<T>(Vector3Int _nodePos, Vector3Int _gridSize, T[] _grid) where T : IGridCoord 
         {
             _nodePos += Vector3Int.up;
             return GetNode(_nodePos, _gridSize, _grid);
         }
         
-        public static T GetNodeUpLeft<T>(Vector3Int _nodePos, Vector3Int _gridSize, T[] _grid) where T : INode 
+        public static T GetNodeUpLeft<T>(Vector3Int _nodePos, Vector3Int _gridSize, T[] _grid) where T : IGridCoord 
         {
             _nodePos += Vector3Int.up;
             _nodePos += Vector3Int.left;
             return GetNode(_nodePos, _gridSize, _grid);
         }
         
-        public static T GetNodeUpRight<T>(Vector3Int _nodePos, Vector3Int _gridSize, T[] _grid) where T : INode 
+        public static T GetNodeUpRight<T>(Vector3Int _nodePos, Vector3Int _gridSize, T[] _grid) where T : IGridCoord 
         {
             _nodePos += Vector3Int.up;
             _nodePos += Vector3Int.right;
             return GetNode(_nodePos, _gridSize, _grid);
         }
         
-        public static T GetNodeUpForward<T>(Vector3Int _nodePos, Vector3Int _gridSize, T[] _grid) where T : INode 
+        public static T GetNodeUpForward<T>(Vector3Int _nodePos, Vector3Int _gridSize, T[] _grid) where T : IGridCoord 
         {
             _nodePos += Vector3Int.up;
             _nodePos += Vector3Int.forward;
             return GetNode(_nodePos, _gridSize, _grid);
         }
         
-        public static T GetNodeUpBack<T>(Vector3Int _nodePos, Vector3Int _gridSize, T[] _grid) where T : INode  
+        public static T GetNodeUpBack<T>(Vector3Int _nodePos, Vector3Int _gridSize, T[] _grid) where T : IGridCoord  
         {
             _nodePos += Vector3Int.up;
             _nodePos += Vector3Int.back;
@@ -364,7 +364,7 @@ namespace MugCup_PathFinder.Runtime
 #endregion
 
 #region GetNode UpForwardLeft, UpForwardRight, UpBackLeft, UpBackRight
-        public static T GetNodeUpForwardLeft<T>(Vector3Int _nodePos, Vector3Int _gridSize, T[] _grid) where T : INode 
+        public static T GetNodeUpForwardLeft<T>(Vector3Int _nodePos, Vector3Int _gridSize, T[] _grid) where T : IGridCoord 
         {
             _nodePos += Vector3Int.up;
             _nodePos += Vector3Int.forward;
@@ -372,7 +372,7 @@ namespace MugCup_PathFinder.Runtime
             return GetNode(_nodePos, _gridSize, _grid);
         }
         
-        public static T GetNodeUpForwardRight<T>(Vector3Int _nodePos, Vector3Int _gridSize, T[] _grid) where T : INode 
+        public static T GetNodeUpForwardRight<T>(Vector3Int _nodePos, Vector3Int _gridSize, T[] _grid) where T : IGridCoord 
         {
             _nodePos += Vector3Int.up;
             _nodePos += Vector3Int.forward;
@@ -380,7 +380,7 @@ namespace MugCup_PathFinder.Runtime
             return GetNode(_nodePos, _gridSize, _grid);
         }
         
-        public static T GetNodeUpBackLeft<T>(Vector3Int _nodePos, Vector3Int _gridSize, T[] _grid) where T : INode 
+        public static T GetNodeUpBackLeft<T>(Vector3Int _nodePos, Vector3Int _gridSize, T[] _grid) where T : IGridCoord 
         {
             _nodePos += Vector3Int.up;
             _nodePos += Vector3Int.back;
@@ -388,7 +388,7 @@ namespace MugCup_PathFinder.Runtime
             return GetNode(_nodePos, _gridSize, _grid);
         }
         
-        public static T GetNodeUpBackRight<T>(Vector3Int _nodePos, Vector3Int _gridSize, T[] _grid) where T : INode 
+        public static T GetNodeUpBackRight<T>(Vector3Int _nodePos, Vector3Int _gridSize, T[] _grid) where T : IGridCoord 
         {
             _nodePos += Vector3Int.up;
             _nodePos += Vector3Int.back;
@@ -398,34 +398,34 @@ namespace MugCup_PathFinder.Runtime
 #endregion
         
 #region GetNode Down, DownLeft, DownRight, DownForward, DownBack
-        public static T GetNodeDown<T>(Vector3Int _nodePos, Vector3Int _gridSize, T[] _grid) where T : INode 
+        public static T GetNodeDown<T>(Vector3Int _nodePos, Vector3Int _gridSize, T[] _grid) where T : IGridCoord 
         {
             _nodePos += Vector3Int.down;
             return GetNode(_nodePos, _gridSize, _grid);
         }
         
-        public static T GetNodeDownLeft<T>(Vector3Int _nodePos, Vector3Int _gridSize, T[] _grid) where T : INode 
+        public static T GetNodeDownLeft<T>(Vector3Int _nodePos, Vector3Int _gridSize, T[] _grid) where T : IGridCoord 
         {
             _nodePos += Vector3Int.down;
             _nodePos += Vector3Int.left;
             return GetNode(_nodePos, _gridSize, _grid);
         }
         
-        public static T GetNodeDownRight<T>(Vector3Int _nodePos, Vector3Int _gridSize, T[] _grid) where T : INode 
+        public static T GetNodeDownRight<T>(Vector3Int _nodePos, Vector3Int _gridSize, T[] _grid) where T : IGridCoord 
         {
             _nodePos += Vector3Int.down;
             _nodePos += Vector3Int.right;
             return GetNode(_nodePos, _gridSize, _grid);
         }
         
-        public static T GetNodeDownForward<T>(Vector3Int _nodePos, Vector3Int _gridSize, T[] _grid) where T : INode 
+        public static T GetNodeDownForward<T>(Vector3Int _nodePos, Vector3Int _gridSize, T[] _grid) where T : IGridCoord 
         {
             _nodePos += Vector3Int.down;
             _nodePos += Vector3Int.forward;
             return GetNode(_nodePos, _gridSize, _grid);
         }
         
-        public static T GetNodeDownBack<T>(Vector3Int _nodePos, Vector3Int _gridSize, T[] _grid) where T : INode 
+        public static T GetNodeDownBack<T>(Vector3Int _nodePos, Vector3Int _gridSize, T[] _grid) where T : IGridCoord 
         {
             _nodePos += Vector3Int.down;
             _nodePos += Vector3Int.back;
@@ -434,7 +434,7 @@ namespace MugCup_PathFinder.Runtime
 #endregion
         
 #region GetNode DownForwardLeft, DownForwardRight, DownBackLeft, DownBackRight
-        public static T GetNodeDownForwardLeft<T>(Vector3Int _nodePos, Vector3Int _gridSize, T[] _grid) where T : INode 
+        public static T GetNodeDownForwardLeft<T>(Vector3Int _nodePos, Vector3Int _gridSize, T[] _grid) where T : IGridCoord 
         {
             _nodePos += Vector3Int.down;
             _nodePos += Vector3Int.forward;
@@ -442,7 +442,7 @@ namespace MugCup_PathFinder.Runtime
             return GetNode(_nodePos, _gridSize, _grid);
         }
         
-        public static T GetNodeDownForwardRight<T>(Vector3Int _nodePos, Vector3Int _gridSize, T[] _grid) where T : INode 
+        public static T GetNodeDownForwardRight<T>(Vector3Int _nodePos, Vector3Int _gridSize, T[] _grid) where T : IGridCoord 
         {
             _nodePos += Vector3Int.down;
             _nodePos += Vector3Int.forward;
@@ -450,7 +450,7 @@ namespace MugCup_PathFinder.Runtime
             return GetNode(_nodePos, _gridSize, _grid);
         }
         
-        public static T GetNodeDownBackLeft<T>(Vector3Int _nodePos, Vector3Int _gridSize, T[] _grid) where T : INode 
+        public static T GetNodeDownBackLeft<T>(Vector3Int _nodePos, Vector3Int _gridSize, T[] _grid) where T : IGridCoord 
         {
             _nodePos += Vector3Int.down;
             _nodePos += Vector3Int.back;
@@ -458,7 +458,7 @@ namespace MugCup_PathFinder.Runtime
             return GetNode(_nodePos, _gridSize, _grid);
         }
         
-        public static T GetNodeDownBackRight<T>(Vector3Int _nodePos, Vector3Int _gridSize, T[] _grid) where T : INode 
+        public static T GetNodeDownBackRight<T>(Vector3Int _nodePos, Vector3Int _gridSize, T[] _grid) where T : IGridCoord 
         {
             _nodePos += Vector3Int.down;
             _nodePos += Vector3Int.back;
@@ -468,25 +468,25 @@ namespace MugCup_PathFinder.Runtime
 #endregion
         
 #region Add Node Left, Right, Forward, Back
-        public static void AddNodeLeft<T>(T _newNode, Vector3Int _nodePos, Vector3Int _gridSize, ref T[] _grid) where T : INode 
+        public static void AddNodeLeft<T>(T _newNode, Vector3Int _nodePos, Vector3Int _gridSize, ref T[] _grid) where T : IGridCoord 
         {
             _nodePos += Vector3Int.left;
             AddNode(_newNode, _nodePos, _gridSize, ref _grid);
         }
         
-        public static void AddNodeRight<T>(T _newNode, Vector3Int _nodePos, Vector3Int _gridSize, ref T[] _grid) where T : INode 
+        public static void AddNodeRight<T>(T _newNode, Vector3Int _nodePos, Vector3Int _gridSize, ref T[] _grid) where T : IGridCoord 
         {
             _nodePos += Vector3Int.right;
             AddNode(_newNode, _nodePos, _gridSize, ref _grid);
         }
         
-        public static void AddNodeForward<T>(T _newNode, Vector3Int _nodePos, Vector3Int _gridSize, ref T[] _grid) where T : INode 
+        public static void AddNodeForward<T>(T _newNode, Vector3Int _nodePos, Vector3Int _gridSize, ref T[] _grid) where T : IGridCoord 
         {
             _nodePos += Vector3Int.forward;
             AddNode(_newNode, _nodePos, _gridSize, ref _grid);
         }
         
-        public static void AddNodeBack<T>(T _newNode, Vector3Int _nodePos, Vector3Int _gridSize, ref T[] _grid) where T : INode 
+        public static void AddNodeBack<T>(T _newNode, Vector3Int _nodePos, Vector3Int _gridSize, ref T[] _grid) where T : IGridCoord 
         {
             _nodePos += Vector3Int.back;
             AddNode(_newNode, _nodePos, _gridSize, ref _grid);
@@ -494,28 +494,28 @@ namespace MugCup_PathFinder.Runtime
 #endregion
         
 #region Add Node ForwardLeft, ForwardRight, BackLeft, BackRight
-        public static void AddNodeForwardLeft<T>(T _newNode, Vector3Int _nodePos, Vector3Int _gridSize, ref T[] _grid) where T : INode 
+        public static void AddNodeForwardLeft<T>(T _newNode, Vector3Int _nodePos, Vector3Int _gridSize, ref T[] _grid) where T : IGridCoord 
         {
             _nodePos += Vector3Int.forward;
             _nodePos += Vector3Int.left;
             AddNode(_newNode, _nodePos, _gridSize, ref _grid);
         }
         
-        public static void AddNodeForwardRight<T>(T _newNode, Vector3Int _nodePos, Vector3Int _gridSize, ref T[] _grid) where T : INode 
+        public static void AddNodeForwardRight<T>(T _newNode, Vector3Int _nodePos, Vector3Int _gridSize, ref T[] _grid) where T : IGridCoord 
         {
             _nodePos += Vector3Int.forward;
             _nodePos += Vector3Int.right;
             AddNode(_newNode, _nodePos, _gridSize, ref _grid);
         }
         
-        public static void AddNodeBackLeft<T>(T _newNode, Vector3Int _nodePos, Vector3Int _gridSize, ref T[] _grid) where T : INode 
+        public static void AddNodeBackLeft<T>(T _newNode, Vector3Int _nodePos, Vector3Int _gridSize, ref T[] _grid) where T : IGridCoord 
         {
             _nodePos += Vector3Int.back;
             _nodePos += Vector3Int.left;
             AddNode(_newNode, _nodePos, _gridSize, ref _grid);
         }
         
-        public static void AddNodeBackRight<T>(T _newNode, Vector3Int _nodePos, Vector3Int _gridSize, ref T[] _grid) where T : INode 
+        public static void AddNodeBackRight<T>(T _newNode, Vector3Int _nodePos, Vector3Int _gridSize, ref T[] _grid) where T : IGridCoord 
         {
             _nodePos += Vector3Int.back;
             _nodePos += Vector3Int.right;
@@ -524,34 +524,34 @@ namespace MugCup_PathFinder.Runtime
 #endregion
         
 #region Add Node Up, UpLeft, UpRight, UpForward, UpBack
-        public static void AddNodeUp<T>(T _newNode, Vector3Int _nodePos, Vector3Int _gridSize, ref T[] _grid) where T : INode 
+        public static void AddNodeUp<T>(T _newNode, Vector3Int _nodePos, Vector3Int _gridSize, ref T[] _grid) where T : IGridCoord 
         {
             _nodePos += Vector3Int.up;
             AddNode(_newNode, _nodePos, _gridSize, ref _grid);
         }
         
-        public static void AddNodeUpLeft<T>(T _newNode, Vector3Int _nodePos, Vector3Int _gridSize, ref T[] _grid) where T : INode 
+        public static void AddNodeUpLeft<T>(T _newNode, Vector3Int _nodePos, Vector3Int _gridSize, ref T[] _grid) where T : IGridCoord 
         {
             _nodePos += Vector3Int.up;
             _nodePos += Vector3Int.left;
             AddNode(_newNode, _nodePos, _gridSize, ref _grid);
         }
         
-        public static void AddNodeUpRight<T>(T _newNode, Vector3Int _nodePos, Vector3Int _gridSize, ref T[] _grid) where T : INode 
+        public static void AddNodeUpRight<T>(T _newNode, Vector3Int _nodePos, Vector3Int _gridSize, ref T[] _grid) where T : IGridCoord 
         {
             _nodePos += Vector3Int.up;
             _nodePos += Vector3Int.right;
             AddNode(_newNode, _nodePos, _gridSize, ref _grid);
         }
         
-        public static void AddNodeUpForward<T>(T _newNode, Vector3Int _nodePos, Vector3Int _gridSize, ref T[] _grid) where T : INode 
+        public static void AddNodeUpForward<T>(T _newNode, Vector3Int _nodePos, Vector3Int _gridSize, ref T[] _grid) where T : IGridCoord 
         {
             _nodePos += Vector3Int.up;
             _nodePos += Vector3Int.forward;
             AddNode(_newNode, _nodePos, _gridSize, ref _grid);
         }
         
-        public static void AddNodeUpBack<T>(T _newNode, Vector3Int _nodePos, Vector3Int _gridSize, ref T[] _grid) where T : INode 
+        public static void AddNodeUpBack<T>(T _newNode, Vector3Int _nodePos, Vector3Int _gridSize, ref T[] _grid) where T : IGridCoord 
         {
             _nodePos += Vector3Int.up;
             _nodePos += Vector3Int.back;
@@ -560,7 +560,7 @@ namespace MugCup_PathFinder.Runtime
 #endregion
         
 #region Add Node UpForwardLeft, UpForwardRight, UpBackLeft, UpBackRight
-        public static void AddNodeUpForwardLeft<T>(T _newNode, Vector3Int _nodePos, Vector3Int _gridSize, ref T[] _grid) where T : INode 
+        public static void AddNodeUpForwardLeft<T>(T _newNode, Vector3Int _nodePos, Vector3Int _gridSize, ref T[] _grid) where T : IGridCoord 
         {
             _nodePos += Vector3Int.up;
             _nodePos += Vector3Int.forward;
@@ -568,7 +568,7 @@ namespace MugCup_PathFinder.Runtime
             AddNode(_newNode, _nodePos, _gridSize, ref _grid);
         }
         
-        public static void AddNodeUpForwardRight<T>(T _newNode, Vector3Int _nodePos, Vector3Int _gridSize, ref T[] _grid) where T : INode 
+        public static void AddNodeUpForwardRight<T>(T _newNode, Vector3Int _nodePos, Vector3Int _gridSize, ref T[] _grid) where T : IGridCoord 
         {
             _nodePos += Vector3Int.up;
             _nodePos += Vector3Int.forward;
@@ -576,7 +576,7 @@ namespace MugCup_PathFinder.Runtime
             AddNode(_newNode, _nodePos, _gridSize, ref _grid);
         }
         
-        public static void AddNodeUpBackLeft<T>(T _newNode, Vector3Int _nodePos, Vector3Int _gridSize, ref T[] _grid) where T : INode 
+        public static void AddNodeUpBackLeft<T>(T _newNode, Vector3Int _nodePos, Vector3Int _gridSize, ref T[] _grid) where T : IGridCoord 
         {
             _nodePos += Vector3Int.up;
             _nodePos += Vector3Int.back;
@@ -584,7 +584,7 @@ namespace MugCup_PathFinder.Runtime
             AddNode(_newNode, _nodePos, _gridSize, ref _grid);
         }
         
-        public static void AddNodeUpBackRight<T>(T _newNode, Vector3Int _nodePos, Vector3Int _gridSize, ref T[] _grid) where T : INode 
+        public static void AddNodeUpBackRight<T>(T _newNode, Vector3Int _nodePos, Vector3Int _gridSize, ref T[] _grid) where T : IGridCoord 
         {
             _nodePos += Vector3Int.up;
             _nodePos += Vector3Int.back;
@@ -594,34 +594,34 @@ namespace MugCup_PathFinder.Runtime
 #endregion
         
 #region Add Node Down, DownLeft, DownRight, DownForward, DownBack
-        public static void AddNodeDown<T>(T _newNode, Vector3Int _nodePos, Vector3Int _gridSize, ref T[] _grid) where T : INode 
+        public static void AddNodeDown<T>(T _newNode, Vector3Int _nodePos, Vector3Int _gridSize, ref T[] _grid) where T : IGridCoord 
         {
             _nodePos += Vector3Int.down;
             AddNode(_newNode, _nodePos, _gridSize, ref _grid);
         }
         
-        public static void AddNodeDownLeft<T>(T _newNode, Vector3Int _nodePos, Vector3Int _gridSize, ref T[] _grid) where T : INode 
+        public static void AddNodeDownLeft<T>(T _newNode, Vector3Int _nodePos, Vector3Int _gridSize, ref T[] _grid) where T : IGridCoord 
         {
             _nodePos += Vector3Int.down;
             _nodePos += Vector3Int.left;
             AddNode(_newNode, _nodePos, _gridSize, ref _grid);
         }
         
-        public static void AddNodeDownRight<T>(T _newNode, Vector3Int _nodePos, Vector3Int _gridSize, ref T[] _grid) where T : INode 
+        public static void AddNodeDownRight<T>(T _newNode, Vector3Int _nodePos, Vector3Int _gridSize, ref T[] _grid) where T : IGridCoord 
         {
             _nodePos += Vector3Int.down;
             _nodePos += Vector3Int.right;
             AddNode(_newNode, _nodePos, _gridSize, ref _grid);
         }
         
-        public static void AddNodeDownForward<T>(T _newNode, Vector3Int _nodePos, Vector3Int _gridSize, ref T[] _grid) where T : INode 
+        public static void AddNodeDownForward<T>(T _newNode, Vector3Int _nodePos, Vector3Int _gridSize, ref T[] _grid) where T : IGridCoord 
         {
             _nodePos += Vector3Int.down;
             _nodePos += Vector3Int.forward;
             AddNode(_newNode, _nodePos, _gridSize, ref _grid);
         }
         
-        public static void AddNodeDownBack<T>(T _newNode, Vector3Int _nodePos, Vector3Int _gridSize, ref T[] _grid) where T : INode 
+        public static void AddNodeDownBack<T>(T _newNode, Vector3Int _nodePos, Vector3Int _gridSize, ref T[] _grid) where T : IGridCoord 
         {
             _nodePos += Vector3Int.down;
             _nodePos += Vector3Int.back;
@@ -630,7 +630,7 @@ namespace MugCup_PathFinder.Runtime
 #endregion
         
 #region GetNode DownForwardLeft, DownForwardRight, DownBackLeft, DownBackRight
-        public static void AddNodeDownForwardLeft<T>(T _newNode, Vector3Int _nodePos, Vector3Int _gridSize, ref T[] _grid) where T : INode 
+        public static void AddNodeDownForwardLeft<T>(T _newNode, Vector3Int _nodePos, Vector3Int _gridSize, ref T[] _grid) where T : IGridCoord 
         {
             _nodePos += Vector3Int.down;
             _nodePos += Vector3Int.forward;
@@ -638,7 +638,7 @@ namespace MugCup_PathFinder.Runtime
             AddNode(_newNode, _nodePos, _gridSize, ref _grid);
         }
         
-        public static void AddNodeDownForwardRight<T>(T _newNode, Vector3Int _nodePos, Vector3Int _gridSize, ref T[] _grid) where T : INode 
+        public static void AddNodeDownForwardRight<T>(T _newNode, Vector3Int _nodePos, Vector3Int _gridSize, ref T[] _grid) where T : IGridCoord 
         {
             _nodePos += Vector3Int.down;
             _nodePos += Vector3Int.forward;
@@ -646,7 +646,7 @@ namespace MugCup_PathFinder.Runtime
             AddNode(_newNode, _nodePos, _gridSize, ref _grid);
         }
         
-        public static void AddNodeDownBackLeft<T>(T _newNode, Vector3Int _nodePos, Vector3Int _gridSize, ref T[] _grid) where T : INode 
+        public static void AddNodeDownBackLeft<T>(T _newNode, Vector3Int _nodePos, Vector3Int _gridSize, ref T[] _grid) where T : IGridCoord 
         {
             _nodePos += Vector3Int.down;
             _nodePos += Vector3Int.back;
@@ -654,7 +654,7 @@ namespace MugCup_PathFinder.Runtime
             AddNode(_newNode, _nodePos, _gridSize, ref _grid);
         }
         
-        public static void AddNodeDownBackRight<T>(T _newNode, Vector3Int _nodePos, Vector3Int _gridSize, ref T[] _grid) where T : INode 
+        public static void AddNodeDownBackRight<T>(T _newNode, Vector3Int _nodePos, Vector3Int _gridSize, ref T[] _grid) where T : IGridCoord 
         {
             _nodePos += Vector3Int.down;
             _nodePos += Vector3Int.back;
@@ -691,27 +691,27 @@ namespace MugCup_PathFinder.Runtime
         }
 #endregion
 
-        public static bool IsWestOf<T>(this T _node, T _comparedNode) where T : INode
+        public static bool IsWestOf<T>(this T _node, T _comparedNode) where T : IGridCoord
         {
             return _node.NodeGridPosition.x < _comparedNode.NodeGridPosition.x;
         }
 
-        public static bool IsEastOf<T>(this T _node, T _comparedNode) where T : INode
+        public static bool IsEastOf<T>(this T _node, T _comparedNode) where T : IGridCoord
         {
             return _node.NodeGridPosition.x > _comparedNode.NodeGridPosition.x;
         }
 
-        public static bool IsNorthOf<T>(this T _node, T _comparedNode) where T : INode
+        public static bool IsNorthOf<T>(this T _node, T _comparedNode) where T : IGridCoord
         {
             return _node.NodeGridPosition.z > _comparedNode.NodeGridPosition.z;
         }
 
-        public static bool IsSouthOf<T>(this T _node, T _comparedNode) where T : INode
+        public static bool IsSouthOf<T>(this T _node, T _comparedNode) where T : IGridCoord
         {
             return _node.NodeGridPosition.z < _comparedNode.NodeGridPosition.z;
         }
 
-        public static NodeDirection GetDirectionTo<T>(this T _node, T _comparedNode) where T : INode
+        public static NodeDirection GetDirectionTo<T>(this T _node, T _comparedNode) where T : IGridCoord
         {
             if (_node.IsWestOf(_comparedNode))
             {
@@ -743,7 +743,7 @@ namespace MugCup_PathFinder.Runtime
         //     return grid[x,y];
         // }
         
-        public static T[] GenerateGridINodes<T>(Vector3Int _gridUnitSize, GameObject _blockPrefab = null, GameObject _parent = null) where T : Component, INode
+        public static T[] GenerateGridINodes<T>(Vector3Int _gridUnitSize, GameObject _blockPrefab = null, GameObject _parent = null) where T : Component, IGridCoord
         {
             int _rowUnit    = _gridUnitSize.x;
             int _columnUnit = _gridUnitSize.z;

@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace MugCup_PathFinder.Runtime
 {
-    public class GridData<T>: MonoBehaviour where T : INode
+    public class GridData<T>: MonoBehaviour where T : IGridCoord
     {
         public IEnumerable<T> ValidNodes 
         {
