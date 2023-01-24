@@ -28,13 +28,13 @@ namespace MugCup_PathFinder.Runtime
         [field: SerializeField] public Vector3Int NodeGridPosition      { get; private set; }
         [field: SerializeField] public Vector3    NodeWorldPosition { get; private set; }
 	    
-        public INode SetNodePosition(Vector3Int _nodePosition)
+        public IGridCoord SetNodePosition(Vector3Int _nodePosition)
         {
             NodeGridPosition = _nodePosition;
             return this;
         }
 
-        public INode SetNodeWorldPosition(Vector3 _worldPosition)
+        public IGridCoord SetNodeWorldPosition(Vector3 _worldPosition)
         {
             NodeWorldPosition = _worldPosition;
             return this;

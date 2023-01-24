@@ -8,12 +8,12 @@ namespace MugCup_PathFinder.Runtime
 {
     public class AgentManager : MonoBehaviour
     {
-        [SerializeField] private Agent AgentPrefab;
+        [SerializeField] private PathAgent PathAgentPrefab;
         
         public int AgentCount = 10;
         public float AgentSpeed = 1f;
         
-        private List<Agent> Agents = new List<Agent>();
+        private List<PathAgent> Agents = new List<PathAgent>();
 
         [SerializeField] private GridVertexData GridVertexData;
 
@@ -39,7 +39,7 @@ namespace MugCup_PathFinder.Runtime
                 
                 if(_node == null) continue;
                 
-                var _newAgent = Instantiate(AgentPrefab, _node.NodeWorldPosition, Quaternion.identity);
+                var _newAgent = Instantiate(PathAgentPrefab, _node.NodeWorldPosition, Quaternion.identity);
 
                 Agents.Add(_newAgent);
 

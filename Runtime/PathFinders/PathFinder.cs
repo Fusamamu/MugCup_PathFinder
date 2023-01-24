@@ -41,7 +41,7 @@ namespace MugCup_PathFinder.Runtime
         public TargetType EndPathType   = TargetType.SetManual;
         //------------------------------------//
         
-        [SerializeField] private Agent agent; //If Assigned use agent pos instead of start posiiton
+        [SerializeField] private PathAgent PathAgent; //If Assigned use agent pos instead of start posiiton
         
         [SerializeField] private Vector3Int gridSize;
         

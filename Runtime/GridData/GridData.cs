@@ -22,11 +22,22 @@ namespace MugCup_PathFinder.Runtime
         public T[]        GridNodes;
         public Vector3Int GridSize ;
         
+        public int RowUnit   ;
+        public int ColumnUnit;
+        public int LevelUnit ;
+
+        public GridData<T> SetGridSize(Vector3Int _gridSize)
+        {
+            GridSize = _gridSize;
+            return this;
+        }
+
         public GridData<T> InitializeGridUnitSize(Vector3Int _gridSize)
         {
             GridSize = _gridSize;
             return this;
         }
+        
         //Duplicate Code
         public GridData<T> InitializeGridArray()
         { 
@@ -44,16 +55,28 @@ namespace MugCup_PathFinder.Runtime
             return this;
         }
         
-        // public IEnumerable<TU> AvailableNodes<TU>() where TU : class, INode
-        // {
-        //     foreach (var _node in GridNodes)
-        //     {
-        //         if(_node == null) continue;
-        //
-        //         if (_node is TU _block)
-        //             yield return _block;
-        //     }
-        // }
+        public TU[] GetGridUnitArray<TU>() where TU : GridNode
+        {
+            var _gridUnitArray = new TU[GridNodes.Length];
+
+            for (var _i = 0; _i < _gridUnitArray.Length; _i++)
+            {
+                _gridUnitArray[_i] = GridNodes[_i] as TU;
+            }
+
+            return _gridUnitArray;
+        }
+        
+        public IEnumerable<TU> AvailableNodes<TU>() where TU : class, INode
+        {
+            foreach (var _node in GridNodes)
+            {
+                if(_node == null) continue;
+        
+                if (_node is TU _block)
+                    yield return _block;
+            }
+        }
 
         public void ApplyAllNode(Action<T> _action)
         {

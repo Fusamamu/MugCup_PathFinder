@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -53,9 +54,9 @@ namespace MugCup_PathFinder.Runtime
 		{
 			framesProcessed++;
 
-			if (currentRequest != null) 
+			if (currentRequest != null)
 			{
-				if (jobHandle.IsCompleted || framesProcessed > 3) 
+				if (jobHandle.IsCompleted)// || framesProcessed > 3) 
 				{
 					jobHandle.Complete();
 
@@ -70,7 +71,9 @@ namespace MugCup_PathFinder.Runtime
 						for (var _i = job.Result.Length - 1; _i >= 0; _i--) 
 							_path[_i] = job.Result[_i].AsVector3Int();
 
-						currentRequest.Callback(_path, true);
+						var _reversePath = _path.Reverse().ToArray();//???Maybe not
+
+						currentRequest.Callback(_reversePath, true);
 					}
 
 					job.ForceDispose();
@@ -89,9 +92,11 @@ namespace MugCup_PathFinder.Runtime
 					TargetNodePos = currentRequest.PathEnd  .AsInt3(),
 					
 					GridStructure  = gridStructure.Copy(),
+					
 					Result         = new NativeList<int3>(Allocator.TempJob),
 					Open           = new NativeBinaryHeap<NodeCost>(gridStructure.NodeCount, Allocator.TempJob),
-					Closed         = new NativeHashMap<int3,NodeCost>(128, Allocator.TempJob)
+					Closed         = new NativeHashMap<int3,NodeCost>(128, Allocator.TempJob),
+					Neighbors      = new NativeList<int3>(Allocator.TempJob)
 				};
 				
 				jobHandle = job.Schedule();

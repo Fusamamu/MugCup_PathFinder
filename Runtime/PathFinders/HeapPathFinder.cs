@@ -88,6 +88,9 @@ namespace MugCup_PathFinder.Runtime
             if (_pathFound)
             {
                 _nodePath = AStarPathFinder<GridNode>.RetracePath(_startGridNode, _targetGridNode).ToArray();
+                
+                AStarPathFinder<GridNode>.SetNodePathData(_nodePath.ToList());
+                
                 _pathFound = _nodePath.Length > 0;
             }
 

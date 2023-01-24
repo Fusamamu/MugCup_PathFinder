@@ -5,14 +5,14 @@ using MugCup_PathFinder.Runtime;
 
 namespace MugCup_PathFinder.Editor
 {
-    [CustomEditor(typeof(Agent))]
+    [CustomEditor(typeof(PathAgent))]
     public class AgentEditor : UnityEditor.Editor
     {
-        private Agent agent;
+        private PathAgent pathAgent;
 
         private void OnEnable()
         {
-            agent = (Agent)target;
+            pathAgent = (PathAgent)target;
         }
 
         public override void OnInspectorGUI()
@@ -27,7 +27,7 @@ namespace MugCup_PathFinder.Editor
             
             if (GUILayout.Button("Start Find Path"))
             {
-                agent
+                pathAgent
                     .StopFollowPath()
                     .RequestPath();
             }

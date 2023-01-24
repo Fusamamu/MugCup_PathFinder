@@ -10,10 +10,10 @@ namespace MugCup_PathFinder.Runtime
 {
     public class FlowField : MonoBehaviour
     {
-        [SerializeField] private Agent AgentPrefab;
+        [SerializeField] private PathAgent PathAgentPrefab;
         public int AgentCount = 10;
         public float AgentSpeed = 1f;
-        private List<Agent> agents = new List<Agent>();
+        private List<PathAgent> agents = new List<PathAgent>();
         
         [SerializeField] private Transform GridParent;
         [SerializeField] private GridNode GridNodePrefab;
@@ -249,7 +249,7 @@ namespace MugCup_PathFinder.Runtime
                 var _checkNode = GridUtility.GetNode(_targetPos, GridNodeData.GridSize, GridNodeData.GridNodes);
                 if (_checkNode != null && _checkNode.gameObject.layer != LayerMask.NameToLayer("Structure"))
                 {
-                    var _newAgent = Instantiate(AgentPrefab, _targetPos + Vector3.up/2, Quaternion.identity);
+                    var _newAgent = Instantiate(PathAgentPrefab, _targetPos + Vector3.up/2, Quaternion.identity);
                     agents.Add(_newAgent);
                     
                     var _followFlow = _newAgent.gameObject.AddComponent<FollowFlowField>();
@@ -282,31 +282,31 @@ namespace MugCup_PathFinder.Runtime
             }
         }
 
-        private IEnumerator MoveAgent(Agent _agent, Vector3 _from , Vector3 _to)
+        private IEnumerator MoveAgent(PathAgent _pathAgent, Vector3 _from , Vector3 _to)
         {
             var _totalDist = Vector3.Distance(_from, _to);
 
 
             float  _t = 0;
             
-            while (Vector3.Distance(_agent.transform.position, _to) > 0.01f)
+            while (Vector3.Distance(_pathAgent.transform.position, _to) > 0.01f)
             {
-                var _currentDist = Vector3.Distance(_agent.transform.position, _to);
+                var _currentDist = Vector3.Distance(_pathAgent.transform.position, _to);
 
                 _t += AgentSpeed * Time.deltaTime;
                 
-                _agent.transform.position = Vector3.Lerp(_from, _to, _t);
+                _pathAgent.transform.position = Vector3.Lerp(_from, _to, _t);
                 yield return null;
             }
             
-            var _agentPos = _agent.transform.position;
+            var _agentPos = _pathAgent.transform.position;
             var _gridPos = new Vector3Int((int)_agentPos.x, 0, (int)_agentPos.z);
                 
             var _currentNode = GridUtility.GetNode(_gridPos, GridNodeData.GridSize, GridNodeData.GridNodes);
             
             if (_currentNode.NodeParent != null)
             {
-                StartCoroutine(MoveAgent(_agent, _agent.transform.position, _currentNode.NodeParent.NodeWorldPosition));
+                StartCoroutine(MoveAgent(_pathAgent, _pathAgent.transform.position, _currentNode.NodeParent.NodeWorldPosition));
             }
         }
 

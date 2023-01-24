@@ -3,10 +3,16 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace MugCup_PathFinder.Runtime
 {
-    public class Agent : MonoBehaviour
+	[Serializable]
+	public class OnDestArrived : UnityEvent
+	{
+	}
+	
+    public class PathAgent : MonoBehaviour
     {
 	    [SerializeField] private bool followingPath;
 	    
@@ -24,7 +30,7 @@ namespace MugCup_PathFinder.Runtime
 #region Dependencies
 	    [SerializeField] private GridData<GridNode> GridData;
 	    
-	    public Agent SetGridData(GridData<GridNode> _gridData)
+	    public PathAgent SetGridData(GridData<GridNode> _gridData)
 	    {
 		    GridData = _gridData;
 		    return this;
@@ -32,7 +38,7 @@ namespace MugCup_PathFinder.Runtime
 	    
 	    private IPathFinderController<GridNode> pathFinderController;
 	    
-	    public Agent SetPathFinderController(IPathFinderController<GridNode> _pathFinderController)
+	    public PathAgent SetPathFinderController(IPathFinderController<GridNode> _pathFinderController)
 	    {
 		    pathFinderController = _pathFinderController;
 		    pathFinderController.SetGridData(GridData);
@@ -67,25 +73,36 @@ namespace MugCup_PathFinder.Runtime
 
 	    private Coroutine followPathCoroutine;
 	    
-	    public event Action OnTargetArrived = delegate { };
+	    public OnDestArrived OnDestArrived = new OnDestArrived();
 
+	    public PathAgent SubscribeOnDestArrivedAgent(Action _action)
+	    {
+		    OnDestArrived?.AddListener(_action.Invoke);
+		    return this;
+	    }
+	    
+	    public PathAgent RemoveAllSubscribers()
+	    {
+		    OnDestArrived?.RemoveAllListeners();
+		    return this;
+	    }
 	    
 #region Get Complete Path from outside.
 	    //Might not need it or move to on path found
-	    public Agent SetTargetPath(GridNode[] _targetPath)
+	    public PathAgent SetTargetPath(GridNode[] _targetPath)
 	    {
 		    currentFollowedPath = _targetPath;
 		    return this;
 	    }
 
-	    public Agent StartFollowPath()
+	    public PathAgent StartFollowPath()
 	    {
 		    StopFollowPath();
 		    followPathCoroutine = StartCoroutine(FollowPath());
 		    return this;
 	    }
 
-	    public Agent StopFollowPath()
+	    public PathAgent StopFollowPath()
 	    {
 		    if (followPathCoroutine != null)
 		    {
@@ -97,13 +114,13 @@ namespace MugCup_PathFinder.Runtime
 #endregion
 	    
 #region Calculate Path by agent itself
-	    public Agent SetStartPos(Vector3Int _startPos)
+	    public PathAgent SetStartPos(Vector3Int _startPos)
 	    {
 		    StartPosition = _startPos;
 		    return this;
 	    }
 
-	    public Agent SetTargetPos(Vector3Int _targetPos)
+	    public PathAgent SetTargetPos(Vector3Int _targetPos)
 	    {
 		    TargetPosition = _targetPos;
 		    return this;
@@ -149,7 +166,7 @@ namespace MugCup_PathFinder.Runtime
 		    SetStartDirection();
 			    
 		    currentFollowedPath = _wayPoints.Select(_point => GridData.GetNode(_point)).ToArray();
-		    followPathCoroutine = StartCoroutine(FollowPath());
+		    followPathCoroutine = StartCoroutine(FollowPathWithNoDirection());
 	    }
 #endregion
 
@@ -161,6 +178,52 @@ namespace MugCup_PathFinder.Runtime
 		    directionAngleTo   = direction.GetAngle();
 
 		    transform.localRotation = direction.GetRotation();
+	    }
+
+	    private IEnumerator FollowPathWithNoDirection()
+	    {
+		    followingPath  = true;
+		    
+		    int _pathIndex = 0;
+		    int _lastIndex = currentFollowedPath.Length - 1;
+		    
+		    GridNodeTo = currentFollowedPath[_pathIndex];
+		    positionTo = GridNodeTo.NodeWorldPosition + Vector3.up;//Temp plus one up
+
+		    while (followingPath)
+		    {
+			    var _distToNextNode = Vector3.Distance(transform.position, positionTo);
+				    
+			    if (_distToNextNode > float.Epsilon)
+			    {
+				    transform.position = Vector3.MoveTowards(transform.position, positionTo, speed * Time.deltaTime);
+				    yield return null;
+			    }
+			    else
+			    {
+				    _pathIndex++;
+
+				    if (_pathIndex <= _lastIndex)
+				    {
+					    GridNodeFrom = GridNodeTo;
+					    positionFrom = positionTo;
+					    
+					    GridNodeTo = currentFollowedPath[_pathIndex];
+
+					    positionTo = GridNodeTo.NodeWorldPosition + Vector3.up;//Temp plus one up
+				    }
+			    }
+
+			    if (_pathIndex > _lastIndex)
+			    {
+				    StartGridNode = GridNodeTo;
+				    StartPosition = GridNodeTo.NodeGridPosition;
+				    
+				    followingPath = false;
+				    
+				    OnDestArrived?.Invoke();
+			    }
+		    }
 	    }
 
 	    private IEnumerator FollowPath()
@@ -215,7 +278,7 @@ namespace MugCup_PathFinder.Runtime
 				    
 				    followingPath = false;
 				    
-				    OnTargetArrived?.Invoke();
+				    OnDestArrived?.Invoke();
 			    }
 		    }
 	    }
@@ -281,47 +344,6 @@ namespace MugCup_PathFinder.Runtime
 		    
 		    model.localPosition     = Vector3.zero;
 		    transform.localPosition = positionFrom;
-	    }
-
-	    public IEnumerator FollowPath(PathInfo _pathInfo)
-	    {
-		    bool _followingPath = true;
-		    
-		    int _pathIndex = 0;
-		    
-		    transform.LookAt(_pathInfo.LookPoints[0]);
-
-		    float _speedPercent = 1;
-
-		    while (_followingPath) 
-		    {
-			    Vector2 pos2D = new Vector2 (transform.position.x, transform.position.z);
-			    
-			    //while (_pathInfo.turnBoundaries [pathIndex].HasCrossedLine (pos2D)) {
-				//    if (pathIndex == _pathInfo.finishLineIndex) {
-				//	    followingPath = false;
-				//	    break;
-				//    } else {
-				//	    pathIndex++;
-				//    }
-			    //}
-			    //
-			    //if (followingPath) {
-			    //
-				//    if (pathIndex >= _pathInfo.slowDownIndex && stoppingDst > 0) {
-				//	    speedPercent = Mathf.Clamp01 (_pathInfo.turnBoundaries [_pathInfo.finishLineIndex].DistanceFromPoint (pos2D) / stoppingDst);
-				//	    if (speedPercent < 0.01f) {
-				//		    followingPath = false;
-				//	    }
-				//    }
-			    //
-				//    Quaternion targetRotation = Quaternion.LookRotation (_pathInfo.lookPoints [pathIndex] - transform.position);
-				//    transform.rotation = Quaternion.Lerp (transform.rotation, targetRotation, Time.deltaTime * turnSpeed);
-				//    transform.Translate (Vector3.forward * Time.deltaTime * speed * speedPercent, Space.Self);
-			    //}
-
-			    yield return null;
-		    }
 	    }
 
 	    private void OnDrawGizmos()

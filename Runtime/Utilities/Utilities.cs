@@ -36,6 +36,11 @@ namespace MugCup_PathFinder.Runtime
             return new Vector3Int(_xPos, _yPos, _zPos);
         }
 
+        public static Vector3Int AsVector3Int(this Vector3 _pos)
+        {
+            return CastVec3ToVec3Int(_pos);
+        }
+
         public static Vector3Int AsVector3Int(this int3 _int3)
         {
             return new Vector3Int(_int3.x, _int3.y, _int3.z);
@@ -49,18 +54,6 @@ namespace MugCup_PathFinder.Runtime
         public static int3 Vec3IntToInt3(Vector3Int _vector3)
         {
             return new int3(_vector3.x, _vector3.y, _vector3.z);
-        }
-
-        public static NativeList<int3> NeighborIndices4Dir(this int3 _index)
-        {
-            var _neighbors = new NativeList<int3>();
-
-            _neighbors.Add(_index.LeftIndex());
-            _neighbors.Add(_index.RightIndex());
-            _neighbors.Add(_index.Forward());
-            _neighbors.Add(_index.Back());
-            
-            return _neighbors;
         }
 
         public static int3 LeftIndex(this int3 _index)

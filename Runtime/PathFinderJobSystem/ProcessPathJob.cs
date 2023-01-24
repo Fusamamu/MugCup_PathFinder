@@ -20,6 +20,8 @@ namespace MugCup_PathFinder.Runtime
 		public int3 StartNodePos;
 		public int3 TargetNodePos;
 
+		public NativeList<int3> Neighbors;
+
 		public void Execute()
 		{
 			if (StartNodePos.x == -1 || TargetNodePos.x == -1) return;
@@ -35,67 +37,70 @@ namespace MugCup_PathFinder.Runtime
 			var _currentNode = new NodeCost(StartNodePos, StartNodePos);
 
 			Open.Add(_currentNode);
-			
+
 			while (Open.CurrentItemCount > 0)
 			{
 				_currentNode = Open.RemoveFirst();
 
-				if (!Closed.TryAdd(_currentNode.Index, _currentNode))
-					break;
+				Closed.Add(_currentNode.Index, _currentNode);
 
 				if (math.all(_currentNode.Index == TargetNodePos))
 					break;
 
-				for (int _xC = -1; _xC <= 1; _xC++)
+				Neighbors.Clear();
+				Neighbors.Add(_currentNode.Index.LeftIndex());
+				Neighbors.Add(_currentNode.Index.RightIndex());
+				Neighbors.Add(_currentNode.Index.Forward());
+				Neighbors.Add(_currentNode.Index.Back());
+
+				foreach (var _newIdx in Neighbors)
 				{
-					for (int _zC = -1; _zC <= 1; _zC++)
+					if (!math.all(_newIdx >= _boundsMin & _newIdx < _boundsMax)) continue;
+					
+					if (Closed.ContainsKey(_newIdx)) continue;
+					
+					//NodeNativeData _neighbor = GridStructure.GetNode(_newIdx);
+
+					var _newCost = new NodeCost(_newIdx, _currentNode.Index);
+
+					// if (!neighbor.walkable || closed.TryGetValue(newIdx, out NodeCost _))
+					// {
+					// 	continue;
+					// }
+
+					int _nodeGCost = _currentNode.GCost + NodeDistance(_currentNode.Index, _newIdx);
+
+					_newCost.GCost = _nodeGCost;
+					_newCost.HCost = NodeDistance(_newIdx, TargetNodePos);
+
+					int _oldIdx = Open.IndexOf(_newCost);
+					if (_oldIdx >= 0)
 					{
-						int3 _newIdx = +_currentNode.Index + new int3(_xC, 0, _zC);
-
-						if (math.all(_newIdx >= _boundsMin & _newIdx < _boundsMax))
+						if (_nodeGCost < Open[_oldIdx].GCost)
 						{
-							//NodeNativeData _neighbor = GridStructure.GetNode(_newIdx);
-
-							var _newCost = new NodeCost(_newIdx, _currentNode.Index);
-
-							// if (!neighbor.walkable || closed.TryGetValue(newIdx, out NodeCost _))
-							// {
-							// 	continue;
-							// }
-
-							int _nodeGCost = _currentNode.GCost + NodeDistance(_currentNode.Index, _newIdx);
-
-							_newCost.GCost = _nodeGCost;
-							_newCost.HCost = NodeDistance(_newIdx, TargetNodePos);
-
-							int _oldIdx = Open.IndexOf(_newCost);
-							if (_oldIdx >= 0)
-							{
-								if (_nodeGCost < Open[_oldIdx].GCost)
-								{
-									Open.RemoveAt(_oldIdx);
-									Open.Add(_newCost);
-								}
-							}
-							else
-							{
-								if (Open.CurrentItemCount < Open.Capacity)
-									Open.Add(_newCost);
-								else
-									return;
-							}
+							Open.RemoveAt(_oldIdx);
+							Open.Add(_newCost);
 						}
 					}
+					else
+					{
+						if (Open.CurrentItemCount < Open.Capacity)
+							Open.Add(_newCost);
+						else
+							return;
+					}
+					
+					
 				}
-			} 
-
+			}
+			
 			while (!math.all(_currentNode.Index == _currentNode.Origin))
 			{
 				Result.Add(_currentNode.Index);
-				
+
 				if (!Closed.TryGetValue(_currentNode.Origin, out NodeCost _next))
 					return;
-				
+
 				_currentNode = _next;
 			}
 		}
@@ -119,6 +124,8 @@ namespace MugCup_PathFinder.Runtime
 			Result       .Dispose();
 			Open         .Dispose();
 			Closed       .Dispose();
+
+			Neighbors.Dispose();
 		}
 		
 		public void Dispose()
@@ -128,6 +135,8 @@ namespace MugCup_PathFinder.Runtime
 			if(Result.IsCreated)     Result.Dispose();
 			if(Open.Items.IsCreated) Open.Dispose();
 			if(Closed.IsCreated)     Closed.Dispose();
+
+			if (Neighbors.IsCreated) Neighbors.Dispose();
 		}
 	}
 }

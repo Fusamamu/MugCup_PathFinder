@@ -5,13 +5,13 @@ using UnityEngine;
 
 namespace MugCup_PathFinder.Runtime
 {
-	public interface INode
+	public interface INode : IGridCoord
 	{
-		public Vector3Int NodeGridPosition  { get; }
-		public Vector3    NodeWorldPosition { get; }
-
-		public INode SetNodePosition     (Vector3Int _nodePosition);
-		public INode SetNodeWorldPosition(Vector3 _worldPosition);
+		// public Vector3Int NodeGridPosition  { get; }
+		// public Vector3    NodeWorldPosition { get; }
+		//
+		// public INode SetNodePosition     (Vector3Int _nodePosition);
+		// public INode SetNodeWorldPosition(Vector3 _worldPosition);
 		
 		
 		public void SetNextNodeOnPath   (INode _node);
@@ -28,11 +28,20 @@ namespace MugCup_PathFinder.Runtime
 		public INode NodeParent { get; set; }
 		public HashSet<INode> Neighbors { get; }
 
-		public IEnumerable<T> GetNeighbors<T>() where T : INode;
-		public void SetNeighbors<T>(IEnumerable<T> _neighbors) where T : INode;
-
 		public INode NextNodeOnPath { get; set; }
 		public NodeDirection Direction { get; set; }
+		
+		public IEnumerable<T> GetNeighbors<T>() where T : INode;
+		public void SetNeighbors<T>(IEnumerable<T> _neighbors) where T : INode;
+	}
+
+	public interface IGridCoord
+	{
+		public Vector3Int NodeGridPosition  { get; }
+		public Vector3    NodeWorldPosition { get; }
+
+		public IGridCoord SetNodePosition     (Vector3Int _nodePosition);
+		public IGridCoord SetNodeWorldPosition(Vector3 _worldPosition);
 	}
 }
 
