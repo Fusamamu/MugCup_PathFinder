@@ -6,7 +6,7 @@ namespace MugCup_PathFinder.Runtime
 {
     public static class GridDataBuilder 
     {
-        public static T[] InitializeGridArray<T>(Vector3Int _gridSize) where T : INode
+        public static T[] InitializeGridArray<T>(Vector3Int _gridSize) where T : IGridCoord
         { 
             int _rowUnit    = _gridSize.x;
             int _columnUnit = _gridSize.z;
@@ -22,7 +22,7 @@ namespace MugCup_PathFinder.Runtime
             return _gridNodes;
         }
         
-        public static T[] GenerateGridNodes<T>(Vector3Int _gridUnitSize, GameObject _nodePrefab, GameObject _parent = null) where T : INode
+        public static T[] GenerateGridNodes<T>(Vector3Int _gridUnitSize, GameObject _nodePrefab, GameObject _parent = null) where T : IGridCoord
         {
             int _rowUnit    = _gridUnitSize.x;
             int _columnUnit = _gridUnitSize.z;
@@ -60,6 +60,7 @@ namespace MugCup_PathFinder.Runtime
 
             return _nodes;
         }
+        
         
         public static void GenerateGridAtLevel<T>(int _level) where T : INode
         {

@@ -54,7 +54,7 @@ namespace MugCup_PathFinder.Runtime
 
             return this;
         }
-        
+
         public TU[] GetGridUnitArray<TU>() where TU : GridNode
         {
             var _gridUnitArray = new TU[GridNodes.Length];
