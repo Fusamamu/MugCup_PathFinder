@@ -241,7 +241,7 @@ namespace MugCup_PathFinder.Runtime
             int _y = _nodePos.y;
             int _z = _nodePos.z;
             
-            T _node = _grid[_z + _gridSize.x * (_x + _gridSize.y * _y)];
+            T _node = _grid[_z + _gridSize.x * (_x + _gridSize.z * _y)];
 
             return _node;
         }
@@ -674,7 +674,7 @@ namespace MugCup_PathFinder.Runtime
             if (_y < 0 || _y >= _gridSize.y) return;
             if (_z < 0 || _z >= _gridSize.z) return;
             
-            _grid[_z + _gridSize.x * (_x + _gridSize.y * _y)] = _newNode;
+            _grid[_z + _gridSize.x * (_x + _gridSize.z * _y)] = _newNode;
         }
         
         public static void RemoveNode<T>(Vector3Int _nodePos, Vector3Int _gridSize, ref T[] _grid) 
@@ -687,7 +687,7 @@ namespace MugCup_PathFinder.Runtime
             if (_y < 0 || _y >= _gridSize.y) return;
             if (_z < 0 || _z >= _gridSize.z) return;
 
-            _grid[_z + _gridSize.x * (_x + _gridSize.y * _y)] = default;
+            _grid[_z + _gridSize.x * (_x + _gridSize.z * _y)] = default;
         }
 #endregion
 
@@ -790,7 +790,7 @@ namespace MugCup_PathFinder.Runtime
                         //
                         // _block.Init(_block.transform.position, new Vector3Int(_x, _y, _z));
 
-                        _nodes[_z + _gridUnitSize.x * (_x + _gridUnitSize.y * _y)] = _nodeBase;
+                        _nodes[_z + _gridUnitSize.x * (_x + _gridUnitSize.z * _y)] = _nodeBase;
                     }
                 }
             }
