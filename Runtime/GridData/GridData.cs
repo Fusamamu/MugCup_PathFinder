@@ -100,6 +100,12 @@ namespace MugCup_PathFinder.Runtime
             return GridUtility.GetNode(_nodePos, GridSize, GridNodes);
         }
         
+        //Test
+        public T GetNodeUp(Vector3Int _nodePos)
+        {
+            return GridUtility.GetNodeUp(_nodePos, GridSize, GridNodes);
+        }
+        
         public TU GetNode<TU>(Vector3Int _nodePos) where TU : class, INode
         {
             return GridUtility.GetNode(_nodePos, GridSize, GridNodes) as TU;
@@ -123,6 +129,21 @@ namespace MugCup_PathFinder.Runtime
         public void RemoveNode<TU>(Vector3Int _nodePos) where TU : class, INode
         {
             GridUtility.RemoveNode(_nodePos, GridSize, ref GridNodes);
+        }
+
+        public T[] GetAllNodeBasesAtLevel(int _gridLevel)
+        {
+            int _rowUnit    = GridSize.x;
+            int _columnUnit = GridSize.z;
+            int _heightUnit = GridSize.y;
+            
+            var _nodesAtLevel = new T[_rowUnit * _columnUnit];
+            
+            for (var _x = 0; _x < _rowUnit   ; _x++)
+            for (var _z = 0; _z < _columnUnit; _z++)
+                _nodesAtLevel[_z + _rowUnit * _x] = GridNodes[_z + _rowUnit * (_x + _heightUnit * _gridLevel)];
+
+            return _nodesAtLevel;
         }
         
         public TU[] GetAllNodeBasesAtLevel<TU>(int _gridLevel) where TU : class, INode
