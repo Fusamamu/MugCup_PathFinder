@@ -37,6 +37,11 @@ namespace MugCup_PathFinder.Runtime
             GridSize = _gridSize;
             return this;
         }
+
+        public virtual void Initialized()
+        {
+            throw new NotImplementedException();
+        }
         
         //Duplicate Code
         public GridData<T> InitializeGridArray()
@@ -94,22 +99,54 @@ namespace MugCup_PathFinder.Runtime
                     _action?.Invoke(_castNode);
             }
         }
+
+        public bool TryGetNode(Vector3Int _nodePos, out T _node)
+        {
+            _node = GetNode(_nodePos);
+            return _node != null;
+        }
         
         public T GetNode(Vector3Int _nodePos)
         {
             return GridUtility.GetNode(_nodePos, GridSize, GridNodes);
         }
         
-        //Test
-        public T GetNodeUp(Vector3Int _nodePos)
-        {
-            return GridUtility.GetNodeUp(_nodePos, GridSize, GridNodes);
-        }
-        
         public TU GetNode<TU>(Vector3Int _nodePos) where TU : class, INode
         {
             return GridUtility.GetNode(_nodePos, GridSize, GridNodes) as TU;
         }
+        
+#region Get Node Via Direction
+        public T GetNodeForward(Vector3Int _nodePos)
+        {
+            return GridUtility.GetNodeForward(_nodePos, GridSize, GridNodes);
+        }
+
+        public T GetNodeRight(Vector3Int _nodePos)
+        {
+            return GridUtility.GetNodeRight(_nodePos, GridSize, GridNodes);
+        }
+
+        public T GetNodeBack(Vector3Int _nodePos)
+        {
+            return GridUtility.GetNodeBack(_nodePos, GridSize, GridNodes);
+        }
+
+        public T GetNodeLeft(Vector3Int _nodePos)
+        {
+            return GridUtility.GetNodeLeft(_nodePos, GridSize, GridNodes);
+        }
+        
+        public T GetNodeUp(Vector3Int _nodePos)
+        {
+            return GridUtility.GetNodeUp(_nodePos, GridSize, GridNodes);
+        }
+
+        public T GetNodeDown(Vector3Int _nodePos)
+        {
+            return GridUtility.GetNodeDown(_nodePos, GridSize, GridNodes);
+        }
+#endregion
         
         public void AddNode(T _newNode, Vector3Int _nodePos)
         {
