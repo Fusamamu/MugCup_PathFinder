@@ -60,6 +60,12 @@ namespace MugCup_PathFinder.Runtime
             return this;
         }
 
+        public GridData<T> PopulateNodesByLevel(GameObject _prefab, int _level)
+        {
+            GridDataBuilder.PopulateNodesByLevel(GridNodes, GridSize, _level, _prefab);
+            return this;
+        }
+
         public TU[] GetGridUnitArray<TU>() where TU : GridNode
         {
             var _gridUnitArray = new TU[GridNodes.Length];
@@ -85,16 +91,20 @@ namespace MugCup_PathFinder.Runtime
 
         public void ApplyAllNode(Action<T> _action)
         {
-            foreach (var _node in ValidNodes)
+            foreach (var _node in GridNodes)
             {
+                if(_node == null) continue;
+                
                 _action?.Invoke(_node);
             }
         }
         
         public void ApplyAllNodes<TU>(Action<TU> _action) where TU : class, INode
         {
-            foreach (var _node in ValidNodes)
+            foreach (var _node in GridNodes)
             {
+                if(_node == null) continue;
+                
                 if(_node is TU _castNode)
                     _action?.Invoke(_castNode);
             }
@@ -197,7 +207,7 @@ namespace MugCup_PathFinder.Runtime
 
             return _nodesAtLevel;
         }
-        
+
         public void EmptyGrid()
         {
             for (var _i = 0; _i < GridNodes.Length; _i++)

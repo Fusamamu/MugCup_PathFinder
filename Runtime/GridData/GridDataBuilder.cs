@@ -78,5 +78,36 @@ namespace MugCup_PathFinder.Runtime
             // else
             //     levelTable[_level] = _selectedBlockLevel;
         }
+        
+        public static void PopulateNodesByLevel<T>(T[] _nodeBases, Vector3Int _gridUnitSize, int _heightLevel, GameObject _nodeBasePrefab, GameObject _parent = null) where T : IGridCoord
+        {
+            int _rowUnit    = _gridUnitSize.x;
+            int _columnUnit = _gridUnitSize.z;
+
+            for (var _x = 0; _x < _rowUnit; _x++)
+            {
+                for (var _z = 0; _z < _columnUnit; _z++)
+                {
+                    var _targetNodePos = new Vector3Int(_x, _heightLevel, _z);
+
+                    var _nodeObject = Object.Instantiate(_nodeBasePrefab, _targetNodePos, Quaternion.identity);
+                        
+                    if (_parent != null)
+                    {
+                        _nodeObject.transform.position += _parent.transform.position;
+                        _nodeObject.transform.SetParent(_parent.transform);
+                    }
+                    
+                    if (_nodeObject.TryGetComponent<T>(out var _node))
+                    {
+                        _node
+                            .SetNodePosition     (new Vector3Int(_x, _heightLevel, _z))
+                            .SetNodeWorldPosition(_nodeObject.transform.position);
+                            
+                        _nodeBases[_z + _gridUnitSize.x * (_x + _gridUnitSize.y * _heightLevel)] = _node;
+                    }
+                }
+            }
+        }
     }
 }
