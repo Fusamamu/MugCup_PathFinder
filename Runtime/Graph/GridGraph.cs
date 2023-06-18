@@ -208,7 +208,8 @@ namespace MugCup_PathFinder.Runtime
             GridVertexData.ClearData();
             GraphEdges    .Clear();
         }
-
+        
+#if UNITY_EDITOR
         private void OnDrawGizmos()
         {
             if (!IsDebug) return;
@@ -233,5 +234,6 @@ namespace MugCup_PathFinder.Runtime
                     Gizmos.DrawLine(_startPos, _targetPos);
             }
         }
+#endif
     }
 }

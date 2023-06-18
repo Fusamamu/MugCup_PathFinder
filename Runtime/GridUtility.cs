@@ -779,7 +779,9 @@ namespace MugCup_PathFinder.Runtime
                             //_nodeBase.NodePosition = new Vector3Int(_x, _y, _z);
                             _nodeBase.SetNodePosition(new Vector3Int(_x, _y, _z));
                             
+#if UNITY_EDITOR
                             Undo.RegisterCreatedObjectUndo(_emptyNode, "Node Created");
+#endif
                         }
                          
                         // if (_parent != null)

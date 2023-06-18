@@ -1,8 +1,9 @@
+#if UNITY_EDITOR
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor;
 using MugCup_PathFinder.Runtime;
+using UnityEditor;
 using UnityEngine;
 
 namespace MugCup_PathFinder.Editor
@@ -42,3 +43,4 @@ namespace MugCup_PathFinder.Editor
         }
     }
 }
+#endif
