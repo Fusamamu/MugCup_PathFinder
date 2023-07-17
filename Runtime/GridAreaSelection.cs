@@ -151,6 +151,44 @@ namespace MugCup_PathFinder.Runtime
             }
         }
 
+        public static IEnumerable<Vector3Int> GetGridAreaPositions(Vector3Int _gridSize)
+        {
+            for (var _x = 0; _x < _gridSize.x; _x++)
+                for (var _z = 0; _z < _gridSize.z; _z++)
+                {
+                    yield return new Vector3Int(_x, 0, _z);
+                }
+        }
+
+        public static IEnumerable<Vector3Int> GetGridAreaRaycastPositions(Vector3Int _gridSize, int _raycastHeightOffset = 2)
+        {
+            int _targetHeight = _gridSize.y + _raycastHeightOffset;
+            
+            foreach (var _pos in GetGridAreaPositions(_gridSize))
+            {
+                yield return new Vector3Int(_pos.x, _targetHeight, _pos.z);
+            }
+        }
+
+        public static bool IsInsideGrid(Vector3Int _gridSize, Vector3Int _nodePos, bool _ignoreYAxis = true)
+        {
+            bool _isInsideGrid = default;
+            
+            var _xPos = _nodePos.x;
+            var _zPos = _nodePos.z;
+
+            _isInsideGrid = _xPos >= 0 && _xPos <= _gridSize.x;
+            _isInsideGrid = _zPos >= 0 && _zPos <= _gridSize.z;
+
+            if (!_ignoreYAxis)
+            {
+                var _yPos = _nodePos.y;
+                _isInsideGrid = _yPos >= 0 && _yPos <= _gridSize.y;
+            }
+
+            return _isInsideGrid;
+        }
+
         public static bool IsInsideCircle(Vector3Int _checkedPos, Vector3Int _center, float _radius)
         {
             float _dx = _center.x - _checkedPos.x;
