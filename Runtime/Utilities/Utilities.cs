@@ -35,6 +35,11 @@ namespace MugCup_PathFinder.Runtime
             return new Vector3Int(_xPos, _yPos, _zPos);
         }
 
+        public static Vector3 AsVector3(this Vector3Int _pos)
+        {
+            return new Vector3(_pos.x, _pos.y, _pos.z);
+        }
+
         public static Vector3Int AsVector3Int(this Vector3 _pos)
         {
             return CastVec3ToVec3Int(_pos);
